@@ -1,0 +1,64 @@
+@charset "utf-8";
+
+@import "variables";
+
+@import "components/bootstrap/functions";
+@import "components/bootstrap/variables";
+@import "components/bootstrap/mixins";
+// @import "components/bootstrap/root";
+@import "components/bootstrap/reboot";
+@import "components/bootstrap/type";
+// @import "components/bootstrap/images";
+// @import "components/bootstrap/code";
+@import "components/bootstrap/grid";
+// @import "components/bootstrap/tables";
+@import "components/bootstrap/forms";
+@import "components/bootstrap/buttons";
+@import "components/bootstrap/transitions";
+@import "components/bootstrap/dropdown";
+@import "components/bootstrap/button-group";
+@import "components/bootstrap/input-group";
+@import "components/bootstrap/custom-forms";
+@import "components/bootstrap/nav";
+@import "components/bootstrap/navbar";
+// @import "components/bootstrap/card";
+// @import "components/bootstrap/breadcrumb";
+@import "components/bootstrap/pagination";
+// @import "components/bootstrap/badge";
+// @import "components/bootstrap/jumbotron";
+@import "components/bootstrap/alert";
+// @import "components/bootstrap/progress";
+// @import "components/bootstrap/media";
+@import "components/bootstrap/list-group";
+@import "components/bootstrap/close";
+// @import "components/bootstrap/toasts";
+@import "components/bootstrap/modal";
+// @import "components/bootstrap/tooltip";
+// @import "components/bootstrap/popover";
+// @import "components/bootstrap/carousel";
+// @import "components/bootstrap/spinners";
+@import "components/bootstrap/utilities";
+// @import "components/bootstrap/print";
+
+
+@import '~/node_modules/bootstrap-vue/src/_variables.scss';
+@import '~/node_modules/bootstrap-vue/src/_utilities.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/card/index.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/dropdown/index.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/form-checkbox/index.scss';
+
+// @import '~/node_modules/bootstrap-vue/src/components/form-input/index.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/form-radio/index.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/input-group/index.scss';
+@import '~/node_modules/bootstrap-vue/src/components/modal/index.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/nav/index.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/navbar/index.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/pagination/index.scss';
+@import '~/node_modules/bootstrap-vue/src/components/pagination-nav/index.scss';
+
+// @import '~/node_modules/bootstrap-vue/src/components/table/index.scss';
+// @import '~/node_modules/bootstrap-vue/src/components/toast/index.scss';
+
+
+@import "components/bootstrap";
+@import "components/core";

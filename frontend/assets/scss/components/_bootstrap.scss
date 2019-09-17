@@ -1,0 +1,20 @@
+/*
+ * стили бутстрапа которые вырезал, но они нужны
+ */
+
+.d-block {
+    display: block!important;
+}
+
+.d-inline-block {
+    display: inline-block!important;
+}
+
+.justify-content-center {
+    -webkit-box-pack: center!important;
+    justify-content: center!important;
+}
+
+.text-center {
+    text-align: center!important
+}

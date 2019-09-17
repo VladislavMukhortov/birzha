@@ -1,0 +1,9 @@
+определение страныпо IP
+https://ipsidekick.com/
+https://ipgeolocationapi.com/
+
+
+Переводчик
+https://yandex.ru/dev/translate/doc/dg/concepts/api-overview-docpage/
+https://translate.yandex.ru/developers/prices
+https://www.deepl.com/ru/docs-api.html?part=introduction

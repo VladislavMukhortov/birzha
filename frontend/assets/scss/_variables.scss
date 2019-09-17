@@ -1,0 +1,37 @@
+
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black:    #000 !default;
+
+$blue:    #007aff !default; // 007bff
+$red:     #ff2d55 !default; // dc3545
+$yellow:  #ffcc00 !default; // ffc107
+$green:   #4cd964 !default; // 28a745
+$cyan:    #34aadc !default; // 17a2b8
+
+$primary:       $blue !default;
+$secondary:     #9e9e9e !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $yellow !default;
+$danger:        $red !default;
+$light:         #f2f6f7 !default;
+
+
+$body-bg:       $white !default;
+$body-color:    $gray-900 !default;
+
+
+$grid-breakpoints-xs: 0 !default;
+$grid-breakpoints-sm: 576px !default;
+$grid-breakpoints-md: 768px !default;
+$grid-breakpoints-lg: 992px !default;
+$grid-breakpoints-xl: 1200px !default;
