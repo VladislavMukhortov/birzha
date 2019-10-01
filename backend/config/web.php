@@ -40,6 +40,7 @@ $config = [
                 'OPTIONS api/currency/<controller>/<action>' => 'api/currency/<controller>/options',
                 'OPTIONS api/lot/<controller>/<action>' => 'api/lot/<controller>/options',
                 'OPTIONS api/messages/<controller>/<action>' => 'api/messages/<controller>/options',
+                'OPTIONS api/offer/<controller>/<action>' => 'api/offer/<controller>/options',
                 'OPTIONS api/user/<controller>/<action>' => 'api/user/<controller>/options',
 
                 '' => 'site/index',

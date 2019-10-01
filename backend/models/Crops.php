@@ -6,6 +6,8 @@ namespace app\models;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
+use app\models\query\CropQuery;
+
 /**
  * @property integer  id
  * @property string   name      название культуры
@@ -41,6 +43,16 @@ class Crops extends ActiveRecord
             ['name', 'unique'],
             ['name', 'string', 'max' => 255],
         ];
+    }
+
+
+
+    /**
+     * @return CropQuery
+     */
+    public static function find()
+    {
+        return new CropQuery(get_called_class());
     }
 
 }

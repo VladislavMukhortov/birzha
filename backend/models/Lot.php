@@ -8,6 +8,8 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 
+use app\models\query\LotQuery;
+
 use app\models\User;
 use app\models\Crops;
 
@@ -54,15 +56,42 @@ use app\models\Crops;
  * @property string    link             ссылка
  * @property integer   views            кол-во просмотров
  * @property boolean   is_edit          измененный
- * @property boolean   status           статус лота
+ * @property integer   status           статус лота
  * @property timestamp created_at       дата создания
  * @property timestamp updated_at       дата изменения
  */
 class Lot extends ActiveRecord
 {
 
-    const STATUS_INACTIVE = false;  // неактивное объявление
-    const STATUS_ACTIVE  = true;    // активное
+    /**
+     * удаленное объявление
+     */
+    const STATUS_INACTIVE = 0;
+
+    /**
+     * объявление находящийся в архиве
+     */
+    const STATUS_ARCHIVE = 1;
+
+    /**
+     * объявление находящийся в ожидании размещения
+     * - например через функцию отложенной публикации (и публикуется в указанное время created_at)
+     * - режим черновика
+     */
+    const STATUS_WAITING = 2;
+
+    /**
+     * объявление отображается на доске:
+     * - нет запросов оффера
+     * - оффер(ы) на стадии подтверждения
+     * - оффер со статусом "твердо"
+     */
+    const STATUS_ACTIVE = 3;
+
+    /**
+     * объявление используется в оффере, который находится в статусе переписки двух сторон
+     */
+    const STATUS_COMMUNICATION = 4;
 
     // базис поставки
     const BASIS = [
@@ -85,14 +114,8 @@ class Lot extends ActiveRecord
         'sell' => 'sell'
     ];
 
-    // время оффера для аукциона между продавцом и покупателем
-    const OFFER_TIME = [
-        '30' => 1800,   // 30 минут
-        '60' => 3600    // 60 минут
-    ];
-
-    const LINK_LENGTH = 15;         // длина ссылки по умолчанию
-    const LIMIT_ON_PAGE  = 10;      // кол-во записей на странице
+    const LINK_LENGTH = 15;     // длина ссылки по умолчанию
+    const LOT_ON_PAGE  = 10;    // кол-во записей на странице
 
 
 
@@ -208,6 +231,17 @@ class Lot extends ActiveRecord
     }
 
 
+
+    /**
+     * @return LotQuery
+     */
+    public static function find()
+    {
+        return new LotQuery(get_called_class());
+    }
+
+
+
     public function getUsers()
     {
         return $this->hasMany(User::className(), ['id' => 'user_id']);
@@ -216,28 +250,6 @@ class Lot extends ActiveRecord
     public function getCrops()
     {
         return $this->hasMany(Crops::className(), ['id' => 'crop_id']);
-    }
-
-
-
-    /**
-     * @param  int|string $id
-     * @return null|static
-     */
-    public static function findById($id) : ?self
-    {
-        return static::findOne(['id' => $id]);
-    }
-
-
-
-    /**
-     * @param  string $url
-     * @return null|static
-     */
-    public static function findByLink(string $link) : ?self
-    {
-        return static::findOne(['link' => $link]);
     }
 
 
@@ -410,7 +422,57 @@ class Lot extends ActiveRecord
     */
     public function setStatus() : void
     {
-        $this->status = self::STATUS_ACTIVE;
+        $this->status = (int) self::STATUS_ACTIVE;
     }
+
+
+
+    /**
+     * Возвращаем строку с данными о базисе
+     * @param  Lot    $lot объект объявления
+     * @return string
+     */
+    public function getBasisLocation(Lot $lot) : string
+    {
+        $location = '';
+
+        switch ($lot->basis) {
+            case self::BASIS['FOB']:
+                $location = $lot->fob_port . ', ' . $lot->fob_terminal;
+                break;
+            case self::BASIS['CIF']:
+                $location = $lot->cif_country . ', ' . $lot->cif_port;
+                break;
+            default: break;
+        }
+
+        return strval($location);
+    }
+
+
+
+    /**
+     * Возвращаем строку с данными о базисе
+     * @param  array  $lot объект объявления
+     * @return string
+     */
+    public function getBasisLocationArray($lot = []) : string
+    {
+        $location = '';
+
+        switch ($lot['basis']) {
+            case self::BASIS['FOB']:
+                $location = $lot['fob_port'] . ', ' . $lot['fob_terminal'];
+                break;
+            case self::BASIS['CIF']:
+                $location = $lot['cif_country'] . ', ' . $lot['cif_port'];
+                break;
+            default: break;
+        }
+
+        return strval($location);
+    }
+
+
 
 }

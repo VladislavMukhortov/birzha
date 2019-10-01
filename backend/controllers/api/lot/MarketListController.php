@@ -15,6 +15,7 @@ use yii\data\ActiveDataProvider;
 
 use app\models\Lot;
 use app\models\Crops;
+use app\models\Offer;
 
 /**
  * API список объявлений для доски
@@ -77,6 +78,13 @@ class MarketListController extends Controller
 
     /**
      * Список объявлений для доски
+     *
+     * Показываем список объявлений которые сейчас торгуются:
+     * - у объявления есть специальный статус для отображения на доске
+     * - объявление опубликовано и офферов к нему еще нет, офферы есть, оффер в статусе "твердо"
+     *
+     * Объявление которое в статусе "твердо" просто отображается, но взаимодействовать с ним нельзя
+     *
      * @param  integer 'crop_id' ID культуры
      * @param  integer 'type_market' 'all'-все или 'buy'-покупка или 'sell'-продажа
      * @return string
@@ -91,63 +99,87 @@ class MarketListController extends Controller
             $type_market = false;
         }
 
+        $tl = Lot::tableName();
+        $to = Offer::tableName();
+
         $query = (new Query())
-            ->select('*')
-            ->from(Lot::tableName())
-            ->where([
-                'crop_id' => $crop_id,
-                'status' => Lot::STATUS_ACTIVE
+            ->select([
+                "{$tl}.id",                 // удалить, нельзя показывать
+                "{$tl}.company_id",         // удалить, нельзя показывать
+                "{$tl}.deal",
+                "{$tl}.price",
+                "{$tl}.currency",
+                "{$tl}.quantity",
+                "{$tl}.period",
+                "{$tl}.basis",
+                "{$tl}.fob_port",
+                "{$tl}.fob_terminal",
+                "{$tl}.cif_country",
+                "{$tl}.cif_port",
+                "{$tl}.moisture",
+                "{$tl}.foreign_matter",
+                "{$tl}.grain_admixture",
+                "{$tl}.gluten",
+                "{$tl}.protein",
+                "{$tl}.natural_weight",
+                "{$tl}.falling_number",
+                "{$tl}.vitreousness",
+                "{$tl}.ragweed",
+                "{$tl}.bug",
+                "{$tl}.oil_content",
+                "{$tl}.oil_admixture",
+                "{$tl}.broken",
+                "{$tl}.damaged",
+                "{$tl}.dirty",
+                "{$tl}.ash",
+                "{$tl}.erucidic_acid",
+                "{$tl}.peroxide_value",
+                "{$tl}.acid_value",
+                "{$tl}.link",
+                "{$to}.status",             // статус офера (может: - не быть, - в ожидании, -"твердо")
             ])
+            ->from($tl)
+            ->where([
+                "{$tl}.crop_id" => $crop_id,
+                "{$tl}.status" => Lot::STATUS_ACTIVE, // статус объявлений для отображения на доске
+            ])
+            // подключаем таблицу только для того чтобы установить для объявления статус "твердо" если такой есть
+            ->leftJoin("{$to}", "{$to}.lot_id = {$tl}.id AND {$to}.status = " . Offer::STATUS_AUCTION)
             ->orderBy([
-                'id' => SORT_DESC
+                "{$tl}.created_at" => SORT_DESC,
+                "{$tl}.id" => SORT_DESC
             ]);
 
         if ($type_market) {
-            $query->andWhere(['deal' => $type_market]);
+            $query->andWhere(["{$tl}.deal" => $type_market]);
         }
 
         $data_provider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => Lot::LIMIT_ON_PAGE
+                'pageSize' => Lot::LOT_ON_PAGE
             ]
         ]);
 
         $lots = $data_provider->getModels();
         $lots_output = [];
 
-        $crop_name = Crops::find()
-            ->select('name')
-            ->where(['id' => $crop_id])
-            ->scalar();
-
-        if ($crop_name) {
-            $crop_name = Yii::t('app', 'crops.' . $crop_name);
-        }
+        $crop = Crops::findOne($crop_id);
 
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
             $lots_output[$i] = [
-                'title' => strval($crop_name),
+                'id' => strval($lots[$i]['id']),                    // удалить, нельзя показывать
+                'company_id' => strval($lots[$i]['company_id']),    // удалить, нельзя показывать
+                'title' => Yii::t('app', 'crops.' . $crop->name),
                 'deal' => strval($lots[$i]['deal']),
                 'basis' => strval($lots[$i]['basis']),
-                'price' => strval($lots[$i]['price'] . ' ' . $lots[$i]['currency']),
+                'price' => Yii::$app->formatter->asCurrency($lots[$i]['price'], $lots[$i]['currency']),
                 'quantity' => strval($lots[$i]['quantity']),
                 'period' => strval($lots[$i]['period']),
                 'link' => strval($lots[$i]['link']),
-                'created_at' => strval($lots[$i]['created_at']),
+                'status' => ((int) $lots[$i]['status'] === Offer::STATUS_AUCTION) ? false : true,
+                'parity' => Lot::getBasisLocationArray($lots[$i]),
             ];
-
-            switch ($lots[$i]['basis']) {
-                case Lot::BASIS['FOB']:
-                    $lots_output[$i]['parity'] = $lots[$i]['fob_port'] . ', ' . $lots[$i]['fob_terminal'];
-                    break;
-                case Lot::BASIS['CIF']:
-                    $lots_output[$i]['parity'] = $lots[$i]['cif_country'] . ', ' . $lots[$i]['cif_port'];
-                    break;
-                default:
-                    $lots_output[$i]['parity'] = '';
-                    break;
-            }
 
             $param = '';
 
@@ -179,8 +211,9 @@ class MarketListController extends Controller
             // 'count' => $data_provider->getCount(),
             // 'total_count' => $data_provider->getTotalCount(),
             // 'pagination' => $data_provider->getPagination()->getLinks(),
-            // +1 так как отсчет начинается с 0
+            // Текущая страница с рузельтатом. +1 так как отсчет начинается с 0
             'pagination_page' => $data_provider->getPagination()->getPage() + 1,
+            // кол-во страниц с результатами
             'pagination_page_count' => $data_provider->getPagination()->getPageCount(),
             // 'pagination_page_size' => $data_provider->getPagination()->getPageSize(),
 
@@ -188,7 +221,5 @@ class MarketListController extends Controller
             // 'pagination_limit' => $data_provider->getPagination()->getLimit()
         ]);
     }
-
-
 
 }

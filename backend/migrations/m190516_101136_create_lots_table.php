@@ -70,17 +70,10 @@ class m190516_101136_create_lots_table extends Migration
             'text' => $this->string(500)->defaultValue(null),                       // дополнительная информация (не обязательный параметр)
             'link' => $this->string(200)->notNull()->unique(),                      // ссылка
 
-            'offer_user_id' => $this->integer()->unsigned()->defaultValue(null),    // ID пользователя (второй стороны) для оффера
-            'offer_price_1' => $this->float()->unsigned()->defaultValue(null),      // первая цена оффера от второй стороны
-            'offer_price_2' => $this->float()->unsigned()->defaultValue(null),      // вторая цена оффера от второй стороны
-            'offer_price_3' => $this->float()->unsigned()->defaultValue(null),      // третья цена оффера от второй стороны
-            'demand_price_1' => $this->float()->unsigned()->defaultValue(null),     // ответ владельца на первую цену от второй стороны
-            'demand_price_2' => $this->float()->unsigned()->defaultValue(null),     // ответ владельца на вторую цену от второй стороны
-            'offer_ended_at' => $this->timestamp()->defaultValue(null),             // время окончания торга между пользователями
-
-            // 'views' => $this->integer()->unsigned()->defaultValue(0),               // кол-во просмотров
             'is_edit' => $this->boolean()->defaultValue(true),                      // измененный
-            'status' => $this->boolean()->defaultValue(true),                       // статус объявления
+
+            'status' => $this->tinyInteger()->unsigned()->defaultValue(0),          // статус объявления
+
             'created_at' => 'timestamp DEFAULT NOW()',                              // дата создания
             'updated_at' => 'timestamp ON UPDATE NOW()'                             // дата изменения
         ], $tableOptions);
@@ -178,7 +171,8 @@ class m190516_101136_create_lots_table extends Migration
             }
             $crop_id = rand(1, $crops_count);
             $deal = ((boolean) rand(0, 1)) ? 'buy' : 'sell';
-            $price = rand(1000, 9999);
+            $price = rand(100, 9999) + (mt_rand(0 * 100, 1 * 100) / 100);
+            $price = number_format((float) $price, 2, '.', '');
             $currency = $currency_list[rand(0, $currency_count)];
             $quantity = rand(100, 9999);
             $period = 'June - AUG';
@@ -325,6 +319,7 @@ class m190516_101136_create_lots_table extends Migration
                 $broken = rand(0, 100); // битые - 0-100%
             }
             $link = security()->generateRandomString(15);
+            $status = 3; // объявление отображается на доске
 
             $lots[] = [
                 $id,
@@ -360,7 +355,8 @@ class m190516_101136_create_lots_table extends Migration
                 $erucidic_acid,
                 $peroxide_value,
                 $acid_value,
-                $link
+                $link,
+                $status,
             ];
         }
 
@@ -399,7 +395,8 @@ class m190516_101136_create_lots_table extends Migration
             'erucidic_acid',
             'peroxide_value',
             'acid_value',
-            'link'          // ссылка
+            'link',         // ссылка
+            'status'
         ], $lots);
 
     }

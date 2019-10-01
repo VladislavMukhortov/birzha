@@ -78,14 +78,12 @@ class MarketShowController extends Controller
      */
     public function actionIndex() : Response
     {
-        $crop_id = (int) Yii::$app->request->get('crop_id', 0);
+        $crop_id = Yii::$app->request->get('crop_id', 0);
 
         $crop = Crops::find()
             ->select('id, name')
-            ->where([
-                'id' => $crop_id,
-                'status' => Crops::STATUS_ACTIVE
-            ])
+            ->where(['id' => $crop_id])
+            ->active()
             ->one();
 
         if (!$crop) {

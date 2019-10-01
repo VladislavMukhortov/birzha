@@ -79,9 +79,7 @@ class MarketListController extends Controller
     {
         $crops = Crops::find()
             ->select('id, name')
-            ->where([
-                'status' => Crops::STATUS_ACTIVE
-            ])
+            ->active()
             ->orderBy(['sort' => SORT_ASC])
             ->asArray()
             ->all();

@@ -1,3 +1,9 @@
+// Страница с объявлением
+// Можно посмотреть информацию об объявлении пока оно активно, то есть отображается на доске объявлений:
+// - нет запросов оффера
+// - оффер(ы) на стадии подтверждения
+// - оффер со статусом "твердо"
+
 <template>
 
     <main>
@@ -6,38 +12,30 @@
                 <b-row class="justify-content-center">
                     <b-col cols="12" md="10" lg="8">
 
-                        <template v-if="lot.success == true">
+                        <h1 class="section_title text-center">Lot</h1>
 
-                            <h1 class="section_title text-center">Lot</h1>
-                            <pre>{{ lot }}</pre>
+                        <template v-if="lot.offer == 'free'">
+                            <b-alert
+                                v-bind:variant="alertCreateOfferVariant"
+                                dismissible
+                                fade
+                                v-bind:show="alertCreateOfferShow"
+                                v-on:dismissed="alertCreateOfferShow=false">{{ alertCreateOfferText }}</b-alert>
 
-                            <p>
-                                <span>Trader: </span>
-                                <nuxt-link v-bind:to="'/trader/'+lot.trader_id">{{ lot.trader_name }}</nuxt-link>
-                            </p>
-                            <p>
-                                <b-button
-                                    variant="link"
-                                    v-on:click="toBackPage">Back page</b-button>
-                            </p>
-                            <p>
-                                <nuxt-link
-                                    v-if="lot.deal == 'sell'"
-                                    v-bind:to="{ path: '/market/seller', query: { crop: lot.crop_id, page: 1 }}">Other Seller {{ lot.crop }}</nuxt-link>
-                                <nuxt-link
-                                    v-else
-                                    v-bind:to="{ path: '/market/buyer', query: { crop: lot.crop_id, page: 1 }}">Other Buyer {{ lot.crop }}</nuxt-link>
-                            </p>
-
+                            <b-button variant="primary" v-on:click="createOffer">Запросить "Твердо"</b-button>
                         </template>
-                        <template v-else>
-
-                            <h1 class="section_title text-center">{{ lot.error }}</h1>
-                            <p class="text-center">
-                                <nuxt-link to="/market">TO Back</nuxt-link>
-                            </p>
-
+                        <template v-else-if="lot.offer == 'wait'">
+                            <p>Вы уже подали заявку, ожидайте!</p>
                         </template>
+                        <template v-else-if="lot.offer == 'auction'">
+                            <b-button variant="primary">Перейти на страницу оффера</b-button>
+                        </template>
+
+                        <p>
+                            <b-link v-bind:to="{ path: '/market/list', query: { crop: lot.crop_id, page: 1, type: lot.deal }}">Back to market</b-link>
+                        </p>
+
+                        <pre>{{ lot }}</pre>
 
                     </b-col>
                 </b-row>
@@ -55,7 +53,7 @@ export default {
 
     head() {
         return {
-            title: 'Lot ' + this.lot.deal + ' '  + this.lot.crop + ' '  + this.lot.trader_name + ' ' + ' | site.com',
+            title: this.lot.title + ' | site.com',
             meta: [
                 { hid: 'description', name: 'description', content: '' }
             ]
@@ -71,10 +69,11 @@ export default {
      */
     data() {
         return {
-            lot: {
-                success: false,
-                error: '',
-            },
+            lot: {},                                // информация об объявлении
+
+            alertCreateOfferText: '',           // некорректный логин или пароль
+            alertCreateOfferVariant: 'success', // некорректный логин или пароль
+            alertCreateOfferShow: false,        // некорректный логин или пароль
         }
     },
 
@@ -82,32 +81,48 @@ export default {
      * получаем данные о объявлении
      * @return object
      */
-    async asyncData ({ $axios, params }) {
+    async asyncData({ $axios, params }) {
         let lot_param = {params: {
             link: params.link
         }};
 
-        let lot = await $axios.$get('/api/lot/market-show/index', lot_param).then((res) => {
+        /**
+         * @param  Object res информация об объявлении
+         */
+        let res = await $axios.$get('/api/lot/market-show/index', lot_param).then((res) => {
             return res;
         });
 
-        return { lot: lot };
+        // объявления нет, редиректим на 404
+        if (!res.success) {
+            $nuxt.$router.push('/market/404');
+            return;
+        }
+
+        return { lot: res.lot };
     },
 
     methods: {
         /**
-         * Редирект на страницу назад
+         * Создаем оффер со статусом ожидания "твердо"
          */
-        toBackPage() {
-            this.$router.back();
+        async createOffer() {
+            var params = new URLSearchParams();
+            params.append('link', this.lot.link);
+
+            let res = await this.$axios.$post('/api/offer/create/index', params).then((res) => {
+                return res;
+            });
+
+            this.alertCreateOfferVariant = (res.success) ? 'success' : 'danger';
+            this.alertCreateOfferText = (res.text) ? res.text : '';
+            this.alertCreateOfferShow = true;
         }
     },
-
 };
 </script>
 
 
 
 <style lang='scss'>
-
 </style>

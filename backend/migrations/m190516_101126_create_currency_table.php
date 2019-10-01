@@ -21,7 +21,7 @@ class m190516_101126_create_currency_table extends Migration
         $this->createTable('{{%currency}}', [
             'id' => $this->primaryKey()->unsigned(),
             'name' => $this->string(255)->notNull()->unique(),      // название валюты
-            'iso_code' => $this->char(3)->notNull()->unique(),      // цифровой код
+            'iso_code' => $this->char(3)->notNull()->unique(),      // цифровой код ISO 4217
             'iso_code_3' => $this->char(3)->notNull()->unique(),    // 3-ех символьный код (используется для пользователей)
             'status' => $this->boolean()->defaultValue(true),       // статус (активно | удалено)
             'sort' => $this->smallInteger()->defaultValue(1)        // порядок сортировки

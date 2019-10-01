@@ -1,3 +1,5 @@
+// Страница с объявлениями для выбранной культуры и типа (покупка/продажа)
+
 <template>
 
     <main>
@@ -17,8 +19,22 @@
 
                         <b-list-group>
                             <template v-for="ad in ads">
-                                <b-list-group-item v-bind:to="'/market/'+ad.link">
-                                    <pre>{{ ad }}</pre>
+                                <b-list-group-item
+                                    v-bind:to="'/market/'+ad.link"
+                                    v-bind:class="{ 'bg-warning': !ad.status }">
+                                    <div class="order-item">
+                                        <h4 class="order-item-title">
+                                            <span>{{ ad.title }}</span>
+                                            <span class="order-item-price">{{ ad.price }}</span>
+                                        </h4>
+                                        <div class="order-item-desc">
+                                            <span>{{ ad.deal }}</span>
+                                            <span class="order-item-price">{{ ad.quantity }} тонн</span>
+                                        </div>
+                                        <div>{{ ad.param }}</div>
+                                        <div>{{ ad.period }}</div>
+                                        <div>{{ ad.basis }} | {{ ad.parity }}</div>
+                                    </div>
                                 </b-list-group-item>
                             </template>
                         </b-list-group>
@@ -49,7 +65,7 @@ export default {
             ads: {},                                    // объявления
             type: this.$route.query.type || 'all',      // тип объявлений (all, sell, buy)
             page_number: this.$route.query.page || 1,   // текущая страница
-            pagination_page_count: 0,                   // кол-во страниц пагинации
+            pagination_page_count: 0,                   // кол-во страниц с результатами
             crop: {},                                   // информация о культуре
             page_title: '',                             // заголовок на странице
         }
@@ -72,12 +88,14 @@ export default {
             page: route.query.page || 1
         }};
 
+        /**
+         * @param  Object crop информация о культуре которую торгуют на этой странице
+         * @param  Object ads  список объявлений
+         */
         let [crop, ads] = await Promise.all([
-            // информация о культуре
             $axios.$get('/api/crop/market-show/index', crop_param).then((res) => {
                 return res;
             }),
-            // список объявлений
             $axios.$get('/api/lot/market-list/index', ads_param).then((res) => {
                 return res;
             })
@@ -111,7 +129,7 @@ export default {
 
     watch: {
         /**
-         * при переключении страниц в пагинации загружаем объввления
+         * При изменении текущей страницы загружаем список объявлений для нее
          */
         page_number: function() {
             this.updateAdsData();
@@ -129,7 +147,7 @@ export default {
         },
 
         /**
-         * Запрос объявлений
+         * Загрузка списка объявлений
          */
         async updateAdsData() {
             let ads_param = {params: {
@@ -138,14 +156,16 @@ export default {
                 page: this.page_number
             }};
 
-            // список объявлений
+            /**
+             * @param  Object ads список объявлений
+             */
             let ads = await this.$axios.$get('/api/lot/market-list/index', ads_param).then((res) => {
                 return res;
             })
 
             this.ads = ads.data;
             this.pagination_page_count = ads.pagination_page_count;
-        }
+        },
     },
 };
 </script>
@@ -153,4 +173,23 @@ export default {
 
 
 <style lang='scss'>
+.order-item {
+}
+
+.order-item-title {
+    position: relative;
+    padding: 0 150px 0 0;
+    text-transform: uppercase;
+}
+
+.order-item-price {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.order-item-desc {
+    position: relative;
+    padding: 0 150px 0 0;
+}
 </style>

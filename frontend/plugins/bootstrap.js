@@ -24,7 +24,7 @@ import {
     InputGroupPlugin,
     // JumbotronPlugin,
     LayoutPlugin,
-    // LinkPlugin,
+    LinkPlugin,
     ListGroupPlugin,
     // MediaPlugin,
     ModalPlugin,
@@ -64,7 +64,7 @@ Vue.use(FormTextareaPlugin);
 Vue.use(InputGroupPlugin);
 // Vue.use(JumbotronPlugin);
 Vue.use(LayoutPlugin);
-// Vue.use(LinkPlugin);
+Vue.use(LinkPlugin);
 Vue.use(ListGroupPlugin);
 // Vue.use(MediaPlugin);
 Vue.use(ModalPlugin);
