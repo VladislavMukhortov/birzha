@@ -412,7 +412,7 @@ class Lot extends ActiveRecord
     */
     public function setLink() : void
     {
-        $this->link = security()->generateRandomString(self::LINK_LENGTH);;
+        $this->link = security()->generateRandomString(self::LINK_LENGTH);
     }
 
 

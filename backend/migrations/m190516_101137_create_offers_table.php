@@ -25,6 +25,8 @@ class m190516_101137_create_offers_table extends Migration
 
             'auction_time_s' => $this->smallInteger()->defaultValue(null),          // время в секундах на которое дается "твердо" (дает владелец объявления)
 
+            'link' => $this->string(200)->notNull()->unique(),                      // ссылка
+
             'status' => $this->tinyInteger()->unsigned()->defaultValue(0),          // статус офера
 
             'created_at' => 'timestamp DEFAULT NOW()',                              // дата создания

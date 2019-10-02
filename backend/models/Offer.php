@@ -20,6 +20,7 @@ use app\models\query\OfferQuery;
  * @property float     lot_price_1      ответ на первую цену от второй стороны
  * @property float     lot_price_2      ответ на вторую цену от второй стороны
  * @property integer   auction_time_s   время в секундах на которое дается "твердо"
+ * @property string    link             ссылка
  * @property integer   status           статус офера
  * @property timestamp created_at       дата создания
  * @property timestamp updated_at       дата изменения
@@ -72,6 +73,10 @@ class Offer extends ActiveRecord
      */
     const STATUS_COMPLETE = 5;
 
+    const LINK_LENGTH = 15;     // длина ссылки по умолчанию
+
+    const OFFER_ON_PAGE  = 10;  // кол-во записей на странице
+
 
 
     /**
@@ -106,8 +111,12 @@ class Offer extends ActiveRecord
     {
         return [
             [
-                ['lot_id','company_id',],
+                ['lot_id','company_id','link'],
                 'required'
+            ],
+            [
+                ['lot_id','company_id','link',],
+                'trim'
             ],
             [
                 [
@@ -149,6 +158,16 @@ class Offer extends ActiveRecord
     public static function find()
     {
         return new OfferQuery(get_called_class());
+    }
+
+
+
+    /**
+     * Устанавливаем статус
+    */
+    public function setLink() : void
+    {
+        $this->link = security()->generateRandomString(self::LINK_LENGTH);
     }
 
 
