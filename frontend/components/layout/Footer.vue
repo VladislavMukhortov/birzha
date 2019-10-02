@@ -12,25 +12,10 @@
                         <li>
                             <nuxt-link to="/market">Market</nuxt-link>
                         </li>
-                        <li>
-                            <nuxt-link to="/trader">Traders</nuxt-link>
-                        </li>
                     </ul>
                 </b-col>
 
-                <b-col cols="12" md="4">
-                    <ul class="list-unstyled">
-                        <li>
-                            <nuxt-link to="/" exact>Main</nuxt-link>
-                        </li>
-                        <li>
-                            <nuxt-link to="/market">Market</nuxt-link>
-                        </li>
-                        <li>
-                            <nuxt-link to="/trader">Traders</nuxt-link>
-                        </li>
-                    </ul>
-                </b-col>
+                <b-col cols="12" md="4"></b-col>
 
 
                 <b-col cols="12" md="4">
