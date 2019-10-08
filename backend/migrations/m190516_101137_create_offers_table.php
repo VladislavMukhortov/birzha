@@ -15,7 +15,8 @@ class m190516_101137_create_offers_table extends Migration
         $this->createTable('{{%offers}}', [
             'id' => $this->primaryKey(),
             'lot_id' => $this->integer()->unsigned()->notNull(),                    // ID объявления
-            'company_id' => $this->integer()->unsigned()->notNull(),                // ID компании (второй стороны)
+            'lot_owner_id' => $this->integer()->unsigned()->notNull(),              // ID компании которая подала объявление покупки/продажи
+            'counterparty_id' => $this->integer()->unsigned()->notNull(),           // ID компании(второй стороны) которая проявила интерес к объявлению
 
             'require_price_1' => $this->float()->unsigned()->defaultValue(null),    // первая цена оффера от второй стороны
             'require_price_2' => $this->float()->unsigned()->defaultValue(null),    // вторая цена оффера от второй стороны
@@ -38,9 +39,20 @@ class m190516_101137_create_offers_table extends Migration
 
         // add foreign key for table `company`
         $this->addForeignKey(
-            "{$table_name}_company_id_fk",
+            "{$table_name}_lot_owner_id_fk",
             "{$table_name}",
-            'company_id',
+            'lot_owner_id',
+            '{{%company}}',
+            'id',
+            'NO ACTION',
+            'CASCADE'
+        );
+
+        // add foreign key for table `company`
+        $this->addForeignKey(
+            "{$table_name}_counterparty_id_fk",
+            "{$table_name}",
+            'counterparty_id',
             '{{%company}}',
             'id',
             'NO ACTION',

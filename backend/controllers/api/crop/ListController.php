@@ -13,9 +13,9 @@ use yii\web\Response;
 use app\models\Crops;
 
 /**
- * API информация о культуре для магазина
+ * API
  */
-class MarketShowController extends Controller
+class ListController extends Controller
 {
 
     /**
@@ -72,27 +72,28 @@ class MarketShowController extends Controller
 
 
     /**
-     * Информация о культуре по ID для магазина
-     * @param  integer 'crop_id' ID культуры
-     * @return string
+     * @return [type] [description]
      */
     public function actionIndex() : Response
     {
-        $crop_id = Yii::$app->request->get('crop_id', 0);
+        return $this->asJson();
+    }
 
-        $crop = Crops::find()
-            ->select('id, name')
-            ->where(['id' => $crop_id])
-            ->active()
-            ->one();
 
-        if (!$crop) {
-            $crop = [];
+
+    /**
+     * Список культур для доски объявлений
+     * @return string
+     */
+    public function actionMarket() : Response
+    {
+        $crops = Crops::find()->allArray();
+
+        for ($i = 0, $arr = count($crops); $i < $arr; $i++) {
+            $crops[$i]['name'] = Yii::t('app', 'crops.' . $crops[$i]['name']);
         }
 
-        $crop['name'] = Yii::t('app', 'crops.' . $crop['name']);
-
-        return $this->asJson($crop);
+        return $this->asJson($crops);
     }
 
 

@@ -11,9 +11,21 @@ use yii\db\Expression;
 use app\models\query\OfferQuery;
 
 /**
+ * Таблица сделок (офферы)
+ *
+ * Оффер может быть:
+ * - удален
+ * - ожидать "твердо" (вторая сторона запросила "твердо", но это еще не значит что она его получит, зависит от владельца объявления). На одно объявление может приходиться много заявок на "твердо". Подавать заявки можно в любой момент пока объявлние активно (не в статусе переписки и не удаленно)
+ * - "твердо" (стороны обдумывают и есть возможность 3 раза предложить свою цену). При соглашении сторон оффер переходит на статус общения сторон (с ценой торга или с начальной ценой), остальные офферы на это объявления удаляются (и их владельцам приходит уведомление). При отказе этот оффер удаляется и владелец объявления может принять другой (если есть).
+ * - статус общения (объявление закрывается для всех кроме сторон и присваивается статус общения. Стороны договариваются через приложение о сделке.)
+ * - завершено (сделки которые были успешно проведенны через ресурс)
+ *
+ * Время на "твердо" дает владелец объявления.
+ *
  * @property integer   id               ID оффера
  * @property integer   lot_id           ID объявления
- * @property integer   company_id       ID компании (второй стороны)
+ * @property integer   lot_owner_id     ID компании которая подала объявление покупки/продажи
+ * @property integer   counterparty_id  ID компании(второй стороны) которая проявила интерес к объявлению
  * @property float     require_price_1  первая цена оффера от второй стороны
  * @property float     require_price_2  вторая цена оффера от второй стороны
  * @property float     require_price_3  третья цена оффера от второй стороны
@@ -46,7 +58,7 @@ class Offer extends ActiveRecord
     /**
      * оффер находящийся в архиве
      * или когда оффер был заключен с другой стороной
-     * выбрать или оставить так
+     * !! НЕ ИСПОЛЬЗОВАТЬ
      */
     const STATUS_ARCHIVE = 1;
 
@@ -111,11 +123,11 @@ class Offer extends ActiveRecord
     {
         return [
             [
-                ['lot_id','company_id','link'],
+                ['lot_id', 'lot_owner_id', 'counterparty_id', 'link',],
                 'required'
             ],
             [
-                ['lot_id','company_id','link',],
+                ['link',],
                 'trim'
             ],
             [
@@ -132,9 +144,10 @@ class Offer extends ActiveRecord
                 'value' => NULL
             ],
             [
-                ['lot_id','company_id',],
+                ['lot_id', 'lot_owner_id', 'counterparty_id',],
                 'integer'
             ],
+            ['link', 'unique'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             [
                 'status',
@@ -167,7 +180,7 @@ class Offer extends ActiveRecord
     */
     public function setLink() : void
     {
-        $this->link = security()->generateRandomString(self::LINK_LENGTH);
+        $this->link = Yii::$app->security->generateRandomString(self::LINK_LENGTH);
     }
 
 

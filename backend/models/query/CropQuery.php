@@ -22,4 +22,20 @@ class CropQuery extends ActiveQuery
         ]);
     }
 
+
+
+    /**
+     * Выборка всех культур
+     * @return [type] [description]
+     */
+    public function allArray()
+    {
+        return $this
+            ->select('id, name')
+            ->active()
+            ->orderBy(['sort' => SORT_ASC])
+            ->asArray()
+            ->all();
+    }
+
 }

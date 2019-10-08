@@ -31,9 +31,9 @@
                                             <span>{{ ad.deal }}</span>
                                             <span class="order-item-price">{{ ad.quantity }} тонн</span>
                                         </div>
-                                        <div>{{ ad.param }}</div>
+                                        <div>{{ ad.quality }}</div>
                                         <div>{{ ad.period }}</div>
-                                        <div>{{ ad.basis }} | {{ ad.parity }}</div>
+                                        <div><b>{{ ad.basis }}</b> | {{ ad.basis_location }}</div>
                                     </div>
                                 </b-list-group-item>
                             </template>
@@ -93,10 +93,10 @@ export default {
          * @param  Object ads  список объявлений
          */
         let [crop, ads] = await Promise.all([
-            $axios.$get('/api/crop/market-show/index', crop_param).then((res) => {
+            $axios.$get('/api/crop/show/market', crop_param).then((res) => {
                 return res;
             }),
-            $axios.$get('/api/lot/market-list/index', ads_param).then((res) => {
+            $axios.$get('/api/lot/list/market', ads_param).then((res) => {
                 return res;
             })
         ]);
@@ -159,7 +159,7 @@ export default {
             /**
              * @param  Object ads список объявлений
              */
-            let ads = await this.$axios.$get('/api/lot/market-list/index', ads_param).then((res) => {
+            let ads = await this.$axios.$get('/api/lot/list/market', ads_param).then((res) => {
                 return res;
             })
 

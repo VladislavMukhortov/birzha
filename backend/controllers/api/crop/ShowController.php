@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\controllers\api\currency;
+namespace app\controllers\api\crop;
 
 use Yii;
 use yii\rest\Controller;
@@ -10,12 +10,12 @@ use yii\filters\Cors;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
-use app\models\Currency;
+use app\models\Crops;
 
 /**
- * API
+ * API информация о культуре для магазина
  */
-class MarketListController extends Controller
+class ShowController extends Controller
 {
 
     /**
@@ -72,25 +72,37 @@ class MarketListController extends Controller
 
 
     /**
-     * Список валют для доски объявлений
-     * @return string
+     * @return [type] [description]
      */
     public function actionIndex() : Response
     {
-        $currency = Currency::find()
-            ->select('id, iso_code_3 AS name')
-            ->where([
-                'status' => Currency::STATUS_ACTIVE
-            ])
-            ->orderBy(['sort' => SORT_ASC])
-            ->asArray()
-            ->all();
+        return $this->asJson();
+    }
 
-        if (!$currency) {
-            $currency = [];
+
+
+    /**
+     * Информация о культуре по ID для магазина
+     * @param  integer 'crop_id' ID культуры
+     * @return string
+     */
+    public function actionMarket() : Response
+    {
+        $crop_id = Yii::$app->request->get('crop_id', 0);
+
+        $crop = Crops::find()
+            ->select('id, name')
+            ->where(['id' => $crop_id])
+            ->active()
+            ->one();
+
+        if (!$crop) {
+            $crop = [];
         }
 
-        return $this->asJson($currency);
+        $crop['name'] = Yii::t('app', 'crops.' . $crop['name']);
+
+        return $this->asJson($crop);
     }
 
 

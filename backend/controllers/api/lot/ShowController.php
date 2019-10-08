@@ -20,7 +20,7 @@ use app\models\Offer;
 /**
  * API Показываем объявление для доски
  */
-class MarketShowController extends Controller
+class ShowController extends Controller
 {
 
     public $enableCsrfValidation = false;
@@ -94,6 +94,16 @@ class MarketShowController extends Controller
 
 
     /**
+     * @return [type] [description]
+     */
+    public function actionIndex() : Response
+    {
+        return $this->asJson();
+    }
+
+
+
+    /**
      * Отдаем данные объявления для пользователя который будет взаимодействовать с ним
      *
      * Не показывать данные о личности которая сделала объявление
@@ -109,7 +119,7 @@ class MarketShowController extends Controller
      * @param  string 'link' ссылка культуры
      * @return string
      */
-    public function actionIndex() : Response
+    public function actionMarket() : Response
     {
         $link = trim(strval(Yii::$app->request->get('link', '')));
 
@@ -134,11 +144,23 @@ class MarketShowController extends Controller
              * @var string
              */
             $offer = '';
+            /**
+             * ссылка на сделку
+             * @var string|false
+             */
+            $offer_link = false;
+            /**
+             * время окончания сделки в статусе "твердо"
+             * @var boolean
+             */
+            $offer_ended_at = false;
             if (!Yii::$app->user->isGuest && $lot->id !== Yii::$app->user->identity->company_id) {
                 $offer = 'free';
                 $my_offer = Offer::find()->myActiveByLot($lot->id)->limit(1)->one();
                 if ($my_offer) {
                     $offer = ($my_offer->status === Offer::STATUS_AUCTION) ? 'auction' : 'wait';
+                    $offer_link = strval($my_offer->link);
+                    $offer_ended_at = strval($my_offer->ended_at);
                 }
             }
 
@@ -167,6 +189,13 @@ class MarketShowController extends Controller
                     ]
                 ],
             ];
+
+            if ($offer_link) {
+                $output['lot']['offer_link'] = $offer_link;
+            }
+            if ($offer_ended_at) {
+                $output['lot']['offer_ended_at'] = $offer_ended_at;
+            }
 
             if ($lot->crop_year) {
                 $output['lot']['quality'][] = [

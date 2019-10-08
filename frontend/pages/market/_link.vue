@@ -15,25 +15,39 @@
                         <h1 class="section_title text-center">Lot</h1>
 
                         <template v-if="lot.offer == 'free'">
+                            <p>Вы можете запросить статус "твердо". Когда владелец объявления увидит ваш запрос, то на его усмотрение он укажет время которое будет длиться статус.</p>
                             <b-alert
                                 v-bind:variant="alertCreateOfferVariant"
                                 dismissible
                                 fade
                                 v-bind:show="alertCreateOfferShow"
-                                v-on:dismissed="alertCreateOfferShow=false">{{ alertCreateOfferText }}</b-alert>
+                                v-on:dismissed="alertCreateOfferShow=false">
+                                <div>{{ alertCreateOfferText }}</div>
+                                <b-link to="/deals/auction">Посмотреть список сделок</b-link>
+                            </b-alert>
 
                             <b-button variant="primary" v-on:click="createOffer">Запросить "Твердо"</b-button>
                         </template>
                         <template v-else-if="lot.offer == 'wait'">
                             <p>Вы уже подали заявку, ожидайте!</p>
+                            <p>
+                                <b-link to="/deals/auction">Посмотреть список сделок</b-link>
+                            </p>
                         </template>
                         <template v-else-if="lot.offer == 'auction'">
-                            <b-button variant="primary">Перейти на страницу оффера</b-button>
+                            <p>Идет статус "твердо" до {{ lot.offer_ended_at }}</p>
+                            <p>
+                                <b-link v-bind:to="'/deals/auction/'+lot.offer_link">Перейти на страницу оффера</b-link>
+                            </p>
                         </template>
+
+                        <hr>
 
                         <p>
                             <b-link v-bind:to="{ path: '/market/list', query: { crop: lot.crop_id, page: 1, type: lot.deal }}">Back to market</b-link>
                         </p>
+
+                        <hr>
 
                         <pre>{{ lot }}</pre>
 
@@ -89,7 +103,7 @@ export default {
         /**
          * @param  Object res информация об объявлении
          */
-        let res = await $axios.$get('/api/lot/market-show/index', lot_param).then((res) => {
+        let res = await $axios.$get('/api/lot/show/market', lot_param).then((res) => {
             return res;
         });
 

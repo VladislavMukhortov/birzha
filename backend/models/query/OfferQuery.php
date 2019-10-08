@@ -13,6 +13,7 @@ class OfferQuery extends ActiveQuery
 
     /**
      * Поиск своего оффера по ID объявления
+     * Ищем только офферы которые сами начали, то есть подали запрос на "твердо"
      * Статус "твердо" или в ожидание "твердо"
      * @param  integer $lot_id     ID объявления
      * @return
@@ -21,7 +22,7 @@ class OfferQuery extends ActiveQuery
     {
         return $this->andWhere([
             'lot_id' => $lot_id,
-            'company_id' => Yii::$app->user->identity->company_id,
+            'counterparty_id' => Yii::$app->user->identity->company_id,
             'status' => [
                 Offer::STATUS_WAITING,
                 Offer::STATUS_AUCTION

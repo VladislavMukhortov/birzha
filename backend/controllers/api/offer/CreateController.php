@@ -110,7 +110,8 @@ class CreateController extends Controller
                     $offer = new Offer();
                     Offer::getDb()->transaction(function($db) use ($offer, $lot) {
                         $offer->lot_id = $lot->id;
-                        $offer->company_id = Yii::$app->user->identity->company_id;
+                        $offer->lot_owner_id = $lot->company_id;
+                        $offer->counterparty_id = Yii::$app->user->identity->company_id;
                         $offer->setLink();
                         $offer->setStatusWaiting();
                         $offer->save();

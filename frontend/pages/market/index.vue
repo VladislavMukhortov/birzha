@@ -73,7 +73,7 @@ export default {
     },
 
     async asyncData ({ $axios }) {
-        const crops = await $axios.$get('/api/crop/market-list/index').then((res) => {
+        const crops = await $axios.$get('/api/crop/list/market').then((res) => {
             return res;
         });
 

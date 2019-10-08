@@ -1,21 +1,42 @@
-// Страница со списком сделок:
-// - ожидающих "твердо"
-// - "твердо"
-// - на этапе общения
-// - завершеные
+// Страница со списком категорий сделок:
+// - в статусе "твердо" или ожидают "твердо"
+// - на этапе переписки
+// - завершенные сделки
 
 <template>
 
     <main>
         <section class="section_block">
             <b-container>
-                <b-row class="justify-content-center">
-                    <b-col cols="12" md="8" lg="8">
 
-                        <h1 class="section_title text-center">Deals</h1>
+                <h1 class="section_title text-center">Deals</h1>
+                <p class="text-center">Выберите категорию по которой хотите просмотреть сделки</p>
 
+                <b-row>
+
+                    <b-col>
+                        <p>Сделки которые ожидают "твердо" и которые имеют статус "твердо"</p>
+                        <p>
+                            <b-link to="/deals/auction">auction</b-link>
+                        </p>
                     </b-col>
+
+                    <b-col>
+                        <p>Сделки которые находятся на этапе общения</p>
+                        <p>
+                            <b-link to="/deals/communication">communication</b-link>
+                        </p>
+                    </b-col>
+
+                    <b-col>
+                        <p>Завершенные сделки</p>
+                        <p>
+                            <b-link to="/deals/archive">archive</b-link>
+                        </p>
+                    </b-col>
+
                 </b-row>
+
             </b-container>
         </section>
     </main>
@@ -26,8 +47,6 @@
 
 <script>
 export default {
-    auth: false,
-
     head() {
         return {
             title: 'Deals | site.com',
@@ -40,7 +59,4 @@ export default {
 
 
 <style lang='scss'>
-.market-content {
-    margin: 1rem 0 0 0;
-}
 </style>

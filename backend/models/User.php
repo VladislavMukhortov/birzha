@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace app\models;
 
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -212,7 +213,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
-        $expire = app()->params['user.passwordResetTokenExpire'];
+        $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         return $timestamp + $expire >= time();
     }
 
@@ -247,6 +248,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
 
+
     /**
      * Validates password
      * @param string $password password to validate
@@ -254,8 +256,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword(string $password) : bool
     {
-        // return Yii::$app->security->validatePassword($password, $this->password_hash);
-        return security()->validatePassword($password, $this->password_hash);
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 
 
@@ -266,7 +267,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setPassword(string $password) : void
     {
-        $this->password_hash = security()->generatePasswordHash($password);
+        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
 
 
@@ -277,7 +278,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setAccessToken() : void
     {
-        $this->access_token = security()->generateRandomString(self::TOKENS_LENGTH);
+        $this->access_token = Yii::$app->security->generateRandomString(self::TOKENS_LENGTH);
     }
 
 
@@ -287,7 +288,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function generatePasswordResetToken() : void
     {
-        $this->password_reset_token = security()->generateRandomString(self::TOKENS_LENGTH) . '_' . time();
+        $this->password_reset_token = Yii::$app->security->generateRandomString(self::TOKENS_LENGTH) . '_' . time();
     }
 
 
@@ -325,8 +326,8 @@ class User extends ActiveRecord implements IdentityInterface
         $t = self::tableName();
         $link = '';
         do {
-            $link = security()->generateRandomString(self::LINK_LENGTH);
-            $user_id = db()->createCommand("SELECT id FROM {$t} WHERE link=:link")
+            $link = Yii::$app->security->generateRandomString(self::LINK_LENGTH);
+            $user_id = Yii::$app->db->createCommand("SELECT id FROM {$t} WHERE link=:link")
                 ->bindValue(':link', $link)
                 ->queryScalar();
         } while ($user_id);
@@ -381,7 +382,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function generatePassword() : string
     {
-        return security()->generateRandomString(self::PSSW_LENGTH_DEFAULT);
+        return Yii::$app->security->generateRandomString(self::PSSW_LENGTH_DEFAULT);
     }
 
 
@@ -390,7 +391,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setVerifyEmail() : void
     {
-        $this->verify_email = security()->generateRandomString(self::VERIFY_EMAIL_LENGTH);
+        $this->verify_email = Yii::$app->security->generateRandomString(self::VERIFY_EMAIL_LENGTH);
     }
 
 

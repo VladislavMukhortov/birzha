@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\controllers\api\crop;
+namespace app\controllers\api\currency;
 
 use Yii;
 use yii\rest\Controller;
@@ -10,12 +10,12 @@ use yii\filters\Cors;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
-use app\models\Crops;
+use app\models\Currency;
 
 /**
  * API
  */
-class MarketListController extends Controller
+class ListController extends Controller
 {
 
     /**
@@ -72,27 +72,35 @@ class MarketListController extends Controller
 
 
     /**
-     * Список культур для доски объявлений
-     * @return string
+     * @return [type] [description]
      */
     public function actionIndex() : Response
     {
-        $crops = Crops::find()
-            ->select('id, name')
-            ->active()
+        return $this->asJson();
+    }
+
+
+
+    /**
+     * Список валют для доски объявлений
+     * @return string
+     */
+    public function actionMarket() : Response
+    {
+        $currency = Currency::find()
+            ->select('id, iso_code_3 AS name')
+            ->where([
+                'status' => Currency::STATUS_ACTIVE
+            ])
             ->orderBy(['sort' => SORT_ASC])
             ->asArray()
             ->all();
 
-        if (!$crops) {
-            $crops = [];
+        if (!$currency) {
+            $currency = [];
         }
 
-        for ($i = 0, $arr = count($crops); $i < $arr; $i++) {
-            $crops[$i]['name'] = Yii::t('app', 'crops.' . $crops[$i]['name']);
-        }
-
-        return $this->asJson($crops);
+        return $this->asJson($currency);
     }
 
 

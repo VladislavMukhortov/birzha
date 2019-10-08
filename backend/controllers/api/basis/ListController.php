@@ -15,7 +15,7 @@ use app\models\Basis;
 /**
  * API
  */
-class MarketListController extends Controller
+class ListController extends Controller
 {
 
     /**
@@ -72,10 +72,20 @@ class MarketListController extends Controller
 
 
     /**
+     * @return [type] [description]
+     */
+    public function actionIndex() : Response
+    {
+        return $this->asJson();
+    }
+
+
+
+    /**
      * Список базисов для доски объявлений
      * @return string
      */
-    public function actionIndex() : Response
+    public function actionMarket() : Response
     {
         $basis = Basis::find()
             ->select('id, name')
@@ -85,10 +95,6 @@ class MarketListController extends Controller
             ->orderBy(['sort' => SORT_ASC])
             ->asArray()
             ->all();
-
-        if (!$basis) {
-            $basis = [];
-        }
 
         return $this->asJson($basis);
     }

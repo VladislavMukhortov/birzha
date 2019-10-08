@@ -643,11 +643,11 @@ export default {
     async asyncData ({ $axios }) {
 
         let [cropsList, currencyList] = await Promise.all([
-            $axios.$get('/api/crop/market-list/index').then((res) => {
+            $axios.$get('/api/crop/list/market').then((res) => {
                 return res;
             }),
 
-            $axios.$get('/api/currency/market-list/index').then((res) => {
+            $axios.$get('/api/currency/list/market').then((res) => {
                 return res;
             }),
         ]);
