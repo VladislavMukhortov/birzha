@@ -33,7 +33,7 @@ class m190516_101137_create_offers_table extends Migration
             'created_at' => 'timestamp DEFAULT NOW()',                              // дата создания
             'updated_at' => 'timestamp ON UPDATE NOW()',                            // дата изменения
             'ended_at' => $this->timestamp()->defaultValue(null),                   // время окончания "твердо" между пользователями
-        ]);
+        ], $tableOptions);
 
         $table_name = $this->db->getSchema()->getRawTableName('{{%offers}}');
 

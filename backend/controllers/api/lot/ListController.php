@@ -204,4 +204,16 @@ class ListController extends Controller
         ]);
     }
 
+
+
+    /**
+     * Список личных объявлений
+     *
+     * @return
+     */
+    public function actionMy() : Response
+    {
+        return $this->asJson();
+    }
+
 }

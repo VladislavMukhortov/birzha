@@ -6,6 +6,8 @@ namespace app\models;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
+use app\models\query\CurrencyQuery;
+
 /**
  * @property integer  id
  * @property string   name          название валюты
@@ -45,6 +47,16 @@ class Currency extends ActiveRecord
             ['iso_code', 'string', 'max' => 3],
             ['iso_code_3', 'string', 'max' => 3],
         ];
+    }
+
+
+
+    /**
+     * @return CurrencyQuery
+     */
+    public static function find()
+    {
+        return new CurrencyQuery(get_called_class());
     }
 
 }

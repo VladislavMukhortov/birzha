@@ -36,7 +36,7 @@ class m190516_101136_create_lots_table extends Migration
             'price' => $this->float()->unsigned()->notNull(),                       // цена
             'currency' => $this->char(3)->notNull(),                                // код валюты
             'quantity' => $this->integer()->unsigned()->notNull(),                  // кол-во тонн (объем)
-            'period' => $this->string(200)->defaultValue(null),                     // период поставки
+            'period' => $this->string(255)->defaultValue(null),                     // период поставки
 
             'basis' => $this->char(3)->notNull(),                                   // базис поставки
             'fob_port' => $this->string(255)->defaultValue(null),                   // базис - порт
@@ -68,7 +68,7 @@ class m190516_101136_create_lots_table extends Migration
             'crop_year' => $this->string(100)->defaultValue(null),                  // год урожая
 
             'text' => $this->string(500)->defaultValue(null),                       // дополнительная информация (не обязательный параметр)
-            'link' => $this->string(200)->notNull()->unique(),                      // ссылка
+            'link' => $this->string(255)->notNull()->unique(),                      // ссылка
 
             'is_edit' => $this->boolean()->defaultValue(true),                      // измененный
 
