@@ -61,39 +61,39 @@ class Create extends Model
     public function attributeLabels() : array
     {
         return [
-            'deal' => '',
-            'crop_id' => '',
-            'currency' => '',
-            'price' => '',
-            'quantity' => '',
-            'moisture' => '',
-            'foreign_matter' => '',
-            'grain_admixture' => '',
-            'gluten' => '',
-            'protein' => '',
-            'natural_weight' => '',
-            'falling_number' => '',
-            'vitreousness' => '',
-            'ragweed' => '',
-            'bug' => '',
-            'oil_content' => '',
-            'oil_admixture' => '',
-            'broken' => '',
-            'damaged' => '',
-            'dirty' => '',
-            'ash' => '',
-            'erucidic_acid' => '',
-            'peroxide_value' => '',
-            'acid_value' => '',
-            'other_color' => '',
-            'crop_year' => '',
-            'basis' => '',
-            'fob_port' => '',
-            'fob_terminal' => '',
-            'cif_country' => '',
-            'cif_port' => '',
-            'period' => '',
-            'text' => '',
+            'deal' => 'Тип сделки',
+            'crop_id' => 'Тип культуры',
+            'currency' => 'Валюта',
+            'price' => 'Цена',
+            'quantity' => 'Объем',
+            'moisture' => Yii::t('app', 'crops.quality.moisture'),
+            'foreign_matter' => Yii::t('app', 'crops.quality.foreign_matter'),
+            'grain_admixture' => Yii::t('app', 'crops.quality.grain_admixture'),
+            'gluten' => Yii::t('app', 'crops.quality.gluten'),
+            'protein' => Yii::t('app', 'crops.quality.protein'),
+            'natural_weight' => Yii::t('app', 'crops.quality.natural_weight'),
+            'falling_number' => Yii::t('app', 'crops.quality.falling_number'),
+            'vitreousness' => Yii::t('app', 'crops.quality.vitreousness'),
+            'ragweed' => Yii::t('app', 'crops.quality.ragweed'),
+            'bug' => Yii::t('app', 'crops.quality.bug'),
+            'oil_content' => Yii::t('app', 'crops.quality.oil_content'),
+            'oil_admixture' => Yii::t('app', 'crops.quality.oil_admixture'),
+            'broken' => Yii::t('app', 'crops.quality.broken'),
+            'damaged' => Yii::t('app', 'crops.quality.damaged'),
+            'dirty' => Yii::t('app', 'crops.quality.dirty'),
+            'ash' => Yii::t('app', 'crops.quality.ash'),
+            'erucidic_acid' => Yii::t('app', 'crops.quality.erucidic_acid'),
+            'peroxide_value' => Yii::t('app', 'crops.quality.peroxide_value'),
+            'acid_value' => Yii::t('app', 'crops.quality.acid_value'),
+            'other_color' => Yii::t('app', 'crops.quality.other_color'),
+            'crop_year' => Yii::t('app', 'crops.quality.crop_year'),
+            'basis' => 'Базис',
+            'fob_port' => 'Базис порт',
+            'fob_terminal' => 'Базис терминал',
+            'cif_country' => 'Базис страна',
+            'cif_port' => 'Базис порт',
+            'period' => 'Период поставки',
+            'text' => 'Дополнительная информация',
         ];
     }
 
@@ -126,7 +126,7 @@ class Create extends Model
             [
                 'crop_id',
                 'in',
-                'range' => Crops::find()->select('name')->active()->column(),
+                'range' => Crops::find()->select('id')->active()->column(),
             ],
             [
                 'currency',
@@ -139,10 +139,9 @@ class Create extends Model
                 'range' => [Lot::BASIS['FOB'], Lot::BASIS['CIF'],],
             ],
 
-            ['price', 'double', 'min' => 0, 'max' => 2147483647,],
+            ['price', 'double', 'min' => 0, 'max' => 2147483647, 'tooBig' => 'Некорректное значение цены', 'tooSmall' => 'Некорректное значение цены',],
 
-            ['crop_id', 'integer', 'min' => 0,],
-            ['quantity', 'integer', 'min' => 0, 'max' => 2147483647,],
+            ['quantity', 'integer', 'min' => 0, 'max' => 2147483647, 'tooBig' => 'Некорректное значение объема', 'tooSmall' => 'Некорректное значение объема',],
 
             ['moisture', 'integer', 'min' => 0, 'max' => 100, 'message' => 'Некорректное значение',],
             ['foreign_matter', 'integer', 'min' => 0, 'max' => 100, 'message' => 'Некорректное значение',],
@@ -173,7 +172,7 @@ class Create extends Model
             ['cif_port', 'string', 'max' => 255, 'message' => 'Некорректное значение',],
 
             ['period', 'string', 'max' => 255, 'message' => 'Некорректное значение',],
-            ['text', 'string', 'max' => 255, 'message' => 'Некорректное значение',],
+            ['text', 'string', 'max' => 500, 'message' => 'Некорректное значение',],
         ];
     }
 
@@ -184,24 +183,29 @@ class Create extends Model
      */
     public function beforeValidate() : bool
     {
+        $this->price = tofloat($this->price);
+
         $this->deal = strtolower($this->deal);
         $this->currency = strtoupper($this->currency);
-        $this->basis = strtoupper($this->basis);
+        $this->basis = strtoupper((string) $this->basis);
 
         // отчищаем строки от символов отличных от utf-8
         // стираем значения если они не относятся к данному базису
-        $this->fob_port = ((string) $this->basis === Lot::BASIS['FOB']) ? mb_convert_encoding($this->fob_port, 'UTF-8', 'UTF-8') : '';
-        $this->fob_terminal = ((string) $this->basis === Lot::BASIS['FOB']) ? mb_convert_encoding($this->fob_terminal, 'UTF-8', 'UTF-8') : '';
-        $this->cif_country = ((string) $this->basis === Lot::BASIS['CIF']) ? mb_convert_encoding($this->cif_country, 'UTF-8', 'UTF-8') : '';
-        $this->cif_port = ((string) $this->basis === Lot::BASIS['CIF']) ? mb_convert_encoding($this->cif_port, 'UTF-8', 'UTF-8') : '';
+        $this->fob_port = ($this->basis === Lot::BASIS['FOB']) ? mb_convert_encoding($this->fob_port, 'UTF-8', 'UTF-8') : '';
+        $this->fob_terminal = ($this->basis === Lot::BASIS['FOB']) ? mb_convert_encoding($this->fob_terminal, 'UTF-8', 'UTF-8') : '';
+        $this->cif_country = ($this->basis === Lot::BASIS['CIF']) ? mb_convert_encoding($this->cif_country, 'UTF-8', 'UTF-8') : '';
+        $this->cif_port = ($this->basis === Lot::BASIS['CIF']) ? mb_convert_encoding($this->cif_port, 'UTF-8', 'UTF-8') : '';
+
+        // отчищаем строки от символов отличных от utf-8
+        $this->crop_year = mb_convert_encoding($this->crop_year, 'UTF-8', 'UTF-8');
+        $this->period = mb_convert_encoding($this->period, 'UTF-8', 'UTF-8');
+        $this->text = mb_convert_encoding($this->text, 'UTF-8', 'UTF-8');
 
         /**
-         * TODO: занулить зачения параметров которые не относятся к конкретной культуре
-         */
-        /**
          * Ключи - параметры культур
-         * Значениях индексы культур в которых используется параметр
-         * @var [type]
+         * Значения - индексы культур в которых используется параметр
+         * moisture и foreign_matter не проверяются, так как используются для всех культур
+         * @var array
          */
         $arr = [
             'grain_admixture' => ['1','2','3','18','19','20'],
@@ -255,18 +259,14 @@ class Create extends Model
      */
     public function save() : array
     {
-        $result = [
+        $output = [
             'result' => 'error',
         ];
 
         if (!$this->validate()) {
-            $result['messages'] = $this->getFirstErrors();
-            return $result;
+            $output['messages'] = $this->getFirstErrors();
+            return $output;
         }
-
-        $this->crop_year = ($this->crop_year) ? mb_convert_encoding($this->crop_year, 'UTF-8', 'UTF-8') : $this->crop_year;
-        $this->period = ($this->period) ? mb_convert_encoding($this->period, 'UTF-8', 'UTF-8') : $this->period;
-        $this->text = ($this->text) ? mb_convert_encoding($this->text, 'UTF-8', 'UTF-8') : $this->text;
 
         $lot = new Lot;
         Lot::getDb()->transaction(function($db) use ($lot) {
@@ -278,6 +278,7 @@ class Create extends Model
             $lot->price = (float) $this->price;
             $lot->currency = $this->currency;
             $lot->quantity = $this->quantity;
+            $lot->period = $this->period;
 
             $lot->basis = $this->basis;
             $lot->fob_port = $this->fob_port;
@@ -319,14 +320,17 @@ class Create extends Model
              * Ошибка валидации - тогда править модель
              * Ошибка сохранения - проблема с доступностью к БД
              */
-            $result['messages'] = $this->getFirstErrors();
-            return $result;
+            /**
+             * TODO: вывести ошибку понятную для пользователя вместо ошибки системы
+             */
+            $output['messages'] = $lot->getFirstErrors();
+            return $output;
         }
 
 
-        $result['result'] = 'success';
+        $output['result'] = 'success';
 
-        return $result;
+        return $output;
     }
 
 }

@@ -107,3 +107,37 @@ if (!function_exists('h')) {
     }
 }
 
+if (!function_exists('h')) {
+    /**
+     * @param $string
+     * @return string
+     */
+    function h(string $string) : string
+    {
+        return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+}
+
+if (!function_exists('tofloat')) {
+    /**
+     * Форматирует цену введеное пользователем в корректное число типа float
+     * @param $string
+     * @return string
+     */
+    function tofloat($n) : float
+    {
+        $n = (string) $n;
+        $dotPos = strrpos($n, '.');
+        $commaPos = strrpos($n, ',');
+        $sep = (($dotPos > $commaPos) && $dotPos) ? $dotPos :
+            ((($commaPos > $dotPos) && $commaPos) ? $commaPos : false);
+
+        $p = '/[^0-9]/';
+        if (!$sep) {
+            return floatval(preg_replace($p, '', $n));
+        }
+
+        return floatval(preg_replace($p, '', substr($n, 0, $sep)) . '.' . preg_replace($p, '', substr($n, $sep + 1, strlen($n))));
+    }
+}
+

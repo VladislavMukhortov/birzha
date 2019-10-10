@@ -9,6 +9,30 @@
 
                         <h1 class="section_title">Новая заявка</h1>
 
+                        <b-alert
+                            variant="success"
+                            dismissible
+                            fade
+                            v-bind:show="alertSuccessShow"
+                            v-on:dismissed="alertSuccessShow=false">
+                            <p>Объявление успешно размещено.</p>
+                            <p>
+                                <b-link to="/orders">Посмотреть свои объявления</b-link>
+                            </p>
+                            <p>
+                                <b-link to="/market">Перейти на доску объявлений</b-link>
+                            </p>
+                        </b-alert>
+
+                        <b-alert
+                            variant="danger"
+                            dismissible
+                            fade
+                            v-bind:show="alertErrorShow"
+                            v-on:dismissed="alertErrorShow=false">
+                            <div v-for="(value, name) in errorMessages">{{ value }}</div>
+                        </b-alert>
+
                         <!-- STEP NUMBER -->
                         <div class="orders-steps">
                             <div class="orders-steps-item" v-bind:class="{ '_active': step_1 }">
@@ -565,7 +589,11 @@
 
                     <b-col cols="12" md="4">
                         <h2 class="section_title">Ваше Объявление</h2>
-
+                        <p>{{ lotVievsDeal }}</p>
+                        <p>{{ lotVievsCropName }}</p>
+                        <p>{{ lotVievsPrice }}</p>
+                        <p>{{ lotVievsQuality }}</p>
+                        <p>{{ lotVievsBasis }}</p>
                     </b-col>
 
                 </b-row>
@@ -637,6 +665,11 @@ export default {
             cifPort: '',        // базис - порт
             period: '',         // период поставки
             text: '',           // дополнительная информация
+
+            // уведомления для сохранения объявления
+            alertSuccessShow: false,    // уведомление о успешном размещении
+            alertErrorShow: false,      // уведомление об ошибке при размещении
+            errorMessages: [],          // сообщения об ошибке
         }
     },
 
@@ -830,6 +863,56 @@ export default {
             return ['7'].indexOf('' + this.cropId) != -1;
         },
 
+        lotVievsDeal() {
+            let deal = this.deal || '';
+            return (deal) ? `Тип объявления: ${deal}` : '';
+        },
+
+        lotVievsCropName() {
+            let cropItem = this.cropsList.find(item => item.id == this.cropId);
+            return (cropItem) ? `Культура: ${cropItem.name}` : '';
+        },
+
+        lotVievsPrice() {
+            let price = (this.price) ? `${this.price} ${this.currency}` : '';
+            return (this.quantity) ? `${price} / ${this.quantity} тонн` : `${price}`;
+        },
+
+        lotVievsQuality() {
+            let quality = (this.moisture) ? `${this.moisture}%` : '';
+            quality += (this.foreignMatter) ? `/${this.foreignMatter}%` : '';
+            quality += (this.grainAdmixture) ? `/${this.grainAdmixture}%` : '';
+            quality += (this.gluten) ? `/${this.gluten}%` : '';
+            quality += (this.protein) ? `/${this.protein}%` : '';
+            quality += (this.naturalWeight) ? `/${this.naturalWeight}` : '';
+            quality += (this.fallingNumber) ? `/${this.fallingNumber}` : '';
+            quality += (this.vitreousness) ? `/${this.vitreousness}%` : '';
+            quality += (this.ragweed) ? `/${this.ragweed}` : '';
+            quality += (this.bug) ? `/${this.bug}%` : '';
+            quality += (this.oilContent) ? `/${this.oilContent}%` : '';
+            quality += (this.oilAdmixture) ? `/${this.oilAdmixture}%` : '';
+            quality += (this.broken) ? `/${this.broken}%` : '';
+            quality += (this.damaged) ? `/${this.damaged}%` : '';
+            quality += (this.dirty) ? `/${this.dirty}%` : '';
+            quality += (this.ash) ? `/${this.ash}%` : '';
+            quality += (this.erucidicAcid) ? `/${this.erucidicAcid}%` : '';
+            quality += (this.peroxideValue) ? `/${this.peroxideValue}%` : '';
+            quality += (this.acidValue) ? `/${this.acidValue}%` : '';
+            quality += (this.otherColor) ? `/${this.otherColor}` : '';
+            return quality;
+        },
+
+        lotVievsBasis() {
+            let basis = '';
+            if (this.basis == 'FOB') {
+                basis = (this.fobTerminal) ? `${this.fobPort}, ${this.fobTerminal}` : `${this.fobPort}`;
+            }
+            if (this.basis == 'CIF') {
+                basis = (this.cifPort) ? `${this.cifCountry}, ${this.cifPort}` : `${this.cifCountry}`;
+            }
+            return (basis) ? `${this.basis} - ${basis}` : '';
+        },
+
     },
 
     methods: {
@@ -962,9 +1045,8 @@ export default {
          * @return {[type]} [description]
          */
         async onSubmit() {
-            /**
-             * TODO: проверка значений
-             */
+            this.alertSuccessShow = false;
+            this.alertErrorShow = false;
 
             var params = new URLSearchParams();
             params.append('deal', this.deal);
@@ -1003,19 +1085,28 @@ export default {
             params.append('period', this.period);
             params.append('text', this.text);
 
-            let create = await this.$axios.$post('/api/lot/create/index', params).then((res) => {
-                console.log(res);
+            let res = await this.$axios.$post('/api/lot/create/index', params).then((res) => {
                 return res;
             }).catch((error) => {
-                console.log(error);
-                return {success:false,error:true};
+                return {
+                    result: 'error',
+                    messages: ['При сохранении возникла ошибка, попробуйте пожалуйста позже'],
+                };
             });
 
-            /**
-             * TODO: обрабатка создания и отправка на страницу
-             */
-        }
-    }
+            if (res.result == 'success') {
+                this.step_1 = false;
+                this.step_2 = false;
+                this.step_3 = false;
+                this.alertSuccessShow = true;
+            } else {
+                this.errorMessages = res.messages;
+                this.alertErrorShow = true;
+            }
+
+            window.scrollTo(0,0);
+        },
+    },
 };
 </script>
 

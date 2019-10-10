@@ -89,7 +89,10 @@ class CreateController extends Controller
         if ($model->load(Yii::$app->request->post(), '')) {
             $result = $model->save();
         } else {
-            $result['error'] = 'Data not found';
+            $result = [
+                'result' => 'error',
+                'messages' => 'Data not found',
+            ];
         }
 
         return $this->asJson($result);
