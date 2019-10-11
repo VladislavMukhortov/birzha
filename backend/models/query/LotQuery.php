@@ -25,6 +25,35 @@ class LotQuery extends ActiveQuery
     }
 
 
+
+    /**
+     * Объявление которое пренадлежит пользователю
+     * @return
+     */
+    public function my()
+    {
+        return $this->andWhere([
+            'company_id' => Yii::$app->user->identity->company_id
+        ]);
+    }
+
+
+
+    public function notDeleted()
+    {
+        return $this->andWhere([
+            'status' => [
+                Lot::STATUS_ARCHIVE,
+                Lot::STATUS_WAITING,
+                Lot::STATUS_ACTIVE,
+                Lot::STATUS_COMMUNICATION,
+                Lot::STATUS_COMPLETE,
+            ]
+        ]);
+    }
+
+
+
     /**
      * Объявление которое отображается в списке объявлений для всех пользователей
      * @return

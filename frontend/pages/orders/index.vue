@@ -33,7 +33,7 @@
                                     <div><b>{{ item.basis }}</b> | {{ item.basis_location }}</div>
                                     <div><b>Создано:</b> {{ item.created_at }}</div>
                                     <div class="text-danger">Статус: {{ item.status }}</div>
-                                    <b-link v-bind:to="'/orders/edit/'+item.link">Редактировать</b-link>
+                                    <b-link v-bind:to="'/orders/'+item.link">Посмотреть</b-link>
                                 </div>
                             </b-list-group-item>
                         </b-list-group>
