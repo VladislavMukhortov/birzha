@@ -70,8 +70,8 @@ class VerifyEmailController extends Controller
     {
         $token = trim(Yii::$app->request->get('token', ''));
 
-        $data = [
-            'success' => false
+        $output = [
+            'result' => 'error',
         ];
 
         if ($token) {
@@ -86,20 +86,18 @@ class VerifyEmailController extends Controller
                 try {
 
                     if ($user->save()) {
-                        $data['success'] = true;
-                        $data['name'] = $user->name;
-                        $data['email'] = $user->email;
-                        $data['phone'] = $user->phone;
-                        $data['company'] = Company::find($user->company_id)
-                            ->select('name')
-                            ->scalar();
-                        $data['access_token'] = $user->access_token;
+                        $output['result'] = 'success';
+                        $output['name'] = $user->name;
+                        $output['email'] = $user->email;
+                        $output['phone'] = $user->phone;
+                        $output['company'] = Company::find($user->company_id)->select('name')->scalar();
+                        $output['access_token'] = $user->access_token;
                     }
 
                     $transaction->commit();
 
                 } catch(\Throwable $e) {
-                    $data['error'] = 'Возникла ошибка, попробуйте посже';
+                    $output['error'] = 'Возникла ошибка, попробуйте посже';
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -110,7 +108,7 @@ class VerifyEmailController extends Controller
              */
         }
 
-        return $this->asJson($data);
+        return $this->asJson($output);
     }
 
 }

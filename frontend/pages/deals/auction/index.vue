@@ -35,7 +35,7 @@
                                         <div>{{ item.quality }}</div>
                                         <div>{{ item.period }}</div>
                                         <div><b>{{ item.basis }}</b> | {{ item.basis_location }}</div>
-                                        <div><b>Создано:</b> {{ item.created_at }}</div>
+                                        <!-- <div><b>Создано:</b> {{ item.created_at }}</div> -->
                                         <div class="text-danger">{{ item.desc }}</div>
 
                                         <template v-if="item.status == 'deals'">

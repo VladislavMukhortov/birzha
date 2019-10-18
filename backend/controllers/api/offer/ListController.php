@@ -104,7 +104,7 @@ class ListController extends Controller
 
         $query = (new Query())
             ->select([
-                // "{$tl}.id",                 // удалить, нельзя показывать
+                "{$tl}.id",                 // удалить, нельзя показывать
                 // "{$tl}.company_id",         // удалить, нельзя показывать
                 "{$tl}.crop_id",
                 "{$tl}.deal",
@@ -140,9 +140,10 @@ class ListController extends Controller
 
                 "{$to}.counterparty_id",
                 "{$to}.link AS offer_link",
-                "{$to}.status",
-                "{$to}.created_at",
-                "{$to}.ended_at",
+
+                // выбираем максимальные значения, что бы из множества записей было выбранно корректное значение
+                "MAX({$to}.status) AS status",
+                "MAX({$to}.ended_at) AS ended_at",
             ])
             ->from($tl)
             ->where([
@@ -155,11 +156,12 @@ class ListController extends Controller
             ])
             ->rightJoin("{$to}", "{$to}.lot_id = {$tl}.id")
             ->orderBy([
+                "status" => SORT_DESC,
                 "{$to}.created_at" => SORT_DESC,
                 "{$to}.id" => SORT_DESC,
             ])
             // груперуем по ID объявления, что бы исключить дубликаты своего объявления
-            ->groupBy("{$tl}.id")
+            ->groupBy("{$to}.lot_id")
             ->params([
                 ':my_company_id' => Yii::$app->user->identity->company_id
             ]);
@@ -174,19 +176,22 @@ class ListController extends Controller
         $offers = $data_provider->getModels();
         $data = [];
 
+        // return $this->asJson($offers);
+
         $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
 
         for ($i = 0, $count = count($offers); $i < $count; $i++) {
             $data[$i] = [
-                'title' => Yii::t('app', 'crops.' . $crops[$offers[$i]['crop_id']]),
+                'title' => $offers[$i]['id'] . ' ' . Yii::t('app', 'crops.' . $crops[$offers[$i]['crop_id']]),
                 'deal' => strval($offers[$i]['deal']),
                 'basis' => strval($offers[$i]['basis']),
                 'price' => Yii::$app->formatter->asCurrency($offers[$i]['price'], $offers[$i]['currency']),
                 'quantity' => strval($offers[$i]['quantity']),
                 'period' => strval($offers[$i]['period']),
-                'created_at' => strval($offers[$i]['created_at']),
+                // 'created_at' => strval($offers[$i]['created_at']),
+                'status_s' => strval($offers[$i]['status']),
                 'basis_location' => Lot::getBasisLocationArray($offers[$i]),
-                'quality' => Lot::getStrQualityArray($offers[$i]),
+                'quality' => Lot::getStrQuality($offers[$i]),
             ];
 
             if ((int) $offers[$i]['status'] === Offer::STATUS_AUCTION) {
@@ -306,7 +311,7 @@ class ListController extends Controller
                 'link' => strval($offers[$i]['link']),
                 'created_at' => strval($offers[$i]['created_at']),
                 'basis_location' => Lot::getBasisLocationArray($offers[$i]),
-                'quality' => Lot::getStrQualityArray($offers[$i]),
+                'quality' => Lot::getStrQuality($offers[$i]),
             ];
         }
 
@@ -407,7 +412,7 @@ class ListController extends Controller
                 'link' => strval($offers[$i]['link']),
                 'created_at' => strval($offers[$i]['created_at']),
                 'basis_location' => Lot::getBasisLocationArray($offers[$i]),
-                'quality' => Lot::getStrQualityArray($offers[$i]),
+                'quality' => Lot::getStrQuality($offers[$i]),
             ];
         }
 

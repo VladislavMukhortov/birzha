@@ -83,16 +83,14 @@ class CreateController extends Controller
      */
     public function actionIndex() : Response
     {
-        $result = [];
+        $result = [
+            'result' => 'error',
+            'messages' => 'Data not found',
+        ];
 
         $model = new Create();
         if ($model->load(Yii::$app->request->post(), '')) {
             $result = $model->save();
-        } else {
-            $result = [
-                'result' => 'error',
-                'messages' => 'Data not found',
-            ];
         }
 
         return $this->asJson($result);

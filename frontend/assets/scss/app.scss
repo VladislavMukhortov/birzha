@@ -1,5 +1,7 @@
 @charset "utf-8";
 
+@import "fonts";
+
 @import "variables";
 
 @import "components/bootstrap/functions";
@@ -60,5 +62,5 @@
 // @import '~/node_modules/bootstrap-vue/src/components/toast/index.scss';
 
 
-@import "components/bootstrap";
+// @import "components/bootstrap";
 @import "components/core";

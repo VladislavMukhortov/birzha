@@ -123,58 +123,19 @@ class ListController extends Controller
             $type_market = false;
         }
 
-        $tl = Lot::tableName();
-        $to = Offer::tableName();
-
         $query = (new Query())
-            ->select([
-                "{$tl}.id",
-                "{$tl}.deal",
-                "{$tl}.price",
-                "{$tl}.currency",
-                "{$tl}.quantity",
-                "{$tl}.period",
-                "{$tl}.basis",
-                "{$tl}.fob_port",
-                "{$tl}.fob_terminal",
-                "{$tl}.cif_country",
-                "{$tl}.cif_port",
-                "{$tl}.moisture",
-                "{$tl}.foreign_matter",
-                "{$tl}.grain_admixture",
-                "{$tl}.gluten",
-                "{$tl}.protein",
-                "{$tl}.natural_weight",
-                "{$tl}.falling_number",
-                "{$tl}.vitreousness",
-                "{$tl}.ragweed",
-                "{$tl}.bug",
-                "{$tl}.oil_content",
-                "{$tl}.oil_admixture",
-                "{$tl}.broken",
-                "{$tl}.damaged",
-                "{$tl}.dirty",
-                "{$tl}.ash",
-                "{$tl}.erucidic_acid",
-                "{$tl}.peroxide_value",
-                "{$tl}.acid_value",
-                "{$tl}.link",
-                "{$to}.status",         // статус офера (может: - не быть, - в ожидании, -"твердо")
-            ])
-            ->from($tl)
+            ->from(Lot::tableName())
             ->where([
-                "{$tl}.crop_id" => $crop_id,
-                "{$tl}.status" => Lot::STATUS_ACTIVE, // статус объявлений для отображения на доске
+                'crop_id' => $crop_id,
+                'status' => Lot::STATUS_ACTIVE, // статус объявлений для отображения на доске
             ])
-            // подключаем таблицу только для того чтобы установить для объявления статус "твердо" если такой есть
-            ->leftJoin("{$to}", "{$to}.lot_id = {$tl}.id AND {$to}.status = " . Offer::STATUS_AUCTION)
             ->orderBy([
-                "{$tl}.created_at" => SORT_DESC,
-                "{$tl}.id" => SORT_DESC,
+                'created_at' => SORT_DESC,
+                'id' => SORT_DESC,
             ]);
 
         if ($type_market) {
-            $query->andWhere(["{$tl}.deal" => $type_market]);
+            $query->andWhere(['deal' => $type_market]);
         }
 
         $data_provider = new ActiveDataProvider([
@@ -191,32 +152,21 @@ class ListController extends Controller
 
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
             $data[$i] = [
-                'title' => $lots[$i]['id'] . ' ' . Yii::t('app', 'crops.' . $crop->name),
+                'title' => Yii::t('app', 'crops.' . $crop->name),
                 'deal' => strval($lots[$i]['deal']),
-                'basis' => strval($lots[$i]['basis']),
                 'price' => Yii::$app->formatter->asCurrency($lots[$i]['price'], $lots[$i]['currency']),
-                'quantity' => strval($lots[$i]['quantity']),
+                'quantity' => (int) $lots[$i]['quantity'],
                 'period' => strval($lots[$i]['period']),
                 'link' => strval($lots[$i]['link']),
-                'status' => ((int) $lots[$i]['status'] === Offer::STATUS_AUCTION) ? false : true,
+                'basis' => strval($lots[$i]['basis']),
                 'basis_location' => Lot::getBasisLocationArray($lots[$i]),
-                'quality' => Lot::getStrQualityArray($lots[$i]),
+                'quality' => Lot::getStrQuality($lots[$i]),
             ];
         }
 
         return $this->asJson([
             'data' => $data,
-            // 'count' => $data_provider->getCount(),
-            // 'total_count' => $data_provider->getTotalCount(),
-            // 'pagination' => $data_provider->getPagination()->getLinks(),
-            // Текущая страница с рузельтатом. +1 так как отсчет начинается с 0
-            'pagination_page' => $data_provider->getPagination()->getPage() + 1,
-            // кол-во страниц с результатами
-            'pagination_page_count' => $data_provider->getPagination()->getPageCount(),
-            // 'pagination_page_size' => $data_provider->getPagination()->getPageSize(),
-
-            // 'pagination_offset' => $data_provider->getPagination()->getOffset(),
-            // 'pagination_limit' => $data_provider->getPagination()->getLimit()
+            'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
         ]);
     }
 
@@ -230,46 +180,10 @@ class ListController extends Controller
     public function actionMyOrders() : Response
     {
         $query = (new Query())
-            ->select([
-                "id",
-                "crop_id",
-                "deal",
-                "price",
-                "currency",
-                "quantity",
-                "period",
-                "basis",
-                "fob_port",
-                "fob_terminal",
-                "cif_country",
-                "cif_port",
-                "moisture",
-                "foreign_matter",
-                "grain_admixture",
-                "gluten",
-                "protein",
-                "natural_weight",
-                "falling_number",
-                "vitreousness",
-                "ragweed",
-                "bug",
-                "oil_content",
-                "oil_admixture",
-                "broken",
-                "damaged",
-                "dirty",
-                "ash",
-                "erucidic_acid",
-                "peroxide_value",
-                "acid_value",
-                "link",
-                "status",
-                "created_at",
-            ])
             ->from(Lot::tableName())
             ->where([
-                "company_id" => Yii::$app->user->identity->company_id,
-                "status" => [
+                'company_id' => Yii::$app->user->identity->company_id,
+                'status' => [
                     Lot::STATUS_ARCHIVE,
                     Lot::STATUS_WAITING,
                     Lot::STATUS_ACTIVE,
@@ -278,8 +192,8 @@ class ListController extends Controller
                 ],
             ])
             ->orderBy([
-                "created_at" => SORT_DESC,
-                "id" => SORT_DESC,
+                'created_at' => SORT_DESC,
+                'id' => SORT_DESC,
             ]);
 
         $data_provider = new ActiveDataProvider([
@@ -292,20 +206,22 @@ class ListController extends Controller
         $lots = $data_provider->getModels();
         $data = [];
 
+        $lot_ids = ArrayHelper::getColumn($lots, 'id');
+
         $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
 
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
             $data[$i] = [
-                'title' => Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]),
+                'title' => $lots[$i]['id'] . ' ' . Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]),
                 'deal' => strval($lots[$i]['deal']),
-                'basis' => strval($lots[$i]['basis']),
                 'price' => Yii::$app->formatter->asCurrency($lots[$i]['price'], $lots[$i]['currency']),
-                'quantity' => strval($lots[$i]['quantity']),
+                'quantity' => (int) $lots[$i]['quantity'],
                 'period' => strval($lots[$i]['period']),
                 'link' => strval($lots[$i]['link']),
                 'created_at' => strval($lots[$i]['created_at']),
+                'basis' => strval($lots[$i]['basis']),
                 'basis_location' => Lot::getBasisLocationArray($lots[$i]),
-                'quality' => Lot::getStrQualityArray($lots[$i]),
+                'quality' => Lot::getStrQuality($lots[$i]),
             ];
 
             $st = (int) $lots[$i]['status'];

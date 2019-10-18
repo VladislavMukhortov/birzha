@@ -11,6 +11,7 @@
                         <h1 class="section_title">My orders</h1>
 
                         <b-pagination-nav
+                            v-if="lots.length"
                             v-model="page_number"
                             v-bind:link-gen="linkGen"
                             v-bind:number-of-pages="pagination_page_count"
@@ -18,7 +19,7 @@
                             use-router></b-pagination-nav>
 
                         <b-list-group>
-                            <b-list-group-item v-for="item in lots">
+                            <b-list-group-item v-for="item in lots" v-bind:key="item.link">
                                 <div class="order-item">
                                     <h4 class="order-item-title">
                                         <span>{{ item.title }}</span>
@@ -30,13 +31,21 @@
                                     </div>
                                     <div>{{ item.quality }}</div>
                                     <div>{{ item.period }}</div>
-                                    <div><b>{{ item.basis }}</b> | {{ item.basis_location }}</div>
-                                    <div><b>Создано:</b> {{ item.created_at }}</div>
+                                    <div>{{ item.basis }} | {{ item.basis_location }}</div>
+                                    <div class="small">Создано: {{ item.created_at }}</div>
                                     <div class="text-danger">Статус: {{ item.status }}</div>
-                                    <b-link v-bind:to="'/orders/'+item.link">Посмотреть</b-link>
+                                    <b-link v-bind:to="'/orders/'+item.link">Редактировать</b-link>
                                 </div>
                             </b-list-group-item>
                         </b-list-group>
+
+                        <b-pagination-nav
+                            v-if="lots.length"
+                            v-model="page_number"
+                            v-bind:link-gen="linkGen"
+                            v-bind:number-of-pages="pagination_page_count"
+                            no-page-detect
+                            use-router></b-pagination-nav>
 
                     </b-col>
                 </b-row>
@@ -59,7 +68,7 @@ export default {
 
     data() {
         return {
-            lots: {},                                 // сделки (офферы)
+            lots: {},                                   // сделки (офферы)
             page_number: this.$route.query.page || 1,   // текущая страница
             pagination_page_count: 0,                   // кол-во страниц с результатами
         }
@@ -76,8 +85,10 @@ export default {
             page: route.query.page || 1
         }};
 
-        const res = await $axios.$get('/api/lot/list/my-orders', _param).then((res) => {
+        let res = await $axios.$get('/api/lot/list/my-orders', _param).then((res) => {
             return res;
+        }).catch((error) => {
+            return { data:{}, pagination_page_count: 0};
         });
 
         return {
@@ -118,7 +129,9 @@ export default {
              */
             let res = await this.$axios.$get('/api/lot/list/my-orders', _param).then((res) => {
                 return res;
-            })
+            }).catch((error) => {
+                return { data:{}, pagination_page_count: 0};
+            });
 
             this.lots = res.data;
             this.pagination_page_count = res.pagination_page_count;

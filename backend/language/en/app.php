@@ -48,6 +48,7 @@ return [
 'crops.quality.peroxide_value' => 'Peroxide value',
 'crops.quality.acid_value' => 'Acid value',
 'crops.quality.other_color' => 'Other color',
+'crops.quality.w' => 'w',
 'crops.quality.crop_year' => 'Crop year',
 
 ];

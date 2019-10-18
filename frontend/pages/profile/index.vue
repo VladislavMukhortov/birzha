@@ -94,26 +94,22 @@
             id="js-modal-change-password"
             title="Изменить пароль"
             hide-footer
-            centered
             size="sm">
 
             <div class="d-block">
                 <b-form v-on:submit.prevent="onSubmitFormChangePassword">
 
-                    <b-form-group label-for="change-password" label="Введите пароль" label-class="required">
-                        <b-input
-                            required
-                            id="change-password"
-                            v-model="password"
-                            type="password"></b-input>
+                    <b-alert
+                        variant="danger"
+                        fade
+                        v-bind:show="showAlertErrorPassword">{{ textAlertErrorPassword }}</b-alert>
+
+                    <b-form-group label="Введите пароль" label-class="required">
+                        <b-input required v-model="password" type="password"></b-input>
                     </b-form-group>
 
-                    <b-form-group label-for="change-password-confirm" label="Подтвердите пароль" label-class="required">
-                        <b-input
-                            required
-                            id="change-password-confirm"
-                            v-model="passwordConfirm"
-                            type="password"></b-input>
+                    <b-form-group label="Подтвердите пароль" label-class="required">
+                        <b-input required v-model="passwordConfirm" type="password"></b-input>
                     </b-form-group>
 
                     <b-button type="submit" variant="primary" block>Сохранить</b-button>
@@ -152,6 +148,7 @@ export default {
             changePasswordAt: '',       // дата последнего изменния пароля
             password: '',               // пароль
             passwordConfirm: '',        // подтверждение пароля
+            showAlertErrorPassword: false,
 
             showAlertEdit: false,         // уведомление об успешном изменении личных данных
             memberNameState: '',            // состояние - имя пользователя
@@ -236,11 +233,11 @@ export default {
          * Отправка формы на изменения пароля
          */
         async onSubmitFormChangePassword() {
-            if (this.password !== this.passwordConfirm) {
-                /**
-                 * TODO: показать уведомление что пароли не совпадают
-                 */
+            this.showAlertErrorPassword = false;
 
+            if (this.password !== this.passwordConfirm) {
+                this.textAlertErrorPassword = 'Пароли не совпадают';
+                this.showAlertErrorPassword = true;
                 return;
             }
 
@@ -250,13 +247,19 @@ export default {
 
             let res = await this.$axios.$post('/api/user/change-password/index', _params).then((res) => {
                 return res;
+            }).catch((error) => {
+                return {result:'error'};
             });
 
-            if (res.success) {
+            if (res.result === 'success') {
                 this.$auth.setUserToken(res.access_token);
-                // уведомление что пароль изменен
+
+                setTimeout(function() {
+                    $nuxt.$router.push('/profile');
+                }, 200);
             } else {
-                // ошибка
+                this.textAlertErrorPassword = 'Ой! Попробуйте позже.';
+                this.showAlertErrorPassword = true;
             }
         },
     },

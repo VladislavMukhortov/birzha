@@ -6,38 +6,36 @@
                 <b-row class="justify-content-center">
                     <b-col cols="12" md="6" lg="4">
 
-                        <template v-if="show_alert_error">
+                        <template v-if="showAlertErrorToken">
 
                             <h1 class="section_title text-center">Change password</h1>
 
                             <b-alert
                                 variant="danger"
                                 fade
-                                v-bind:show="show_alert_error">Incorrect reset token!</b-alert>
+                                v-bind:show="showAlertErrorToken">Incorrect reset token!</b-alert>
 
-                            <nuxt-link class="btn btn-primary btn-block" to="/auth/signin">Return to sign in</nuxt-link>
+                            <b-link class="btn btn-primary btn-block" to="/auth/signin">Return to sign in</b-link>
 
                         </template>
                         <template v-else>
 
                             <h1 class="section_title text-center">Change password for {{ email }}</h1>
 
+                            <b-alert
+                                variant="danger"
+                                fade
+                                v-bind:show="showAlertErrorPassword"
+                                v-on:dismissed="showAlertErrorPassword=false">{{ textAlertErrorPassword }}</b-alert>
+
                             <b-form v-on:submit.prevent="onSubmit">
 
-                                <b-form-group label-for="change-password" label="Введите пароль" label-class="required">
-                                    <b-input
-                                        required
-                                        id="change-password"
-                                        v-model="password"
-                                        type="password"></b-input>
+                                <b-form-group label="Введите пароль" label-class="required">
+                                    <b-input required v-model="password" type="password"></b-input>
                                 </b-form-group>
 
-                                <b-form-group label-for="change-password-confirm" label="Подтвердите пароль" label-class="required">
-                                    <b-input
-                                        required
-                                        id="change-password-confirm"
-                                        v-model="passwordConfirm"
-                                        type="password"></b-input>
+                                <b-form-group label="Подтвердите пароль" label-class="required">
+                                    <b-input required v-model="passwordConfirm" type="password"></b-input>
                                 </b-form-group>
 
                                 <b-button type="submit" variant="primary" block>Change password</b-button>
@@ -74,33 +72,38 @@ export default {
             email: '',
             access_token: '',
 
-            show_alert_error: false,    // некорректный токен для изменения пароля
+            showAlertErrorToken: false,     // некорректный токен для изменения пароля
+            showAlertErrorPassword: false,  // пароли не совпадают
+            textAlertErrorPassword: '',     // текст ошибки
 
-            password: '',               // пароль
-            passwordConfirm: '',        // подтверждение пароля
+            password: '',           // пароль
+            passwordConfirm: '',    // подтверждение пароля
         }
     },
 
     async asyncData({ $axios, params }) {
-        let _params = {
-            params: {
-                token: params.token
-            }
-        };
+        let _params = {params: {
+            token: params.token
+        }};
 
         let res = await $axios.$get('/api/auth/password-reset/index', _params).then((res) => {
             return res;
+        }).catch((error) => {
+            return {result:'error'};
         });
 
-        return {
-            success: res.success,
-            show_alert_error: !res.success,
-            company: res.company || '',
-            name: res.name || '',
-            phone: res.phone || '',
-            email: res.email || '',
-            access_token: res.access_token || ''
-        };
+        if (res.result === 'success') {
+            return {
+                success: true,
+                company: res.company || '',
+                name: res.name || '',
+                phone: res.phone || '',
+                email: res.email || '',
+                access_token: res.access_token || ''
+            };
+        }
+
+        return { success: false };
     },
 
     mounted() {
@@ -112,7 +115,7 @@ export default {
 
             this.$auth.setUserToken(this.access_token);
         } else {
-            this.show_alert_error = true;
+            this.showAlertErrorToken = true;
         }
     },
 
@@ -122,11 +125,11 @@ export default {
          * Отправка формы на изменения пароля
          */
         async onSubmit() {
-            if (this.password !== this.passwordConfirm) {
-                /**
-                 * TODO: показать уведомление что пароли не совпадают
-                 */
+            this.showAlertErrorPassword = false;
 
+            if (this.password !== this.passwordConfirm) {
+                this.textAlertErrorPassword = 'Пароли не совпадают';
+                this.showAlertErrorPassword = true;
                 return;
             }
 
@@ -136,17 +139,19 @@ export default {
 
             let res = await this.$axios.$post('/api/user/change-password/index', _params).then((res) => {
                 return res;
+            }).catch((error) => {
+                return {result:'error'};
             });
 
-            if (res.success) {
+            if (res.result === 'success') {
                 this.$auth.setUserToken(res.access_token);
 
                 setTimeout(function() {
                     $nuxt.$router.push('/profile');
                 }, 200);
-                // уведомление что пароль изменен
             } else {
-                // ошибка
+                this.textAlertErrorPassword = 'Ой! Попробуйте позже.';
+                this.showAlertErrorPassword = true;
             }
         },
     },
@@ -156,5 +161,4 @@ export default {
 
 
 <style lang='scss'>
-
 </style>

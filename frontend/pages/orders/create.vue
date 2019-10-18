@@ -61,14 +61,8 @@
                                     name="deal-radios"></b-radio-group>
                             </b-form-group>
 
-                            <b-form-group
-                                label="Выберите культуру:"
-                                label-class="required"
-                                label-for="create-crop-id">
-                                <b-select
-                                    required
-                                    id="create-crop-id"
-                                    v-model="cropId">
+                            <b-form-group label-class="required" label="Выберите культуру:">
+                                <b-select v-model="cropId">
                                     <option v-bind:value="0" disabled>Наименование товара</option>
                                     <template v-for="crop_item in cropsList">
                                         <option v-bind:value="crop_item.id">{{ crop_item.name }}</option>
@@ -76,10 +70,7 @@
                                 </b-select>
                             </b-form-group>
 
-                            <b-form-group
-                                label="Валюта и цена за тонну:"
-                                label-class="required"
-                                label-for="create-price">
+                            <b-form-group label-class="required" label="Валюта и цена за тонну:">
                                 <b-input-group>
 
                                     <b-input-group-prepend>
@@ -90,24 +81,13 @@
                                         </b-select>
                                     </b-input-group-prepend>
 
-                                    <b-input
-                                        required
-                                        id="create-price"
-                                        v-model="price"
-                                        type="text"></b-input>
+                                    <b-input type="text" v-model="price"></b-input>
 
                                 </b-input-group>
                             </b-form-group>
 
-                            <b-form-group
-                                label="Укажите объём тонн:"
-                                label-class="required"
-                                label-for="create-quantity">
-                                <b-input
-                                    required
-                                    id="create-quantity"
-                                    v-model="quantity"
-                                    type="text"></b-input>
+                            <b-form-group label-class="required" label="Укажите объём тонн:">
+                                <b-input type="text" v-model="quantity"></b-input>
                             </b-form-group>
 
                             <b-button
@@ -123,34 +103,31 @@
                             <b-form-group
                                 label="Влажность:"
                                 label-class="required"
-                                label-for="create-moisture"
                                 label-cols="4"
                                 description="Значение 0 - 100%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-moisture"
-                                        v-model="moisture"
-                                        type="number"
-                                        min="0"
-                                        max="100"></b-input>
+                                    <b-input type="number" min="0" max="100" v-model="moisture"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
                             <b-form-group
                                 label="Сорная примесь:"
                                 label-class="required"
-                                label-for="create-foreign-matter"
                                 label-cols="4"
                                 description="Значение 0 - 100%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-foreign-matter"
-                                        v-model="foreignMatter"
-                                        type="number"
-                                        min="0"
-                                        max="100"></b-input>
+                                    <b-input type="number" min="0" max="100" v-model="foreignMatter"></b-input>
+                                </b-input-group>
+                            </b-form-group>
+
+                            <b-form-group
+                                v-if="wVievs"
+                                label="W:"
+                                label-class="required"
+                                label-cols="4"
+                                description="Значение 0 - 1000w">
+                                <b-input-group append="w">
+                                    <b-input type="number" min="0" max="1000" v-model="w"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -158,17 +135,10 @@
                                 v-if="grainAdmixtureVievs"
                                 label="Зерновая примесь:"
                                 label-class="required"
-                                label-for="create-grain-admixture"
                                 label-cols="4"
                                 description="Значение 0 - 100%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-grain-admixture"
-                                        v-model="grainAdmixture"
-                                        type="number"
-                                        min="0"
-                                        max="100"></b-input>
+                                    <b-input type="number" min="0" max="100" v-model="grainAdmixture"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -176,17 +146,10 @@
                                 v-if="glutenVievs"
                                 label="Клейковина:"
                                 label-class="required"
-                                label-for="create-gluten"
                                 label-cols="4"
                                 description="Значение 12 - 40%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-gluten"
-                                        v-model="gluten"
-                                        type="number"
-                                        min="12"
-                                        max="40"></b-input>
+                                    <b-input type="number" min="12" max="40" v-model="gluten"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -194,17 +157,10 @@
                                 v-if="proteinVievs"
                                 label="Протеин:"
                                 label-class="required"
-                                label-for="create-protein"
                                 label-cols="4"
                                 description="Значение 0 - 80%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-protein"
-                                        v-model="protein"
-                                        type="number"
-                                        min="0"
-                                        max="80"></b-input>
+                                    <b-input type="number" min="0" max="80" v-model="protein"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -212,17 +168,10 @@
                                 v-if="naturalWeightVievs"
                                 label="Натура:"
                                 label-class="required"
-                                label-for="create-natural-weight"
                                 label-cols="4"
                                 description="Значение 50 - 1000 грам/литр">
                                 <b-input-group append="грам/литр">
-                                    <b-input
-                                        required
-                                        id="create-natural-weight"
-                                        v-model="naturalWeight"
-                                        type="number"
-                                        min="50"
-                                        max="1000"></b-input>
+                                    <b-input type="number" min="50" max="1000" v-model="naturalWeight"></b-input>
                                     </b-input-group>
                             </b-form-group>
 
@@ -230,17 +179,10 @@
                                 v-if="fallingNumberVievs"
                                 label="Число падения:"
                                 label-class="required"
-                                label-for="create-falling-number"
                                 label-cols="4"
                                 description="Значение 50 - 500 штук">
                                 <b-input-group append="штук">
-                                    <b-input
-                                        required
-                                        id="create-falling-number"
-                                        v-model="fallingNumber"
-                                        type="number"
-                                        min="50"
-                                        max="500"></b-input>
+                                    <b-input type="number" min="50" max="500" v-model="fallingNumber"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -248,17 +190,10 @@
                                 v-if="vitreousnessVievs"
                                 label="Стекловидность:"
                                 label-class="required"
-                                label-for="create-vitreousness"
                                 label-cols="4"
                                 description="Значение 20 - 95%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-vitreousness"
-                                        v-model="vitreousness"
-                                        type="number"
-                                        min="20"
-                                        max="95"></b-input>
+                                    <b-input type="number" min="20" max="95" v-model="vitreousness"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -266,17 +201,10 @@
                                 v-if="ragweedVievs"
                                 label="Амброзия:"
                                 label-class="required"
-                                label-for="create-ragweed"
                                 label-cols="4"
                                 description="Значение 0 - 500 штук/кг">
                                 <b-input-group append="штук/кг">
-                                    <b-input
-                                        required
-                                        id="create-ragweed"
-                                        v-model="ragweed"
-                                        type="number"
-                                        min="0"
-                                        max="500"></b-input>
+                                    <b-input type="number" min="0" max="500" v-model="ragweed"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -284,17 +212,10 @@
                                 v-if="bugVievs"
                                 label="Клоп:"
                                 label-class="required"
-                                label-for="create-bug"
                                 label-cols="4"
                                 description="Значение 0 - 20%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-bug"
-                                        v-model="bug"
-                                        type="number"
-                                        min="0"
-                                        max="20"></b-input>
+                                    <b-input type="number" min="0" max="20" v-model="bug"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -302,17 +223,10 @@
                                 v-if="oilContentVievs"
                                 label="Масличность:"
                                 label-class="required"
-                                label-for="create-oil-content"
                                 label-cols="4"
                                 description="Значение 0 - 80%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-oil-content"
-                                        v-model="oilContent"
-                                        type="number"
-                                        min="0"
-                                        max="80"></b-input>
+                                    <b-input type="number" min="0" max="80" v-model="oilContent"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -320,17 +234,10 @@
                                 v-if="oilAdmixtureVievs"
                                 label="Масличная примесь:"
                                 label-class="required"
-                                label-for="create-oil-admixture"
                                 label-cols="4"
                                 description="Значение 0 - 100%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-oil-admixture"
-                                        v-model="oilAdmixture"
-                                        type="number"
-                                        min="0"
-                                        max="100"></b-input>
+                                    <b-input type="number" min="0" max="100" v-model="oilAdmixture"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -338,17 +245,10 @@
                                 v-if="brokenVievs"
                                 label="Битые:"
                                 label-class="required"
-                                label-for="create-broken"
                                 label-cols="4"
                                 description="Значение 0 - 100%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-broken"
-                                        v-model="broken"
-                                        type="number"
-                                        min="0"
-                                        max="100"></b-input>
+                                    <b-input type="number" min="0" max="100" v-model="broken"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -356,17 +256,10 @@
                                 v-if="damagedVievs"
                                 label="Повреждённые:"
                                 label-class="required"
-                                label-for="create-damaged"
                                 label-cols="4"
                                 description="Значение 0 - 100%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-damaged"
-                                        v-model="damaged"
-                                        type="number"
-                                        min="0"
-                                        max="100"></b-input>
+                                    <b-input type="number" min="0" max="100" v-model="damaged"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -374,17 +267,10 @@
                                 v-if="dirtyVievs"
                                 label="Маранные:"
                                 label-class="required"
-                                label-for="create-dirty"
                                 label-cols="4"
                                 description="Значение 0 - 100%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-dirty"
-                                        v-model="dirty"
-                                        type="number"
-                                        min="0"
-                                        max="100"></b-input>
+                                    <b-input type="number" min="0" max="100" v-model="dirty"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -392,17 +278,10 @@
                                 v-if="ashVievs"
                                 label="Зольность:"
                                 label-class="required"
-                                label-for="create-ash"
                                 label-cols="4"
                                 description="Значение 0 - 100%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-ash"
-                                        v-model="ash"
-                                        type="number"
-                                        min="0"
-                                        max="100"></b-input>
+                                    <b-input type="number" min="0" max="100" v-model="ash"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -410,17 +289,10 @@
                                 v-if="erucidicAcidVievs"
                                 label="Эруковая кислота:"
                                 label-class="required"
-                                label-for="create-erucidic-acid"
                                 label-cols="4"
                                 description="Значение 0 - 20%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-erucidic-acid"
-                                        v-model="erucidicAcid"
-                                        type="number"
-                                        min="0"
-                                        max="20"></b-input>
+                                    <b-input type="number" min="0" max="20" v-model="erucidicAcid"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -428,17 +300,10 @@
                                 v-if="peroxideValueVievs"
                                 label="Перекисное число:"
                                 label-class="required"
-                                label-for="create-peroxide-value"
                                 label-cols="4"
                                 description="Значение 0 - 20%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-peroxide-value"
-                                        v-model="peroxideValue"
-                                        type="number"
-                                        min="0"
-                                        max="20"></b-input>
+                                    <b-input type="number" min="0" max="20" v-model="peroxideValue"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -446,17 +311,10 @@
                                 v-if="acidValueVievs"
                                 label="Кислотное число:"
                                 label-class="required"
-                                label-for="create-acid-value"
                                 label-cols="4"
                                 description="Значение 0 - 20%">
                                 <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-acid-value"
-                                        v-model="acidValue"
-                                        type="number"
-                                        min="0"
-                                        max="20"></b-input>
+                                    <b-input type="number" min="0" max="20" v-model="acidValue"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
@@ -464,28 +322,15 @@
                                 v-if="otherColorVievs"
                                 label="Другой цвет:"
                                 label-class="required"
-                                label-for="create-other-color"
                                 label-cols="4"
-                                description="Значение 1 - 5%">
-                                <b-input-group append="%">
-                                    <b-input
-                                        required
-                                        id="create-other-color"
-                                        v-model="otherColor"
-                                        type="number"
-                                        min="1"
-                                        max="5"></b-input>
+                                description="Значение 1 - 5">
+                                <b-input-group>
+                                    <b-input type="number" min="1" max="5" v-model="otherColor"></b-input>
                                 </b-input-group>
                             </b-form-group>
 
-                            <b-form-group
-                                label="Год урожая:"
-                                label-for="create-crop-year"
-                                label-cols="4">
-                                <b-input
-                                    id="create-crop-year"
-                                    v-model="cropYear"
-                                    type="text"></b-input>
+                            <b-form-group label-cols="4" label="Год урожая:">
+                                <b-input type="text" v-model="cropYear"></b-input>
                             </b-form-group>
 
                             <b-button
@@ -506,74 +351,31 @@
                                 <b-tabs content-class="" justified pills align="center">
                                     <b-tab active v-on:click="basis = 'FOB'" title="FOB">
                                         <p class="small">FOB - загружено на судно в порту отгрузки</p>
-                                        <b-form-group
-                                            v-if="basis == 'FOB'"
-                                            label="Порт:"
-                                            label-class="required"
-                                            label-for="create-fob-port">
-                                            <b-input
-                                                required
-                                                id="create-fob-port"
-                                                v-model="fobPort"
-                                                type="text"></b-input>
+                                        <b-form-group v-if="basis == 'FOB'" label-class="required" label="Порт:">
+                                            <b-input type="text" v-model="fobPort"></b-input>
                                         </b-form-group>
-                                        <b-form-group
-                                            v-if="basis == 'FOB'"
-                                            label="Терминал:"
-                                            label-class="required"
-                                            label-for="create-fob-terminal">
-                                            <b-input
-                                                required
-                                                id="create-fob-terminal"
-                                                v-model="fobTerminal"
-                                                type="text"></b-input>
+                                        <b-form-group v-if="basis == 'FOB'" label-class="required" label="Терминал:">
+                                            <b-input type="text" v-model="fobTerminal"></b-input>
                                         </b-form-group>
                                     </b-tab>
                                     <b-tab v-on:click="basis = 'CIF'" title="CIF">
                                         <p class="small">CIF - доставка в порт назначения</p>
-                                        <b-form-group
-                                            v-if="basis == 'CIF'"
-                                            label="Страна:"
-                                            label-class="required"
-                                            label-for="create-cif-country">
-                                            <b-input
-                                                required
-                                                id="create-cif-country"
-                                                v-model="cifCountry"
-                                                type="text"></b-input>
+                                        <b-form-group v-if="basis == 'CIF'" label-class="required" label="Страна:">
+                                            <b-input type="text" v-model="cifCountry"></b-input>
                                         </b-form-group>
-                                        <b-form-group
-                                            v-if="basis == 'CIF'"
-                                            label="Порт:"
-                                            label-class="required"
-                                            label-for="create-cif-port">
-                                            <b-input
-                                                required
-                                                id="create-cif-port"
-                                                v-model="cifPort"
-                                                type="text"></b-input>
+                                        <b-form-group v-if="basis == 'CIF'" label-class="required" label="Порт:">
+                                            <b-input type="text" v-model="cifPort"></b-input>
                                         </b-form-group>
                                     </b-tab>
                                 </b-tabs>
                             </b-form-group>
 
-                            <b-form-group
-                                label="Период поставки:"
-                                label-class="required"
-                                label-for="create-period">
-                                <b-input
-                                    required
-                                    id="create-period"
-                                    v-model="period"
-                                    type="text"></b-input>
+                            <b-form-group label-class="required" label="Период поставки:">
+                                <b-input type="text" v-model="period"></b-input>
                             </b-form-group>
 
-                            <b-form-group
-                                label="Дополнительная информация:"
-                                label-for="create-text">
-                                <b-textarea
-                                    id="create-text"
-                                    v-model="text"></b-textarea>
+                            <b-form-group label="Дополнительная информация:">
+                                <b-textarea rows="3" v-model="text"></b-textarea>
                             </b-form-group>
 
                             <b-button
@@ -592,7 +394,6 @@
                         <p>{{ lotVievsDeal }}</p>
                         <p>{{ lotVievsCropName }}</p>
                         <p>{{ lotVievsPrice }}</p>
-                        <p>{{ lotVievsQuality }}</p>
                         <p>{{ lotVievsBasis }}</p>
                     </b-col>
 
@@ -637,6 +438,7 @@ export default {
             // данные для шага 2
             moisture: '',       // влажность - 0-100%
             foreignMatter: '',  // сорная примесь - 0-100%
+            w: '',              // w - 0-1000w
             grainAdmixture: '', // зерновая примесь - 0-100%
             gluten: '',         // клейковина - 12-40%
             protein: '',        // протеин - 0-80%
@@ -720,7 +522,15 @@ export default {
         },
 
         /**
-         * зерновая примесь
+         * w - проверка, отображать ли поле для ввода
+         * @return boolean
+         */
+        wVievs() {
+            return ['1'].indexOf('' + this.cropId) != -1;
+        },
+
+        /**
+         * зерновая примесь - проверка, отображать ли поле для ввода
          * @return boolean
          */
         grainAdmixtureVievs() {
@@ -728,7 +538,7 @@ export default {
         },
 
         /**
-         * клейковина
+         * клейковина - проверка, отображать ли поле для ввода
          * @return boolean
          */
         glutenVievs() {
@@ -736,7 +546,7 @@ export default {
         },
 
         /**
-         * протеин
+         * протеин - проверка, отображать ли поле для ввода
          * @return boolean
          */
         proteinVievs() {
@@ -744,7 +554,7 @@ export default {
         },
 
         /**
-         * натура
+         * натура - проверка, отображать ли поле для ввода
          * @return boolean
          */
         naturalWeightVievs() {
@@ -752,7 +562,7 @@ export default {
         },
 
         /**
-         * число падения
+         * число падения - проверка, отображать ли поле для ввода
          * @return boolean
          */
         fallingNumberVievs() {
@@ -760,7 +570,7 @@ export default {
         },
 
         /**
-         * стекловидность
+         * стекловидность - проверка, отображать ли поле для ввода
          * @return boolean
          */
         vitreousnessVievs() {
@@ -768,7 +578,7 @@ export default {
         },
 
         /**
-         * амброзия
+         * амброзия - проверка, отображать ли поле для ввода
          * @return boolean
          */
         ragweedVievs() {
@@ -776,7 +586,7 @@ export default {
         },
 
         /**
-         * клоп
+         * клоп - проверка, отображать ли поле для ввода
          * @return boolean
          */
         bugVievs() {
@@ -784,7 +594,7 @@ export default {
         },
 
         /**
-         * масличность
+         * масличность - проверка, отображать ли поле для ввода
          * @return boolean
          */
         oilContentVievs() {
@@ -792,7 +602,7 @@ export default {
         },
 
         /**
-         * масличная примесь
+         * масличная примесь - проверка, отображать ли поле для ввода
          * @return boolean
          */
         oilAdmixtureVievs() {
@@ -800,7 +610,7 @@ export default {
         },
 
         /**
-         * битые
+         * битые - проверка, отображать ли поле для ввода
          * @return boolean
          */
         brokenVievs() {
@@ -808,7 +618,7 @@ export default {
         },
 
         /**
-         * повреждённые
+         * повреждённые - проверка, отображать ли поле для ввода
          * @return boolean
          */
         damagedVievs() {
@@ -816,7 +626,7 @@ export default {
         },
 
         /**
-         * маранные
+         * маранные - проверка, отображать ли поле для ввода
          * @return boolean
          */
         dirtyVievs() {
@@ -824,7 +634,7 @@ export default {
         },
 
         /**
-         * зольность
+         * зольность - проверка, отображать ли поле для ввода
          * @return boolean
          */
         ashVievs() {
@@ -832,7 +642,7 @@ export default {
         },
 
         /**
-         * эруковая кислота
+         * эруковая кислота - проверка, отображать ли поле для ввода
          * @return boolean
          */
         erucidicAcidVievs() {
@@ -840,7 +650,7 @@ export default {
         },
 
         /**
-         * перекисное число
+         * перекисное число - проверка, отображать ли поле для ввода
          * @return boolean
          */
         peroxideValueVievs() {
@@ -848,7 +658,7 @@ export default {
         },
 
         /**
-         * кислотное число
+         * кислотное число - проверка, отображать ли поле для ввода
          * @return boolean
          */
         acidValueVievs() {
@@ -856,7 +666,7 @@ export default {
         },
 
         /**
-         * другой цвет
+         * другой цвет - проверка, отображать ли поле для ввода
          * @return boolean
          */
         otherColorVievs() {
@@ -876,30 +686,6 @@ export default {
         lotVievsPrice() {
             let price = (this.price) ? `${this.price} ${this.currency}` : '';
             return (this.quantity) ? `${price} / ${this.quantity} тонн` : `${price}`;
-        },
-
-        lotVievsQuality() {
-            let quality = (this.moisture) ? `${this.moisture}%` : '';
-            quality += (this.foreignMatter) ? `/${this.foreignMatter}%` : '';
-            quality += (this.grainAdmixture) ? `/${this.grainAdmixture}%` : '';
-            quality += (this.gluten) ? `/${this.gluten}%` : '';
-            quality += (this.protein) ? `/${this.protein}%` : '';
-            quality += (this.naturalWeight) ? `/${this.naturalWeight}` : '';
-            quality += (this.fallingNumber) ? `/${this.fallingNumber}` : '';
-            quality += (this.vitreousness) ? `/${this.vitreousness}%` : '';
-            quality += (this.ragweed) ? `/${this.ragweed}` : '';
-            quality += (this.bug) ? `/${this.bug}%` : '';
-            quality += (this.oilContent) ? `/${this.oilContent}%` : '';
-            quality += (this.oilAdmixture) ? `/${this.oilAdmixture}%` : '';
-            quality += (this.broken) ? `/${this.broken}%` : '';
-            quality += (this.damaged) ? `/${this.damaged}%` : '';
-            quality += (this.dirty) ? `/${this.dirty}%` : '';
-            quality += (this.ash) ? `/${this.ash}%` : '';
-            quality += (this.erucidicAcid) ? `/${this.erucidicAcid}%` : '';
-            quality += (this.peroxideValue) ? `/${this.peroxideValue}%` : '';
-            quality += (this.acidValue) ? `/${this.acidValue}%` : '';
-            quality += (this.otherColor) ? `/${this.otherColor}` : '';
-            return quality;
         },
 
         lotVievsBasis() {
@@ -963,6 +749,9 @@ export default {
             if (!this.moisture) {return false;}
             if (!this.foreignMatter) {return false;}
 
+            if (this.wVievs) {
+                if (!this.w) {return false;}
+            }
             if (this.grainAdmixtureVievs) {
                 if (!this.grainAdmixture) {return false;}
             }
@@ -1075,6 +864,7 @@ export default {
             params.append('peroxide_value', this.peroxideValue);
             params.append('acid_value', this.acidValue);
             params.append('other_color', this.otherColor);
+            params.append('w', this.w);
             params.append('crop_year', this.cropYear);
 
             params.append('basis', this.basis);
@@ -1090,7 +880,7 @@ export default {
             }).catch((error) => {
                 return {
                     result: 'error',
-                    messages: ['При сохранении возникла ошибка, попробуйте пожалуйста позже'],
+                    messages: ['При сохранении возникла ошибка, попробуйте позже'],
                 };
             });
 
@@ -1098,6 +888,37 @@ export default {
                 this.step_1 = false;
                 this.step_2 = false;
                 this.step_3 = false;
+                this.price = '';
+                this.quantity = '';
+                this.moisture = '';
+                this.foreignMatter = '';
+                this.w = '';
+                this.grainAdmixture = '';
+                this.gluten = '';
+                this.protein = '';
+                this.naturalWeight = '';
+                this.fallingNumber = '';
+                this.vitreousness = '';
+                this.ragweed = '';
+                this.bug = '';
+                this.oilContent = '';
+                this.oilAdmixture = '';
+                this.broken = '';
+                this.damaged = '';
+                this.dirty = '';
+                this.ash = '';
+                this.erucidicAcid = '';
+                this.peroxideValue = '';
+                this.acidValue = '';
+                this.otherColor = '';
+                this.cropYear = '';
+                this.basis = '';
+                this.fobPort = '';
+                this.fobTerminal = '';
+                this.cifCountry = '';
+                this.cifPort = '';
+                this.period = '';
+                this.text = '';
                 this.alertSuccessShow = true;
             } else {
                 this.errorMessages = res.messages;

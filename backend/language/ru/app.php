@@ -48,6 +48,7 @@ return [
 'crops.quality.peroxide_value' => 'Перекисное число',
 'crops.quality.acid_value' => 'Кислотное число',
 'crops.quality.other_color' => 'Другой цвет',
+'crops.quality.w' => 'w',
 'crops.quality.crop_year' => 'Год урожая',
 
 ];

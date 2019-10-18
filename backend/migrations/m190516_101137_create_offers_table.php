@@ -12,17 +12,22 @@ class m190516_101137_create_offers_table extends Migration
      */
     public function safeUp()
     {
+        $tableOptions = null;
+        if ($this->db->driverName === 'mysql') {
+            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
+        }
+
         $this->createTable('{{%offers}}', [
             'id' => $this->primaryKey(),
             'lot_id' => $this->integer()->unsigned()->notNull(),                    // ID объявления
             'lot_owner_id' => $this->integer()->unsigned()->notNull(),              // ID компании которая подала объявление покупки/продажи
             'counterparty_id' => $this->integer()->unsigned()->notNull(),           // ID компании(второй стороны) которая проявила интерес к объявлению
 
-            'require_price_1' => $this->float()->unsigned()->defaultValue(null),    // первая цена оффера от второй стороны
-            'require_price_2' => $this->float()->unsigned()->defaultValue(null),    // вторая цена оффера от второй стороны
-            'require_price_3' => $this->float()->unsigned()->defaultValue(null),    // третья цена оффера от второй стороны
-            'lot_price_1' => $this->float()->unsigned()->defaultValue(null),        // ответ на первую цену от второй стороны
-            'lot_price_2' => $this->float()->unsigned()->defaultValue(null),        // ответ на вторую цену от второй стороны
+            'require_price_1' => $this->decimal(10,2)->unsigned()->defaultValue(null),  // первая цена оффера от второй стороны
+            'require_price_2' => $this->decimal(10,2)->unsigned()->defaultValue(null),  // вторая цена оффера от второй стороны
+            'require_price_3' => $this->decimal(10,2)->unsigned()->defaultValue(null),  // третья цена оффера от второй стороны
+            'lot_price_1' => $this->decimal(10,2)->unsigned()->defaultValue(null),      // ответ на первую цену от второй стороны
+            'lot_price_2' => $this->decimal(10,2)->unsigned()->defaultValue(null),      // ответ на вторую цену от второй стороны
 
             'auction_time_s' => $this->smallInteger()->defaultValue(null),          // время в секундах на которое дается "твердо" (дает владелец объявления)
 

@@ -28,24 +28,28 @@ export default {
     },
 
     async asyncData({ $axios, params }) {
-        let _params = {
-            params: {
-                token: params.token
-            }
-        };
+        let _params = {params: {
+            token: params.token
+        }};
 
         let res = await $axios.$get('/api/auth/verify-email/index', _params).then((res) => {
             return res;
+        }).catch((error) => {
+            return {result:'error'};
         });
 
-        return {
-            success: res.success,
-            company: res.company,
-            name: res.name,
-            phone: res.phone,
-            email: res.email,
-            access_token: res.access_token
-        };
+        if (res.result === 'success') {
+            return {
+                success: true,
+                company: res.company,
+                name: res.name,
+                phone: res.phone,
+                email: res.email,
+                access_token: res.access_token
+            };
+        }
+
+        return { success: false };
     },
 
     mounted() {
@@ -61,12 +65,11 @@ export default {
         } else {
             $nuxt.$router.push('/market');
         }
-    }
+    },
 };
 </script>
 
 
 
 <style lang='scss'>
-
 </style>

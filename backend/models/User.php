@@ -342,10 +342,23 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setEmail(string $email) : void
     {
-        $email = mb_convert_encoding($email, 'UTF-8', 'UTF-8');
+        $this->email = self::cleanEmail($email);
+    }
+
+
+
+    /**
+     * Отчищаем строку с почтовым адресом
+     * @param  string $email
+     * @return string
+     */
+    public function cleanEmail(string $email) : string
+    {
+        $email = mb_convert_encoding(strval($email), 'UTF-8', 'UTF-8');
         $email = mb_substr($email, 0, self::EMAIL_LENGTH_MAX);
         $email = strtolower($email);
-        $this->email = preg_replace('/[^a-z0-9\.\@\_\-]/', '', $email);
+        $email = preg_replace('/[^a-z0-9\.\@\_\-]/', '', $email);
+        return $email;
     }
 
 
@@ -356,11 +369,26 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setPhone(string $phone) : void
     {
-        $phone = mb_convert_encoding($phone, 'UTF-8', 'UTF-8');
+        $this->phone = self::cleanPhoneNumber($phone);
+    }
+
+
+
+    /**
+     * Отчищаем строку с номером телефона
+     * @param  string $phone
+     * @return string
+     */
+    public function cleanPhoneNumber(string $phone) : string
+    {
+        $phone = mb_convert_encoding(strval($phone), 'UTF-8', 'UTF-8');
         $phone = mb_substr($phone, 0, self::PHONE_LENGTH_MAX);
         $phone = strtolower($phone);
-        $this->phone = preg_replace('/[^0-9\+]/', '', $phone);
+        $phone = preg_replace('/[^0-9\+]/', '', $phone);
+        return $phone;
     }
+
+
 
 
 

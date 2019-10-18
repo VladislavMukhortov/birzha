@@ -17,9 +17,7 @@
                             <b-tab title="All" active>
                                 <b-list-group>
                                     <template v-for="crop in crops">
-                                        <b-list-group-item v-bind:to="{ path: '/market/list', query: { crop: crop.id, page: 1, type: 'all' }}">
-                                            <span>{{ crop.name }}</span>
-                                        </b-list-group-item>
+                                        <b-list-group-item v-bind:to="{ path: '/market/list', query: { crop: crop.id, page: 1, type: 'all' }}">{{ crop.name }}</b-list-group-item>
                                     </template>
                                 </b-list-group>
                             </b-tab>
@@ -27,9 +25,7 @@
                             <b-tab title="Seller">
                                 <b-list-group>
                                     <template v-for="crop in crops">
-                                        <b-list-group-item v-bind:to="{ path: '/market/list', query: { crop: crop.id, page: 1, type: 'sell' }}">
-                                            <span>{{ crop.name }}</span>
-                                        </b-list-group-item>
+                                        <b-list-group-item v-bind:to="{ path: '/market/list', query: { crop: crop.id, page: 1, type: 'sell' }}">{{ crop.name }}</b-list-group-item>
                                     </template>
                                 </b-list-group>
                             </b-tab>
@@ -37,9 +33,7 @@
                             <b-tab title="Buyer">
                                 <b-list-group>
                                     <template v-for="crop in crops">
-                                        <b-list-group-item v-bind:to="{ path: '/market/list', query: { crop: crop.id, page: 1, type: 'buy' }}">
-                                            <span>{{ crop.name }}</span>
-                                        </b-list-group-item>
+                                        <b-list-group-item v-bind:to="{ path: '/market/list', query: { crop: crop.id, page: 1, type: 'buy' }}">{{ crop.name }}</b-list-group-item>
                                     </template>
                                 </b-list-group>
                             </b-tab>
@@ -62,7 +56,7 @@ export default {
     head() {
         return {
             title: 'Market | site.com',
-            meta: [{ hid: 'description', name: 'description', content: '' }]
+            meta: [{ hid: 'description', name: 'description', content: '' }],
         }
     },
 
@@ -73,11 +67,13 @@ export default {
     },
 
     async asyncData ({ $axios }) {
-        const crops = await $axios.$get('/api/crop/list/market').then((res) => {
+        let res = await $axios.$get('/api/crop/list/market').then((res) => {
             return res;
+        }).catch((error) => {
+            return {};
         });
 
-        return { crops: crops };
+        return { crops: res };
     }
 };
 </script>

@@ -37,42 +37,18 @@
                         <!-- STEP 1 -->
                         <div class="signup-step" v-bind:class="{ '_active': step_1 }">
 
-                            <b-form-group
-                                label="Ваше имя"
-                                label-class="required"
-                                label-for="signup-member-name">
-                                <b-input
-                                    required
-                                    id="signup-member-name"
-                                    type="text"
-                                    v-model="memberName"
-                                    v-bind:state="memberNameState"></b-input>
+                            <b-form-group label="Ваше имя" label-class="required">
+                                <b-input type="text" v-model="memberName" v-bind:state="memberNameState"></b-input>
                             </b-form-group>
 
-                            <b-form-group
-                                label="Ваш телефон"
-                                label-class="required"
-                                label-for="signup-member-phone">
-                                <b-input
-                                    required
-                                    id="signup-member-phone"
-                                    type="text"
-                                    v-model="memberPhone"
-                                    v-bind:state="memberPhoneState"></b-input>
+                            <b-form-group label="Ваш телефон" label-class="required">
+                                <b-input type="text" v-model="memberPhone" v-bind:state="memberPhoneState"></b-input>
                                 <b-form-text>Номер телефона через +</b-form-text>
                                 <b-form-invalid-feedback>Этот номер телефона уже занят</b-form-invalid-feedback>
                             </b-form-group>
 
-                            <b-form-group
-                                label="Email address"
-                                label-class="required"
-                                label-for="signup-member-email">
-                                <b-input
-                                    required
-                                    id="signup-member-email"
-                                    type="email"
-                                    v-model="memberEmail"
-                                    v-bind:state="memberEmailState"></b-input>
+                            <b-form-group label="Email address" label-class="required">
+                                <b-input type="email" v-model="memberEmail" v-bind:state="memberEmailState"></b-input>
                                 <b-form-invalid-feedback>Эта электронная почта уже занята</b-form-invalid-feedback>
                             </b-form-group>
 
@@ -93,25 +69,16 @@
                                 <div>Почтовый ящик: <b>{{memberEmail}}</b></div>
                             </div>
 
-                            <b-form-group
-                                label="Company Name"
-                                label-class="required"
-                                label-for="signup-company-name">
-                                <b-input id="signup-company-name" type="text" v-model="companyName" required></b-input>
+                            <b-form-group label="Company Name" label-class="required">
+                                <b-input type="text" v-model="companyName"></b-input>
                             </b-form-group>
 
-                            <b-form-group
-                                label="SWIFT"
-                                label-class="required"
-                                label-for="signup-swift">
-                                <b-input id="signup-swift" type="text" v-model="companySwift" required></b-input>
+                            <b-form-group label="SWIFT" label-class="required">
+                                <b-input type="text" v-model="companySwift"></b-input>
                             </b-form-group>
 
-                            <b-form-group
-                                label="ACC / IBAN"
-                                label-class="required"
-                                label-for="signup-account">
-                                <b-input id="signup-account" type="text" v-model="companyIban" required></b-input>
+                            <b-form-group label="ACC / IBAN" label-class="required">
+                                <b-input type="text" v-model="companyIban"></b-input>
                             </b-form-group>
 
                             <hr>
@@ -211,25 +178,20 @@ export default {
             }
 
             let _params = new URLSearchParams();
+            _params.append('phone', this.memberPhone);
+            _params.append('email', this.memberEmail);
+            let res = await this.$axios.$post('/api/auth/is-unique-data/index', _params).then((res) => {
+                return res;
+            }).catch((error) => {
+                return {result:'error'};
+            });
 
-            if (this.memberPhone.length) {
-                _params.append('member-phone', this.memberPhone);
-            }
-
-            if (this.memberEmail.length) {
-                _params.append('member-email', this.memberEmail);
-            }
-
-            if (_params.toString().length) {
-                let check = await this.$axios.$post('/api/auth/is-unique-data/index', _params).then((res) => {
-                    return res;
-                });
-
+            if (res.result === 'success') {
                 this.memberNameState = (this.memberName.length) ? true : false;
-                this.memberPhoneState = check.member_phone;
-                this.memberEmailState = check.member_email;
+                this.memberPhoneState = res.phone;
+                this.memberEmailState = res.email;
 
-                if (check.member_phone && check.member_email) {
+                if (res.phone && res.email) {
                     this.step_0 = false;
                     this.step_1 = false;
                     this.step_2 = true;
@@ -258,18 +220,20 @@ export default {
             }
 
             let _params = new URLSearchParams();
-            _params.append('member-name', this.memberName);
-            _params.append('member-phone', this.memberPhone);
-            _params.append('member-email', this.memberEmail);
-            _params.append('company-name', this.companyName);
-            _params.append('company-swift', this.companySwift);
-            _params.append('company-iban', this.companyIban);
+            _params.append('member_name', this.memberName);
+            _params.append('member_phone', this.memberPhone);
+            _params.append('member_email', this.memberEmail);
+            _params.append('company_name', this.companyName);
+            _params.append('company_swift', this.companySwift);
+            _params.append('company_iban', this.companyIban);
 
             let res = await this.$axios.$post('/api/auth/signup/index', _params).then((res) => {
                 return res;
+            }).catch((error) => {
+                return {result:'error'};
             });
 
-            if (res.success) {
+            if (res.result === 'success') {
                 this.$auth.$storage.setUniversal('userName', res.name);
                 this.$auth.$storage.setUniversal('userPhone', res.phone);
                 this.$auth.$storage.setUniversal('userEmail', res.email);
@@ -280,8 +244,8 @@ export default {
             } else {
 
             }
-        }
-    }
+        },
+    },
 };
 </script>
 

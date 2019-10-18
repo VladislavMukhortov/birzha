@@ -67,33 +67,32 @@ class IsUniqueDataController extends Controller
      */
     public function actionIndex() : Response
     {
-        $member_phone = trim(Yii::$app->request->post('member-phone', ''));
-        $member_email = trim(Yii::$app->request->post('member-email', ''));
+        $phone = trim(Yii::$app->request->post('phone', ''));
+        $email = trim(Yii::$app->request->post('email', ''));
 
-        $data = [
-            'member_phone' => true,
-            'member_email' => true
+        $output = [
+            'result' => 'success',
+            'phone' => true,
+            'email' => true,
         ];
 
-        if ($member_phone) {
-            $member_phone = mb_convert_encoding(strval($member_phone), 'UTF-8', 'UTF-8');
-            $member_phone = mb_substr($member_phone, 0, User::PHONE_LENGTH_MAX);
-            $member_phone = strtolower($member_phone);
-            $member_phone = preg_replace('/[^0-9\+]/', '', $member_phone);
-
-            $data['member_phone'] = !User::find()->where(['phone' => $member_phone])->exists();
+        if ($phone) {
+            $output['phone'] = !User::find()
+                ->where([
+                    'phone' => User::cleanPhoneNumber($phone)
+                ])
+                ->exists();
         }
 
-        if ($member_email) {
-            $member_email = mb_convert_encoding(strval($member_email), 'UTF-8', 'UTF-8');
-            $member_email = mb_substr($member_email, 0, User::EMAIL_LENGTH_MAX);
-            $member_email = strtolower($member_email);
-            $member_email = preg_replace('/[^a-z0-9\.\@\_\-]/', '', $member_email);
-
-            $data['member_email'] = !User::find()->where(['email' => $member_email])->exists();
+        if ($email) {
+            $output['email'] = !User::find()
+                ->where([
+                    'email' => User::cleanEmail($email)
+                ])
+                ->exists();
         }
 
-        return $this->asJson($data);
+        return $this->asJson($output);
     }
 
 }

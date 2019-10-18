@@ -154,9 +154,9 @@ class ShowController extends Controller
              * @var boolean
              */
             $offer_ended_at = false;
-            if (!Yii::$app->user->isGuest && $lot->id !== Yii::$app->user->identity->company_id) {
+            if (!Yii::$app->user->isGuest && $lot->company_id !== Yii::$app->user->identity->company_id) {
                 $offer = 'free';
-                $my_offer = Offer::find()->myActiveByLot($lot->id)->limit(1)->one();
+                $my_offer = Offer::find()->my()->byLot($lot->id)->auction()->limit(1)->one();
                 if ($my_offer) {
                     $offer = ($my_offer->status === Offer::STATUS_AUCTION) ? 'auction' : 'wait';
                     $offer_link = strval($my_offer->link);
@@ -540,6 +540,34 @@ class ShowController extends Controller
             if ($st === Lot::STATUS_COMMUNICATION) {$output['data']['status'] = 'STATUS_COMMUNICATION';}
             if ($st === Lot::STATUS_COMPLETE) {$output['data']['status'] = 'STATUS_COMPLETE';}
 
+            /**
+             * иформация об офферах
+             * @var array
+             */
+            $offers_data = [];
+            if ((int) $lot->status ===  Lot::STATUS_ACTIVE) {
+                $offers = Offer::find()->imOwner()->byLot($lot->id)->auction()->all();
+                for ($i = 0, $count = count($offers); $i < $count; $i++) {
+                    $offers_data[$i] = [
+                        'id' => $i + 1,
+                        'link' => $offers[$i]->link,
+                        'created_at' => $offers[$i]->created_at,
+                    ];
+
+                    $st = (int) $offers[$i]->status;
+
+                    if ($st === Offer::STATUS_WAITING) {
+                        $offers_data[$i]['status'] = false;
+                        $offers_data[$i]['desc'] = 'STATUS_WAITING';
+                    }
+                    if ($st === Offer::STATUS_AUCTION) {
+                        $offers_data[$i]['status'] = true;
+                        $offers_data[$i]['desc'] = 'STATUS_AUCTION ' . $offers[$i]->ended_at;
+                    }
+                }
+            }
+
+            $output['offers'] = $offers_data;
         }
 
         return $this->asJson($output);

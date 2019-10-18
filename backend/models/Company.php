@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace app\models;
 
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -264,7 +265,7 @@ class Company extends ActiveRecord
      */
     public function setVerifyEmail() : void
     {
-        $this->verify_email = security()->generateRandomString(self::VERIFY_EMAIL_LENGTH);
+        $this->verify_email = Yii::$app->security->generateRandomString(self::VERIFY_EMAIL_LENGTH);
     }
 
 

@@ -73,8 +73,8 @@ class RequestPasswordResetController extends Controller
         $email = trim(Yii::$app->request->post('email', ''));
         $email = strtolower($email);
 
-        $data = [
-            'email' => false,   // есть ли пользователь с email
+        $output = [
+            'result' => 'error',
             'send' => false,    // отправлено ли уведомление
         ];
 
@@ -84,7 +84,7 @@ class RequestPasswordResetController extends Controller
              * TODO: логировать обращение пользователя на сброс пароля
              */
 
-            $data['email'] = true;
+            $output['result'] = 'success';
 
             if (!User::isPasswordResetTokenValid($user->password_reset_token)) {
                 $user->generatePasswordResetToken();
@@ -92,13 +92,13 @@ class RequestPasswordResetController extends Controller
 
                 if (!$user->hasErrors()) {
                     if (EmailNotification::requestPasswordReset($user)) {
-                        $data['send'] = true;
+                        $output['send'] = true;
                     }
                 }
             }
         }
 
-        return $this->asJson($data);
+        return $this->asJson($output);
     }
 
 }

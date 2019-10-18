@@ -90,16 +90,16 @@ class ChangePasswordController extends Controller
         $password = trim(Yii::$app->request->post('password', ''));
         $confirm = trim(Yii::$app->request->post('confirm', ''));
 
-        $data = [
-            'success' => false
+        $output = [
+            'result' => 'error',
         ];
 
         if (strlen($password) < User::PSSW_LENGTH_MIN) {
-            return $this->asJson($data);
+            return $this->asJson($output);
         }
 
         if ($password !== $confirm) {
-            return $this->asJson($data);
+            return $this->asJson($output);
         }
 
         $user = User::findIdentity(Yii::$app->user->identity->id);
@@ -117,8 +117,8 @@ class ChangePasswordController extends Controller
             });
 
             if (!$user->hasErrors()) {
-                $data['success'] = true;
-                $data['access_token'] = $user->access_token;
+                $output['result'] = 'success';
+                $output['access_token'] = $user->access_token;
                 DataChange::add(DataChange::KEYS['user_password'], $user_password_hash);
                 EmailNotification::userChangePassword($user, $password);
             }
@@ -128,7 +128,7 @@ class ChangePasswordController extends Controller
              */
         }
 
-        return $this->asJson($data);
+        return $this->asJson($output);
     }
 
 

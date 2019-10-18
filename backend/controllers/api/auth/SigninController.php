@@ -73,8 +73,8 @@ class SigninController extends Controller
 
         $login = strtolower($login);
 
-        $data = [
-            'success' => false
+        $output = [
+            'result' => 'error',
         ];
 
         if ($login && $password) {
@@ -85,15 +85,12 @@ class SigninController extends Controller
                 /**
                  * TODO: записывать логи входа
                  */
-
-                $data['success'] = true;
-                $data['name'] = $user->name;
-                $data['email'] = $user->email;
-                $data['phone'] = $user->phone;
-                $data['company'] = Company::find($user->company_id)
-                    ->select('name')
-                    ->scalar();
-                $data['access_token'] = $user->access_token;
+                $output['result'] = 'success';
+                $output['name'] = $user->name;
+                $output['email'] = $user->email;
+                $output['phone'] = $user->phone;
+                $output['company'] = Company::find($user->company_id)->select('name')->scalar();
+                $output['access_token'] = $user->access_token;
             }
 
             /**
@@ -101,7 +98,7 @@ class SigninController extends Controller
              */
         }
 
-        return $this->asJson($data);
+        return $this->asJson($output);
     }
 
 }

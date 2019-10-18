@@ -102,7 +102,7 @@ class CreateController extends Controller
             // создатель объявления не равен обращающемуся
             if ($lot->company_id !== Yii::$app->user->identity->company_id) {
 
-                $offer = Offer::find()->myActiveByLot($lot->id)->limit(1)->one();
+                $offer = Offer::find()->my()->byLot($lot->id)->auction()->limit(1)->one();
                 if ($offer) {
                     // оффер уже подан
                     $output['text'] = 'Вы уже подали заявку, ожидайте!';

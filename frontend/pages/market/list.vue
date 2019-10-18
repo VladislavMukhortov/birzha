@@ -11,6 +11,7 @@
                         <h1 class="section_title text-center">{{ page_title }}</h1>
 
                         <b-pagination-nav
+                            v-if="ads.length"
                             v-model="page_number"
                             v-bind:link-gen="linkGen"
                             v-bind:number-of-pages="pagination_page_count"
@@ -19,9 +20,7 @@
 
                         <b-list-group>
                             <template v-for="ad in ads">
-                                <b-list-group-item
-                                    v-bind:to="'/market/'+ad.link"
-                                    v-bind:class="{ 'bg-warning': !ad.status }">
+                                <b-list-group-item v-bind:to="'/market/'+ad.link">
                                     <div class="order-item">
                                         <h4 class="order-item-title">
                                             <span>{{ ad.title }}</span>
@@ -33,11 +32,20 @@
                                         </div>
                                         <div>{{ ad.quality }}</div>
                                         <div>{{ ad.period }}</div>
-                                        <div><b>{{ ad.basis }}</b> | {{ ad.basis_location }}</div>
+                                        <div>{{ ad.basis }} | {{ ad.basis_location }}</div>
+                                        <span class="btn-link">Подробнее</span>
                                     </div>
                                 </b-list-group-item>
                             </template>
                         </b-list-group>
+
+                        <b-pagination-nav
+                            v-if="ads.length"
+                            v-model="page_number"
+                            v-bind:link-gen="linkGen"
+                            v-bind:number-of-pages="pagination_page_count"
+                            no-page-detect
+                            use-router></b-pagination-nav>
 
                     </b-col>
                 </b-row>
@@ -56,7 +64,7 @@ export default {
     head() {
         return {
             title: 'Market crops | site.com',
-            meta: [{ hid: 'description', name: 'description', content: '' }]
+            meta: [{ hid: 'description', name: 'description', content: '' }],
         }
     },
 
@@ -95,9 +103,13 @@ export default {
         let [crop, ads] = await Promise.all([
             $axios.$get('/api/crop/show/market', crop_param).then((res) => {
                 return res;
+            }).catch((error) => {
+                return {};
             }),
             $axios.$get('/api/lot/list/market', ads_param).then((res) => {
                 return res;
+            }).catch((error) => {
+                return { data:{}, pagination_page_count: 0};
             })
         ]);
 
@@ -157,14 +169,16 @@ export default {
             }};
 
             /**
-             * @param  Object ads список объявлений
+             * @param  Object res список объявлений
              */
-            let ads = await this.$axios.$get('/api/lot/list/market', ads_param).then((res) => {
+            let res = await this.$axios.$get('/api/lot/list/market', ads_param).then((res) => {
                 return res;
-            })
+            }).catch((error) => {
+                return { data:{}, pagination_page_count: 0};
+            });
 
-            this.ads = ads.data;
-            this.pagination_page_count = ads.pagination_page_count;
+            this.ads = res.data;
+            this.pagination_page_count = res.pagination_page_count;
         },
     },
 };

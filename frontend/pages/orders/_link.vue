@@ -12,6 +12,20 @@
 
                         <pre>{{ lot }}</pre>
 
+                        <b-list-group>
+                            <b-list-group-item v-for="item in offers" v-bind:key="item.link">
+                                <span>#{{ item.id }}</span>
+                                <span>Запросили: {{ item.created_at }}</span>
+                                <span>{{ item.desc }}</span>
+                                <template v-if="item.status">
+                                    <b-link to="">Перейти</b-link>
+                                </template>
+                                <template v-else>
+                                    <b-button variant="primary" v-on:click="startAuction(item.link)">Дать твердо</b-button>
+                                </template>
+                            </b-list-group-item>
+                        </b-list-group>
+
                         <p>
                             <nuxt-link to="/orders">Back to my orders</nuxt-link>
                         </p>
@@ -44,6 +58,7 @@ export default {
     data() {
         return {
             lot: {},    // информация об объявлении
+            offers: {},    // информация об объявлении
         }
     },
 
@@ -69,10 +84,16 @@ export default {
             return;
         }
 
-        return { lot: res.data };
+        return {
+            lot: res.data,
+            offers: res.offers,
+        };
     },
 
     methods: {
+        startAuction(link) {
+            console.log(link);
+        }
     },
 };
 </script>

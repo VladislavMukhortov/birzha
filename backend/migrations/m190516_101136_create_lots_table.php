@@ -33,7 +33,7 @@ class m190516_101136_create_lots_table extends Migration
             'company_id' => $this->integer()->unsigned()->notNull(),                // ID компании от которой подается объявление
             'crop_id' => $this->integer()->unsigned()->notNull(),                   // ID культуры к которой пренадлежит объявление
             'deal' => $this->char(10)->notNull(),                                   // тип объявления buy sell
-            'price' => $this->float()->unsigned()->notNull(),                       // цена
+            'price' => $this->decimal(10,2)->unsigned()->notNull(),                 // цена
             'currency' => $this->char(3)->notNull(),                                // код валюты
             'quantity' => $this->integer()->unsigned()->notNull(),                  // кол-во тонн (объем)
             'period' => $this->string(255)->defaultValue(null),                     // период поставки
@@ -44,26 +44,27 @@ class m190516_101136_create_lots_table extends Migration
             'cif_country' => $this->string(255)->defaultValue(null),                // базис - страна
             'cif_port' => $this->string(255)->defaultValue(null),                   // базис - порт
 
-            'moisture' => $this->tinyInteger()->defaultValue(null),                 // влажность - 0-100%
-            'foreign_matter' => $this->tinyInteger()->defaultValue(null),           // сорная примесь - 0-100%
-            'grain_admixture' => $this->tinyInteger()->defaultValue(null),          // зерновая примесь - 0-100%
-            'gluten' => $this->tinyInteger()->defaultValue(null),                   // клейковина - 12-40%
-            'protein' => $this->tinyInteger()->defaultValue(null),                  // протеин - 0-80%
-            'natural_weight' => $this->smallInteger()->defaultValue(null),          // натура - 50-1000 грам/литр
-            'falling_number' => $this->smallInteger()->defaultValue(null),          // число падения - 50-500 штук
-            'vitreousness' => $this->tinyInteger()->defaultValue(null),             // стекловидность - 20-95%
-            'ragweed' => $this->smallInteger()->defaultValue(null),                 // амброзия - 0-500 штук/кг
-            'bug' => $this->tinyInteger()->defaultValue(null),                      // клоп - 0-20%
-            'oil_content' => $this->tinyInteger()->defaultValue(null),              // масличность - 0-80%
-            'oil_admixture' => $this->tinyInteger()->defaultValue(null),            // масличная примесь - 0-100%
-            'broken' => $this->tinyInteger()->defaultValue(null),                   // битые - 0-100%
-            'damaged' => $this->tinyInteger()->defaultValue(null),                  // повреждённые - 0-100%
-            'dirty' => $this->tinyInteger()->defaultValue(null),                    // маранные - 0-100%
-            'ash' => $this->tinyInteger()->defaultValue(null),                      // зольность - 0-100%
-            'erucidic_acid' => $this->tinyInteger()->defaultValue(null),            // эруковая кислота - 0-20%
-            'peroxide_value' => $this->tinyInteger()->defaultValue(null),           // перекисное число - 0-20%
-            'acid_value' => $this->tinyInteger()->defaultValue(null),               // кислотное число - 0-20%
-            'other_color' => $this->tinyInteger()->defaultValue(null),              // другой цвет - 1-5%
+            'moisture' => $this->decimal(5,2)->unsigned()->defaultValue(null),          // влажность - 0-100%
+            'foreign_matter' => $this->decimal(5,2)->unsigned()->defaultValue(null),    // сорная примесь - 0-100%
+            'grain_admixture' => $this->decimal(5,2)->unsigned()->defaultValue(null),   // зерновая примесь - 0-100%
+            'gluten' => $this->decimal(5,2)->unsigned()->defaultValue(null),            // клейковина - 12-40%
+            'protein' => $this->decimal(5,2)->unsigned()->defaultValue(null),           // протеин - 0-80%
+            'natural_weight' => $this->decimal(6,2)->unsigned()->defaultValue(null),    // натура - 50-1000 грам/литр
+            'falling_number' => $this->decimal(5,2)->unsigned()->defaultValue(null),    // число падения - 50-500 штук
+            'vitreousness' => $this->decimal(5,2)->unsigned()->defaultValue(null),      // стекловидность - 20-95%
+            'ragweed' => $this->decimal(5,2)->unsigned()->defaultValue(null),           // амброзия - 0-500 штук/кг
+            'bug' => $this->decimal(5,2)->unsigned()->defaultValue(null),               // клоп - 0-20%
+            'oil_content' => $this->decimal(5,2)->unsigned()->defaultValue(null),       // масличность - 0-80%
+            'oil_admixture' => $this->decimal(5,2)->unsigned()->defaultValue(null),     // масличная примесь - 0-100%
+            'broken' => $this->decimal(5,2)->unsigned()->defaultValue(null),            // битые - 0-100%
+            'damaged' => $this->decimal(5,2)->unsigned()->defaultValue(null),           // повреждённые - 0-100%
+            'dirty' => $this->decimal(5,2)->unsigned()->defaultValue(null),             // маранные - 0-100%
+            'ash' => $this->decimal(5,2)->unsigned()->defaultValue(null),               // зольность - 0-100%
+            'erucidic_acid' => $this->decimal(5,2)->unsigned()->defaultValue(null),     // эруковая кислота - 0-20%
+            'peroxide_value' => $this->decimal(5,2)->unsigned()->defaultValue(null),    // перекисное число - 0-20%
+            'acid_value' => $this->decimal(5,2)->unsigned()->defaultValue(null),        // кислотное число - 0-20%
+            'other_color' => $this->tinyInteger()->unsigned()->defaultValue(null),      // другой цвет - 1-5%
+            'w' => $this->smallInteger()->unsigned()->defaultValue(null),               // w - 0-1000w
 
             'crop_year' => $this->string(100)->defaultValue(null),                  // год урожая
 
@@ -207,6 +208,8 @@ class m190516_101136_create_lots_table extends Migration
             $erucidic_acid = NULL;          // эруковая кислота - 0-20%
             $peroxide_value = NULL;         // перекисное число - 0-20%
             $acid_value = NULL;             // кислотное число - 0-20%
+            $other_color = NULL;            // другой цвет - 1-5%
+            $w = NULL;                      // w - 0-1000w
             // пшеница
             if ($crop_id === 1) {
                 $grain_admixture = rand(0, 100);// зерновая примесь - 0-100%
@@ -215,6 +218,7 @@ class m190516_101136_create_lots_table extends Migration
                 $natural_weight = rand(50, 1000); // натура - 50-1000 грам/литр
                 $falling_number = rand(50, 500); // число падения - 50-500 штук
                 $bug = rand(0, 20);            // клоп - 0-20%
+                $w = rand(0, 1000);            // w - 0-1000w
             }
             // пшеница твердая
             if ($crop_id === 2) {
@@ -254,6 +258,7 @@ class m190516_101136_create_lots_table extends Migration
             if ($crop_id === 7) {
                 $broken = rand(0, 100); // битые - 0-100%
                 $damaged = rand(0, 100);    // повреждённые - 0-100%
+                $other_color = rand(1, 5);  // другой цвет - 1-5
             }
             // соевые бобы
             if ($crop_id === 8) {
@@ -355,6 +360,8 @@ class m190516_101136_create_lots_table extends Migration
                 $erucidic_acid,
                 $peroxide_value,
                 $acid_value,
+                $other_color,
+                $w,
                 $link,
                 $status,
             ];
@@ -395,6 +402,8 @@ class m190516_101136_create_lots_table extends Migration
             'erucidic_acid',
             'peroxide_value',
             'acid_value',
+            'other_color',
+            'w',
             'link',         // ссылка
             'status'
         ], $lots);

@@ -10,36 +10,22 @@
 
                         <h1 class="section_title text-center">Sign in to Grain Market</h1>
 
-
                         <b-alert
                             variant="danger"
                             dismissible
                             fade
-                            v-bind:show="show_alert_error"
-                            v-on:dismissed="show_alert_error=false">Incorrect login or password!</b-alert>
-
+                            v-bind:show="showAlertError"
+                            v-on:dismissed="showAlertError=false">Incorrect login or password!</b-alert>
 
                         <b-form novalidate v-on:submit.prevent="onSubmit">
 
-                            <b-form-group label="Email address or phone" label-for="signin-login">
-                                <b-input
-                                    id="signin-login"
-                                    type="text"
-                                    v-model="login"
-                                    v-bind:state="login_state"
-                                    tabindex="1"></b-input>
-                                <b-form-invalid-feedback>Login is incorrect</b-form-invalid-feedback>
+                            <b-form-group label="Email address or phone">
+                                <b-input required type="text" v-model="login" tabindex="1"></b-input>
                             </b-form-group>
 
-                            <b-form-group label="Password" label-for="signin-password">
-                                <nuxt-link class="signin-password-reset-link" to="/auth/password-reset">Forgot password?</nuxt-link>
-                                <b-input
-                                    id="signin-password"
-                                    type="password"
-                                    v-model="password"
-                                    v-bind:state="password_state"
-                                    tabindex="2"></b-input>
-                                <b-form-invalid-feedback>Password is incorrect</b-form-invalid-feedback>
+                            <b-form-group label="Password">
+                                <b-link class="signin-password-reset-link" to="/auth/password-reset">Forgot password?</b-link>
+                                <b-input required type="password" v-model="password" tabindex="2"></b-input>
                             </b-form-group>
 
                             <b-button
@@ -51,7 +37,7 @@
 
                         </b-form>
 
-                        <div class="signin-to-signup text-center">New to Grain Market? <nuxt-link to="/auth/signup">Create an account.</nuxt-link></div>
+                        <div class="signin-to-signup text-center">New to Grain Market? <b-link to="/auth/signup">Create an account.</b-link></div>
 
                     </b-col>
                 </b-row>
@@ -76,11 +62,9 @@ export default {
 
     data() {
         return {
-            login: '',                  // логин
-            password: '',               // пароль
-            login_state: '',            // состояние - логин
-            password_state: '',         // состояние - пароль
-            show_alert_error: false,    // некорректный логин или пароль
+            login: '',              // логин
+            password: '',           // пароль
+            showAlertError: false,  // некорректный логин или пароль
         }
     },
 
@@ -114,12 +98,7 @@ export default {
                 return;
             }
 
-            // проверка заполнености логина и пароля
-            this.login_state = (this.login.length <= 0) ? false : true;
-            this.password_state = (this.password.length <= 0) ? false : true;
-            if (this.login_state == false || this.password_state == false) {
-                return;
-            }
+            this.showAlertError = false;
 
             let _params = new URLSearchParams();
             _params.append('login', this.login);
@@ -127,12 +106,11 @@ export default {
 
             let res = await this.$axios.$post('/api/auth/signin/index', _params).then((res) => {
                 return res;
+            }).catch((error) => {
+                return {result:'error'};
             });
-            // .catch((error) => {
-                // console.log(error);
-            // })
 
-            if (res.success) {
+            if (res.result === 'success') {
                 // $nuxt.$auth.$storage.setUniversal('token', res.access_token, false);
                 // $nuxt.$auth.$storage.setState('loggedIn', true);
 
@@ -145,7 +123,7 @@ export default {
 
                 this.$router.push('/market');
             } else {
-                this.show_alert_error = true;
+                this.showAlertError = true;
             }
         },
     },

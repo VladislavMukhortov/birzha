@@ -8,14 +8,14 @@
 
                         <h1 class="section_title text-center">Reset your password</h1>
 
-                        <template v-if="show_alert_success">
+                        <template v-if="showAlertSuccess">
 
                             <b-alert
                                 variant="success"
                                 fade
-                                v-bind:show="show_alert_success">Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam folder.</b-alert>
+                                v-bind:show="showAlertSuccess">Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam folder.</b-alert>
 
-                            <nuxt-link class="btn btn-primary btn-block" to="/auth/signin">Return to sign in</nuxt-link>
+                            <b-link class="btn btn-primary btn-block" to="/auth/signin">Return to sign in</b-link>
 
                         </template>
                         <template v-else>
@@ -24,26 +24,20 @@
 
                             <b-alert
                                 variant="warning"
-                                dismissible
                                 fade
-                                v-bind:show="show_alert_error"
-                                v-on:dismissed="show_alert_error=false">Ой! Нет пользователя с этим адресом электронной почты</b-alert>
+                                v-bind:show="showAlertError">Ой! Нет пользователя с этим адресом электронной почты</b-alert>
 
                             <b-form v-on:submit.prevent="onSubmit">
 
-                                <b-form-group label-for="reset-password-email">
-                                    <b-input
-                                        required
-                                        id="reset-password-email"
-                                        type="text"
-                                        v-model="email"
-                                        placeholder="Enter your email address"></b-input>
+                                <b-form-group label="Email address">
+                                    <b-input required type="text" v-model="email" placeholder="Enter your email address"></b-input>
                                 </b-form-group>
 
                                 <b-button
                                     type="submit"
+                                    variant="primary"
                                     block
-                                    variant="primary">Send password reset email</b-button>
+                                    v-bind:class="{ 'disabled': !isActiveSubmitBtn }">Send password reset email</b-button>
 
                             </b-form>
 
@@ -73,43 +67,60 @@ export default {
     data() {
         return {
             email: '',                  // почтовый ящик
-            show_alert_error: false,    // уведомление если почты нет
-            show_alert_success: false,  // уведомление если почта есть
-            text_alert_success: '',     // текст для положительного уведомления
+            showAlertError: false,      // уведомление если почты нет
+            showAlertSuccess: false,    // уведомление если почта есть
         }
+    },
+
+    computed: {
+        /**
+         * Проверка наличия email для блокировки кнопки "Submit"
+         * @return boolean
+         */
+        isActiveSubmitBtn() {
+            return this.checkData();
+        },
+
     },
 
     methods: {
         /**
+         * Проверка наличия email для блокировки кнопки "Submit"
+         * @return boolean
+         */
+        checkData() {
+            return (this.email.length) ? true : false;
+        },
+
+        /**
          * Отправка данных для сброса пароля
          */
         async onSubmit() {
-            if (this.email.length <= 0) {
+            if (!this.checkData()) {
                 return;
             }
 
-            this.show_alert_error = false;
-            this.show_alert_success = false;
+            this.showAlertError = false;
+            this.showAlertSuccess = false;
 
             var _params = new URLSearchParams();
             _params.append('email', this.email);
 
             let res = await this.$axios.$post('/api/auth/request-password-reset/index', _params).then((res) => {
                 return res;
+            }).catch((error) => {
+                return {result:'error'};
             });
 
-            if (res.email) {
+            if (res.result === 'success') {
                 if (res.send) {
                     // сообщение отправлено только что
-                    this.text_alert_success = 'Готово! Проверьте свою почту';
                 } else {
                     // сообщение было отправлено при предыдущем обращении
-                    this.text_alert_success = 'Готово! Проверьте свою почту';
                 }
-
-                this.show_alert_success = true;
+                this.showAlertSuccess = true;
             } else {
-                this.show_alert_error = true;
+                this.showAlertError = true;
             }
         },
     },
