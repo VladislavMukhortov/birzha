@@ -174,6 +174,10 @@ class ListController extends Controller
 
     /**
      * Список личных объявлений
+     * Показываем актуальные объявления которые:
+     * - отображаются на доске
+     * - в статусе твердо
+     * - на этапе общения
      *
      * @return
      */
@@ -184,11 +188,9 @@ class ListController extends Controller
             ->where([
                 'company_id' => Yii::$app->user->identity->company_id,
                 'status' => [
-                    Lot::STATUS_ARCHIVE,
                     Lot::STATUS_WAITING,
                     Lot::STATUS_ACTIVE,
                     Lot::STATUS_COMMUNICATION,
-                    Lot::STATUS_COMPLETE
                 ],
             ])
             ->orderBy([
@@ -206,13 +208,23 @@ class ListController extends Controller
         $lots = $data_provider->getModels();
         $data = [];
 
+        /**
+         * Получаем офферы которые в статусе "твердо" или на этапе переписки
+         */
         $lot_ids = ArrayHelper::getColumn($lots, 'id');
+        $offers = Offer::find($lot_ids)
+            ->select(['lot_id', 'link', 'status'])
+            ->where([
+                'status' => Offer::STATUS_AUCTION,
+            ])
+            ->all();
+        $offers = ArrayHelper::index($offers, 'lot_id');
 
         $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
 
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
             $data[$i] = [
-                'title' => $lots[$i]['id'] . ' ' . Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]),
+                'title' => Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]),
                 'deal' => strval($lots[$i]['deal']),
                 'price' => Yii::$app->formatter->asCurrency($lots[$i]['price'], $lots[$i]['currency']),
                 'quantity' => (int) $lots[$i]['quantity'],
@@ -222,14 +234,17 @@ class ListController extends Controller
                 'basis' => strval($lots[$i]['basis']),
                 'basis_location' => Lot::getBasisLocationArray($lots[$i]),
                 'quality' => Lot::getStrQuality($lots[$i]),
+                'is_edit' => true,      // возможность редактирования
+                'is_remove' => true,    // возможность удаления
+                'is_auction' => false,  // имеется ли оффер
             ];
 
-            $st = (int) $lots[$i]['status'];
-            if ($st === Lot::STATUS_ARCHIVE) {$data[$i]['status'] = 'STATUS_ARCHIVE';}
-            if ($st === Lot::STATUS_WAITING) {$data[$i]['status'] = 'STATUS_WAITING';}
-            if ($st === Lot::STATUS_ACTIVE) {$data[$i]['status'] = 'STATUS_ACTIVE';}
-            if ($st === Lot::STATUS_COMMUNICATION) {$data[$i]['status'] = 'STATUS_COMMUNICATION';}
-            if ($st === Lot::STATUS_COMPLETE) {$data[$i]['status'] = 'STATUS_COMPLETE';}
+            if (isset($offers[$lots[$i]['id']])) {
+                $data[$i]['is_edit'] = false;
+                $data[$i]['is_remove'] = false;
+                $data[$i]['is_auction'] = true;
+                $data[$i]['offer_link'] = $offers[$lots[$i]['id']]['link'];
+            }
         }
 
         return $this->asJson([

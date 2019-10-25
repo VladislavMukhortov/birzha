@@ -11,12 +11,12 @@ use yii\filters\VerbFilter;
 use yii\filters\auth\HttpHeaderAuth;
 use yii\web\Response;
 
-use app\models\form\lot\Create;
+use app\models\form\lot\Delete;
 
 /**
- * API Создание объявления
+ * API Удаление объявления
  */
-class CreateController extends Controller
+class DeleteController extends Controller
 {
 
     /**
@@ -78,24 +78,22 @@ class CreateController extends Controller
 
 
     /**
-     * Создаем объявление
+     * Удаляем объявление
      * @return string
      */
     public function actionIndex() : Response
     {
         $result = [
             'result' => 'error',
-            'messages' => 'Data not found',
+            'messages' => 'Lot not found',
         ];
 
-        $model = new Create();
+        $model = new Delete();
         if ($model->load(Yii::$app->request->post(), '')) {
-            $result = $model->save();
+            $result = $model->delete();
         }
 
         return $this->asJson($result);
     }
-
-
 
 }

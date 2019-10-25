@@ -10,6 +10,11 @@
 
                         <h1 class="section_title">My orders</h1>
 
+                        <p>
+                            <b-link to="/orders/archive">Archive</b-link>
+                            <b-link to="/orders/complete">Complete</b-link>
+                        </p>
+
                         <b-pagination-nav
                             v-if="lots.length"
                             v-model="page_number"
@@ -19,23 +24,31 @@
                             use-router></b-pagination-nav>
 
                         <b-list-group>
-                            <b-list-group-item v-for="item in lots" v-bind:key="item.link">
-                                <div class="order-item">
-                                    <h4 class="order-item-title">
-                                        <span>{{ item.title }}</span>
-                                        <span class="order-item-price">{{ item.price }}</span>
-                                    </h4>
-                                    <div class="order-item-desc">
-                                        <span>{{ item.deal }}</span>
-                                        <span class="order-item-price">{{ item.quantity }} тонн</span>
-                                    </div>
-                                    <div>{{ item.quality }}</div>
-                                    <div>{{ item.period }}</div>
-                                    <div>{{ item.basis }} | {{ item.basis_location }}</div>
-                                    <div class="small">Создано: {{ item.created_at }}</div>
-                                    <div class="text-danger">Статус: {{ item.status }}</div>
-                                    <b-link v-bind:to="'/orders/'+item.link">Редактировать</b-link>
+                            <b-list-group-item v-for="(item, index) in lots" v-bind:key="item.link">
+
+                                <ShortDescriptionItemList v-bind:lot="item" />
+
+                                <div class="small">Создано: {{ item.created_at }}</div>
+
+                                <div>
+                                    <template v-if="item.is_edit">
+                                        <b-link class="btn btn-success" v-bind:to="'/orders/'+item.link">Редактировать</b-link>
+                                    </template>
+
+                                    <template v-if="item.is_remove">
+                                        <b-button variant="danger" v-bind:id="'lot-item-remove-' + index">Удалить</b-button>
+                                        <b-popover v-bind:target="'lot-item-remove-' + index" triggers="click blur" placement="top">
+                                            <template v-slot:title>Подтвердить удаление</template>
+                                            <b-button variant="danger" v-on:click="lotDeletByLink(item.link)">Удалить</b-button>
+                                            <b-button v-on:click="onCloseLotPopover">Отмена</b-button>
+                                        </b-popover>
+                                    </template>
+
+                                    <template v-if="item.is_auction">
+                                        <b-link class="btn btn-primary" v-bind:to="'/deals/auction/'+item.offer_link">Оффер</b-link>
+                                    </template>
                                 </div>
+
                             </b-list-group-item>
                         </b-list-group>
 
@@ -58,7 +71,13 @@
 
 
 <script>
+import ShortDescriptionItemList from '~/components/lot/ShortDescriptionItemList.vue';
+
 export default {
+    components: {
+        ShortDescriptionItemList,
+    },
+
     head() {
         return {
             title: 'My orders | site.com',
@@ -76,9 +95,7 @@ export default {
 
     /**
      * Получаем список объявлений
-     * @param  {[type]} options.$axios
-     * @param  {[type]} options.route
-     * @return Object                  список объявлений, кол-во страниц с объявлениями
+     * @return Object   список объявлений, кол-во страниц с объявлениями
      */
     async asyncData({ $axios, route }) {
         let _param = {params: {
@@ -124,9 +141,6 @@ export default {
                 page: this.page_number
             }};
 
-            /**
-             * @param  Object res список объявлений
-             */
             let res = await this.$axios.$get('/api/lot/list/my-orders', _param).then((res) => {
                 return res;
             }).catch((error) => {
@@ -136,6 +150,49 @@ export default {
             this.lots = res.data;
             this.pagination_page_count = res.pagination_page_count;
         },
+
+        /**
+         * Удаление объявления
+         * @param  string link ссылка на объявление
+         * @return
+         */
+        async lotDeletByLink(link) {
+            let _param = new URLSearchParams();
+            _param.append('link', link);
+
+            let res = await this.$axios.$post('/api/lot/delete/index', _param).then((res) => {
+                return res;
+            }).catch((error) => {
+                return {
+                    result: 'error',
+                    messages: 'При удалении возникла ошибка, попробуйте позже',
+                };
+            });
+
+            let variant = 'success';
+            let content = 'Успешно удалено';
+
+            if (res.result == 'success') {
+                this.updateLotData();
+            } else {
+                variant = 'danger';
+                content = res.messages;
+            }
+
+            this.$root.$emit('bv::hide::popover');
+
+            this.$bvToast.toast(content, {
+                title: 'Удаление объявления',
+                autoHideDelay: 5000,
+                variant: variant,
+                solid: true,
+                toaster: 'b-toaster-top-center',
+            });
+        },
+
+        onCloseLotPopover() {
+            this.$root.$emit('bv::hide::popover');
+        },
     },
 
 };
@@ -144,23 +201,4 @@ export default {
 
 
 <style lang='scss'>
-.order-item {
-}
-
-.order-item-title {
-    position: relative;
-    padding: 0 150px 0 0;
-    text-transform: uppercase;
-}
-
-.order-item-price {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.order-item-desc {
-    position: relative;
-    padding: 0 150px 0 0;
-}
 </style>

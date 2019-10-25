@@ -267,11 +267,21 @@ class Lot extends ActiveRecord
 
 
     /**
-     * Устанавливаем статус
+     * Устанавливаем статус по умолчанию - активно и размещается на доске
     */
     public function setStatus() : void
     {
         $this->status = (int) self::STATUS_ACTIVE;
+    }
+
+
+
+    /**
+     * Устанавливаем статус - удалено
+    */
+    public function setStatusDelete() : void
+    {
+        $this->status = (int) self::STATUS_ARCHIVE;
     }
 
 

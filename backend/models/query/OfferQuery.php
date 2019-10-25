@@ -81,4 +81,22 @@ class OfferQuery extends ActiveQuery
         ->exists();
     }
 
+
+
+    /**
+     * Оффер со статусом аукциона или общения или завершен, с таким статусом
+     * объявление удалить нельзя
+     * @return
+     */
+    public function statusLotNotDelete()
+    {
+        return $this->andWhere([
+            'status' => [
+                Offer::STATUS_AUCTION,
+                Offer::STATUS_COMMUNICATION,
+                Offer::STATUS_COMPLETE,
+            ]
+        ]);
+    }
+
 }

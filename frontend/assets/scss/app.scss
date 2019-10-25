@@ -33,10 +33,10 @@
 // @import "components/bootstrap/media";
 @import "components/bootstrap/list-group";
 @import "components/bootstrap/close";
-// @import "components/bootstrap/toasts";
+@import "components/bootstrap/toasts";
 @import "components/bootstrap/modal";
 // @import "components/bootstrap/tooltip";
-// @import "components/bootstrap/popover";
+@import "components/bootstrap/popover";
 // @import "components/bootstrap/carousel";
 // @import "components/bootstrap/spinners";
 @import "components/bootstrap/utilities";
@@ -57,9 +57,10 @@
 // @import '~/node_modules/bootstrap-vue/src/components/navbar/index.scss';
 // @import '~/node_modules/bootstrap-vue/src/components/pagination/index.scss';
 @import '~/node_modules/bootstrap-vue/src/components/pagination-nav/index.scss';
+@import '~/node_modules/bootstrap-vue/src/components/popover/index.scss';
 
 // @import '~/node_modules/bootstrap-vue/src/components/table/index.scss';
-// @import '~/node_modules/bootstrap-vue/src/components/toast/index.scss';
+@import '~/node_modules/bootstrap-vue/src/components/toast/index.scss';
 
 
 // @import "components/bootstrap";

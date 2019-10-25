@@ -32,12 +32,12 @@ import {
     NavbarPlugin,
     // PaginationPlugin,
     PaginationNavPlugin,
-    // PopoverPlugin,
+    PopoverPlugin,
     // ProgressPlugin,
     // SpinnerPlugin,
     // TablePlugin,
     TabsPlugin,
-    // ToastPlugin,
+    ToastPlugin,
     // TooltipPlugin
 } from 'bootstrap-vue';
 
@@ -72,10 +72,10 @@ Vue.use(ModalPlugin);
 Vue.use(NavbarPlugin);
 // Vue.use(PaginationPlugin);
 Vue.use(PaginationNavPlugin);
-// Vue.use(PopoverPlugin);
+Vue.use(PopoverPlugin);
 // Vue.use(ProgressPlugin);
 // Vue.use(SpinnerPlugin);
 // Vue.use(TablePlugin);
 Vue.use(TabsPlugin);
-// Vue.use(ToastPlugin);
+Vue.use(ToastPlugin);
 // Vue.use(TooltipPlugin);

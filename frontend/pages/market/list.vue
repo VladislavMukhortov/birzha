@@ -19,24 +19,13 @@
                             use-router></b-pagination-nav>
 
                         <b-list-group>
-                            <template v-for="ad in ads">
-                                <b-list-group-item v-bind:to="'/market/'+ad.link">
-                                    <div class="order-item">
-                                        <h4 class="order-item-title">
-                                            <span>{{ ad.title }}</span>
-                                            <span class="order-item-price">{{ ad.price }}</span>
-                                        </h4>
-                                        <div class="order-item-desc">
-                                            <span>{{ ad.deal }}</span>
-                                            <span class="order-item-price">{{ ad.quantity }} тонн</span>
-                                        </div>
-                                        <div>{{ ad.quality }}</div>
-                                        <div>{{ ad.period }}</div>
-                                        <div>{{ ad.basis }} | {{ ad.basis_location }}</div>
-                                        <span class="btn-link">Подробнее</span>
-                                    </div>
-                                </b-list-group-item>
-                            </template>
+                            <b-list-group-item v-for="item in ads" v-bind:to="'/market/'+item.link" v-bind:key="item.link">
+
+                                <ShortDescriptionItemList v-bind:lot="item" />
+
+                                <span class="btn-link">Подробнее</span>
+
+                            </b-list-group-item>
                         </b-list-group>
 
                         <b-pagination-nav
@@ -58,8 +47,14 @@
 
 
 <script>
+import ShortDescriptionItemList from '~/components/lot/ShortDescriptionItemList.vue';
+
 export default {
     auth: false,
+
+    components: {
+        ShortDescriptionItemList,
+    },
 
     head() {
         return {

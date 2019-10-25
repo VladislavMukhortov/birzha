@@ -14,24 +14,24 @@
 
                 <b-row>
 
-                    <b-col>
+                    <b-col sm="4">
                         <p>Сделки которые ожидают "твердо" и которые имеют статус "твердо"</p>
                         <p>
-                            <b-link to="/deals/auction">auction</b-link>
+                            <b-link class="btn btn-primary btn-block" to="/deals/auction">auction</b-link>
                         </p>
                     </b-col>
 
-                    <b-col>
+                    <b-col sm="4">
                         <p>Сделки которые находятся на этапе общения</p>
                         <p>
-                            <b-link to="/deals/communication">communication</b-link>
+                            <b-link class="btn btn-primary btn-block" to="/deals/communication">communication</b-link>
                         </p>
                     </b-col>
 
-                    <b-col>
+                    <b-col sm="4">
                         <p>Завершенные сделки</p>
                         <p>
-                            <b-link to="/deals/archive">archive</b-link>
+                            <b-link class="btn btn-primary btn-block" to="/deals/archive">archive</b-link>
                         </p>
                     </b-col>
 

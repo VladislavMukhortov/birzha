@@ -11,9 +11,10 @@
                 <b-row class="justify-content-center">
                     <b-col cols="12" md="8" lg="8">
 
-                        <h1 class="section_title text-center">Auction deals</h1>
+                        <h1 class="section_title">Auction deals</h1>
 
                         <b-pagination-nav
+                            v-if="offers.length"
                             v-model="page_number"
                             v-bind:link-gen="linkGen"
                             v-bind:number-of-pages="pagination_page_count"
@@ -21,36 +22,36 @@
                             use-router></b-pagination-nav>
 
                         <b-list-group>
-                            <template v-for="item in offers">
-                                <b-list-group-item>
-                                    <div class="order-item">
-                                        <h4 class="order-item-title">
-                                            <span>{{ item.title }}</span>
-                                            <span class="order-item-price">{{ item.price }}</span>
-                                        </h4>
-                                        <div class="order-item-desc">
-                                            <span>{{ item.deal }}</span>
-                                            <span class="order-item-price">{{ item.quantity }} тонн</span>
-                                        </div>
-                                        <div>{{ item.quality }}</div>
-                                        <div>{{ item.period }}</div>
-                                        <div><b>{{ item.basis }}</b> | {{ item.basis_location }}</div>
-                                        <!-- <div><b>Создано:</b> {{ item.created_at }}</div> -->
-                                        <div class="text-danger">{{ item.desc }}</div>
+                            <b-list-group-item v-for="item in offers" v-bind:key="item.link">
 
-                                        <template v-if="item.status == 'deals'">
-                                            <b-link v-bind:to="'/deals/auction/'+item.link">{{ item.link_text }}</b-link>
+                                <ShortDescriptionItemList v-bind:lot="item" />
+
+                                <div class="text-danger">{{ item.desc }}</div>
+
+                                <div>
+                                    <template v-if="item.is_auction">
+                                        <b-link class="btn btn-primary" v-bind:to="'/deals/auction/'+item.link">Перейти в сделку</b-link>
+                                    </template>
+                                    <template v-else>
+                                        <template v-if="item.is_my">
+                                            <b-link class="btn btn-primary" v-bind:to="'/orders/'+item.link">Посмотреть запросы к объявлению</b-link>
                                         </template>
-                                        <template v-else-if="item.status == 'market'">
-                                            <b-link v-bind:to="'/market/'+item.link">{{ item.link_text }}</b-link>
+                                        <template v-else>
+                                            <b-link class="btn btn-primary" v-bind:to="'/market/'+item.link">Посмотреть объявление</b-link>
                                         </template>
-                                        <template v-else-if="item.status == 'my'">
-                                            <b-link v-bind:to="'/orders/'+item.link">{{ item.link_text }}</b-link>
-                                        </template>
-                                    </div>
-                                </b-list-group-item>
-                            </template>
+                                    </template>
+                                </div>
+
+                            </b-list-group-item>
                         </b-list-group>
+
+                        <b-pagination-nav
+                            v-if="offers.length"
+                            v-model="page_number"
+                            v-bind:link-gen="linkGen"
+                            v-bind:number-of-pages="pagination_page_count"
+                            no-page-detect
+                            use-router></b-pagination-nav>
 
                     </b-col>
                 </b-row>
@@ -63,7 +64,13 @@
 
 
 <script>
+import ShortDescriptionItemList from '~/components/lot/ShortDescriptionItemList.vue';
+
 export default {
+    components: {
+        ShortDescriptionItemList,
+    },
+
     head() {
         return {
             title: 'Auction deals | site.com',
