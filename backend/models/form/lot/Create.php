@@ -229,7 +229,7 @@ class Create extends Model
             'peroxide_value' => ['5','6','9'],
             'acid_value' => ['5','6','9'],
             'other_color' => ['7'],
-            'w' => ['1'],
+            'w' => ['1','2'],
         ];
         $crop_id = (int) $this->crop_id;
 
@@ -324,14 +324,7 @@ class Create extends Model
         });
 
         if ($lot->hasErrors()) {
-            /**
-             * Ошибка валидации - тогда править модель
-             * Ошибка сохранения - проблема с доступностью к БД
-             */
-            /**
-             * TODO: вывести ошибку понятную для пользователя вместо ошибки системы
-             */
-            $output['messages'] = $lot->getFirstErrors();
+            $output['messages'] = ['При сохранении возникла ошибка, попробуйте позже'];
             return $output;
         }
 

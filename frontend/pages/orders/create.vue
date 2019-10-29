@@ -64,7 +64,7 @@
                             <b-form-group label-class="required" label="Выберите культуру:">
                                 <b-select v-model="cropId">
                                     <option v-bind:value="0" disabled>Наименование товара</option>
-                                    <template v-for="crop_item in cropsList">
+                                    <template v-for="crop_item in cropList">
                                         <option v-bind:value="crop_item.id">{{ crop_item.name }}</option>
                                     </template>
                                 </b-select>
@@ -347,7 +347,7 @@
                         <!-- STEP 3 -->
                         <div class="orders-step" v-bind:class="{ '_active': step_3 }">
 
-                             <b-form-group label="Basis:">
+                            <b-form-group label="Basis:">
                                 <b-tabs content-class="" justified pills align="center">
                                     <b-tab active v-on:click="basis = 'FOB'" title="FOB">
                                         <p class="small">FOB - загружено на судно в порту отгрузки</p>
@@ -408,12 +408,18 @@
 
 <script>
 export default {
-
     head() {
         return {
             title: 'Market | site.com',
             meta: [{ hid: 'description', name: 'description', content: '' }]
         }
+    },
+
+    async fetch ({ $axios, store }) {
+        let cropList = await $axios.$get('/api/crop/list/market').then((res) => {
+            return res;
+        });
+        store.commit('lot/SET_CROP_LIST', cropList);
     },
 
     data() {
@@ -424,14 +430,8 @@ export default {
 
             // данные для шага 1
             deal: 'sell',       // тип объявления (покупка или продажа)
-            dealList: [
-                {value: 'sell', text: 'Selling'},
-                {value: 'buy', text: 'Buying'}
-            ],
             cropId: 0,          // ID культуры
-            cropsList: {},      // список культур
             currency: 'USD',    // валюта
-            currencyList: {},   // список валют
             price: '',          // цена
             quantity: '',       // объем
 
@@ -475,28 +475,31 @@ export default {
         }
     },
 
-    async asyncData ({ $axios }) {
-
-        let [cropsList, currencyList] = await Promise.all([
-            $axios.$get('/api/crop/list/market').then((res) => {
-                return res;
-            }),
-
-            $axios.$get('/api/currency/list/market').then((res) => {
-                return res;
-            }),
-        ]);
-
-        let currency = (currencyList[0]) ? currencyList[0].name : false;
-
-        return {
-            cropsList: cropsList,
-            currencyList: currencyList,
-            currency: currency,
-        };
-    },
-
     computed: {
+        /**
+         * тип объявления (покупка или продажа)
+         * @return array
+         */
+        dealList() {
+            return this.$store.state.lot.dealList;
+        },
+
+        /**
+         * список культур
+         * @return array
+         */
+        cropList() {
+            return this.$store.state.lot.cropList;
+        },
+
+        /**
+         * список валют
+         * @return array
+         */
+        currencyList() {
+            return this.$store.state.lot.currencyList;
+        },
+
         /**
          * проверка, завершен ли первый шаг
          * @return boolean
@@ -526,7 +529,7 @@ export default {
          * @return boolean
          */
         wVievs() {
-            return ['1'].indexOf('' + this.cropId) != -1;
+            return ['1','2'].indexOf('' + this.cropId) != -1;
         },
 
         /**
@@ -673,21 +676,37 @@ export default {
             return ['7'].indexOf('' + this.cropId) != -1;
         },
 
+        /**
+         * Заполнение данных формы
+         * @return string
+         */
         lotVievsDeal() {
             let deal = this.deal || '';
             return (deal) ? `Тип объявления: ${deal}` : '';
         },
 
+        /**
+         * Заполнение данных формы
+         * @return string
+         */
         lotVievsCropName() {
-            let cropItem = this.cropsList.find(item => item.id == this.cropId);
+            let cropItem = this.cropList.find(item => item.id == this.cropId);
             return (cropItem) ? `Культура: ${cropItem.name}` : '';
         },
 
+        /**
+         * Заполнение данных формы
+         * @return string
+         */
         lotVievsPrice() {
             let price = (this.price) ? `${this.price} ${this.currency}` : '';
             return (this.quantity) ? `${price} / ${this.quantity} тонн` : `${price}`;
         },
 
+        /**
+         * Заполнение данных формы
+         * @return string
+         */
         lotVievsBasis() {
             let basis = '';
             if (this.basis == 'FOB') {

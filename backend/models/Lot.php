@@ -352,7 +352,7 @@ class Lot extends ActiveRecord
                 break;
             case 2:
                 // пшеница твердая - протеин / влага / натура / клейковина / клоп / зерновая примесь / сорная примесь / стекловидность
-                $quality = sprintf('%G/%G/%G/%G/%G/%G/%G/%G', $l['protein'], $l['moisture'], $l['natural_weight'], $l['gluten'], $l['bug'], $l['grain_admixture'], $l['foreign_matter'], $l['vitreousness']);
+                $quality = sprintf('%G/%G/%G/%G/%Gw/%G/%G/%G/%G', $l['protein'], $l['moisture'], $l['natural_weight'], $l['gluten'], $l['w'], $l['bug'], $l['grain_admixture'], $l['foreign_matter'], $l['vitreousness']);
                 break;
             case 3:
                 // ячмень - влага / натура / зерновая примесь / сорная примесь

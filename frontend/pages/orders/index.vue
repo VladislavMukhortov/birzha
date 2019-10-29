@@ -28,9 +28,15 @@
 
                                 <ShortDescriptionItemList v-bind:lot="item" />
 
-                                <div class="small">Создано: {{ item.created_at }}</div>
+                                <div class="text-muted">Создано: {{ item.created_at }}</div>
+
+                                <template v-if="item.waiting_offer_count && !item.is_auction">
+                                    <div class="text-danger">Запросов "твердо": {{ item.waiting_offer_count }}</div>
+                                </template>
 
                                 <div>
+                                    <b-link class="btn btn-info" v-bind:to="'/orders/'+item.link">Посмотреть</b-link>
+
                                     <template v-if="item.is_edit">
                                         <b-link class="btn btn-success" v-bind:to="'/orders/'+item.link">Редактировать</b-link>
                                     </template>
@@ -179,8 +185,10 @@ export default {
                 content = res.messages;
             }
 
+            // закрываем все popover
             this.$root.$emit('bv::hide::popover');
 
+            // показываем уведомление что объявление удалено
             this.$bvToast.toast(content, {
                 title: 'Удаление объявления',
                 autoHideDelay: 5000,

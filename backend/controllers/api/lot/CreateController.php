@@ -85,7 +85,7 @@ class CreateController extends Controller
     {
         $result = [
             'result' => 'error',
-            'messages' => 'Data not found',
+            'messages' => ['Data not found'],
         ];
 
         $model = new Create();

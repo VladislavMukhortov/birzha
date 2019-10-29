@@ -208,18 +208,37 @@ class ListController extends Controller
         $lots = $data_provider->getModels();
         $data = [];
 
-        /**
-         * Получаем офферы которые в статусе "твердо" или на этапе переписки
-         */
         $lot_ids = ArrayHelper::getColumn($lots, 'id');
-        $offers = Offer::find($lot_ids)
-            ->select(['lot_id', 'link', 'status'])
+
+        /**
+         * Получаем офферы которые в статусе "твердо"
+         */
+        $offers_auction = Offer::find()
+            ->select(['lot_id', 'link'])
             ->where([
+                'lot_id' => $lot_ids,
                 'status' => Offer::STATUS_AUCTION,
             ])
+            ->imOwner()
             ->all();
-        $offers = ArrayHelper::index($offers, 'lot_id');
+        $offers_auction = ArrayHelper::index($offers_auction, 'lot_id');
 
+        /**
+         * Получаем кол-во офферов которые ожидают подтверждения "твердо"
+         */
+        $offers_waiting = Offer::find()
+            ->select(['lot_id', 'COUNT(id) AS o_count'])
+            ->where([
+                'lot_id' => $lot_ids,
+                'status' => Offer::STATUS_WAITING,
+            ])
+            ->imOwner()
+            ->groupBy('lot_id')
+            ->createCommand()
+            ->queryAll();
+        $offers_waiting = ArrayHelper::index($offers_waiting, 'lot_id');
+
+        // список культур
         $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
 
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
@@ -237,13 +256,18 @@ class ListController extends Controller
                 'is_edit' => true,      // возможность редактирования
                 'is_remove' => true,    // возможность удаления
                 'is_auction' => false,  // имеется ли оффер
+                'waiting_offer_count' => 0,  // кол-во запросов "твердо"
             ];
 
-            if (isset($offers[$lots[$i]['id']])) {
+            if (isset($offers_auction[$lots[$i]['id']])) {
                 $data[$i]['is_edit'] = false;
                 $data[$i]['is_remove'] = false;
                 $data[$i]['is_auction'] = true;
-                $data[$i]['offer_link'] = $offers[$lots[$i]['id']]['link'];
+                $data[$i]['offer_link'] = $offers_auction[$lots[$i]['id']]['link'];
+            }
+
+            if (isset($offers_waiting[$lots[$i]['id']])) {
+                $data[$i]['waiting_offer_count'] = (int) $offers_waiting[$lots[$i]['id']]['o_count'];
             }
         }
 

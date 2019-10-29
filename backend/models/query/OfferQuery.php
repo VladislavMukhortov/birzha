@@ -26,6 +26,20 @@ class OfferQuery extends ActiveQuery
 
 
     /**
+     * Оффер по уникальному url
+     * @param  string $link url объявления
+     * @return
+     */
+    public function byLink($link = '')
+    {
+        return $this->andWhere([
+            'link' => $link
+        ]);
+    }
+
+
+
+    /**
      * Оффер по ID объявления
      * @param  integer $lot_id ID лота
      * @return
@@ -77,6 +91,24 @@ class OfferQuery extends ActiveQuery
     {
         return $this->andWhere([
             'status' => Offer::STATUS_AUCTION
+        ])
+        ->exists();
+    }
+
+
+
+    /**
+     * Проверяем наличие офферов для возможности редактирования объявления
+     * @return boolean
+     */
+    public function hasEditLot()
+    {
+        return $this->andWhere([
+            'status' => [
+                Offer::STATUS_AUCTION,
+                Offer::STATUS_COMMUNICATION,
+                Offer::STATUS_COMPLETE,
+            ]
         ])
         ->exists();
     }

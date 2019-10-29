@@ -55,6 +55,23 @@ class LotQuery extends ActiveQuery
 
 
     /**
+     * Объявление которое можно редактировать
+     * @return
+     */
+    public function hasEdit()
+    {
+        return $this->andWhere([
+            'status' => [
+                Lot::STATUS_ARCHIVE,
+                Lot::STATUS_WAITING,
+                Lot::STATUS_ACTIVE,
+            ]
+        ]);
+    }
+
+
+
+    /**
      * Объявление которое отображается в списке объявлений для всех пользователей
      * @return
      */

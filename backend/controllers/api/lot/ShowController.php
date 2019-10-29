@@ -476,11 +476,11 @@ class ShowController extends Controller
 
 
     /**
-     * Про
-     * @param  string 'link' ссылка культуры
+     * Данные об объявлении для просмотра/редактирования
+     * @param  string 'link' ссылка объявления
      * @return string
      */
-    public function actionMyOrders() : Response
+    public function actionMyOrder() : Response
     {
         $link = trim(strval(Yii::$app->request->get('link', '')));
 
@@ -493,81 +493,73 @@ class ShowController extends Controller
         if ($lot) {
             $output['result'] = 'success';
 
-            $crop = Crops::findOne($lot->crop_id);
+            // наличие оффера не дает разрешения редактировать объявление
+            $offer = Offer::find()->byLot($lot->id)->hasEditLot();
 
             $output['data'] = [
-                'id' => (int) $lot->id,
-                'title' => Yii::t('app', 'crops.' . $crop->name),
-                'crop_id' => (int) $lot->crop_id,
+                'cant_edit' => (boolean) $offer,
+                'crop_id' => strval($lot->crop_id),
                 'deal' => strval($lot->deal),
-                'basis' => strval($lot->basis),
-                'price' => Yii::$app->formatter->asCurrency($lot->price, $lot->currency),
+                'price' => strval($lot->price),
+                'currency' => strval($lot->currency),
                 'quantity' => strval($lot->quantity),
                 'period' => strval($lot->period),
+                'basis' => strval($lot->basis),
+                'fob_port' => strval($lot->fob_port),
+                'fob_terminal' => strval($lot->fob_terminal),
+                'cif_country' => strval($lot->cif_country),
+                'cif_port' => strval($lot->cif_port),
+                'moisture' => strval($lot->moisture),
+                'foreign_matter' => strval($lot->foreign_matter),
+                'grain_admixture' => strval($lot->grain_admixture),
+                'gluten' => strval($lot->gluten),
+                'protein' => strval($lot->protein),
+                'natural_weight' => strval($lot->natural_weight),
+                'falling_number' => strval($lot->falling_number),
+                'vitreousness' => strval($lot->vitreousness),
+                'ragweed' => strval($lot->ragweed),
+                'bug' => strval($lot->bug),
+                'oil_content' => strval($lot->oil_content),
+                'oil_admixture' => strval($lot->oil_admixture),
+                'broken' => strval($lot->broken),
+                'damaged' => strval($lot->damaged),
+                'dirty' => strval($lot->dirty),
+                'ash' => strval($lot->ash),
+                'erucidic_acid' => strval($lot->erucidic_acid),
+                'peroxide_value' => strval($lot->peroxide_value),
+                'acid_value' => strval($lot->acid_value),
+                'other_color' => strval($lot->other_color),
+                'w' => strval($lot->w),
+                'crop_year' => strval($lot->crop_year),
                 'text' => strval($lot->text),
-                'created_at' => strval($lot->created_at),
-                'parity' => Lot::getBasisLocation($lot),
-                'quality' => [
-                    'crop_year' => strval($lot->crop_year),
-                ],
             ];
+        }
 
-            if ($lot->moisture) {$output['data']['quality']['moisture'] = (int) $lot->moisture;}
-            if ($lot->foreign_matter) {$output['data']['quality']['foreign_matter'] = (int) $lot->foreign_matter;}
-            if ($lot->grain_admixture) {$output['data']['quality']['grain_admixture'] = (int) $lot->grain_admixture;}
-            if ($lot->gluten) {$output['data']['quality']['gluten'] = (int) $lot->gluten;}
-            if ($lot->protein) {$output['data']['quality']['protein'] = (int) $lot->protein;}
-            if ($lot->natural_weight) {$output['data']['quality']['natural_weight'] = (int) $lot->natural_weight;}
-            if ($lot->falling_number) {$output['data']['quality']['falling_number'] = (int) $lot->falling_number;}
-            if ($lot->vitreousness) {$output['data']['quality']['vitreousness'] = (int) $lot->vitreousness;}
-            if ($lot->ragweed) {$output['data']['quality']['ragweed'] = (int) $lot->ragweed;}
-            if ($lot->bug) {$output['data']['quality']['bug'] = (int) $lot->bug;}
-            if ($lot->oil_content) {$output['data']['quality']['oil_content'] = (int) $lot->oil_content;}
-            if ($lot->oil_admixture) {$output['data']['quality']['oil_admixture'] = (int) $lot->oil_admixture;}
-            if ($lot->broken) {$output['data']['quality']['broken'] = (int) $lot->broken;}
-            if ($lot->damaged) {$output['data']['quality']['damaged'] = (int) $lot->damaged;}
-            if ($lot->dirty) {$output['data']['quality']['dirty'] = (int) $lot->dirty;}
-            if ($lot->ash) {$output['data']['quality']['ash'] = (int) $lot->ash;}
-            if ($lot->erucidic_acid) {$output['data']['quality']['erucidic_acid'] = (int) $lot->erucidic_acid;}
-            if ($lot->peroxide_value) {$output['data']['quality']['peroxide_value'] = (int) $lot->peroxide_value;}
-            if ($lot->acid_value) {$output['data']['quality']['acid_value'] = (int) $lot->acid_value;}
-            if ($lot->other_color) {$output['data']['quality']['other_color'] = (int) $lot->other_color;}
+        return $this->asJson($output);
+    }
 
-            $st = (int) $lot->status;
-            if ($st === Lot::STATUS_ARCHIVE) {$output['data']['status'] = 'STATUS_ARCHIVE';}
-            if ($st === Lot::STATUS_WAITING) {$output['data']['status'] = 'STATUS_WAITING';}
-            if ($st === Lot::STATUS_ACTIVE) {$output['data']['status'] = 'STATUS_ACTIVE';}
-            if ($st === Lot::STATUS_COMMUNICATION) {$output['data']['status'] = 'STATUS_COMMUNICATION';}
-            if ($st === Lot::STATUS_COMPLETE) {$output['data']['status'] = 'STATUS_COMPLETE';}
 
-            /**
-             * иформация об офферах
-             * @var array
-             */
-            $offers_data = [];
-            if ((int) $lot->status ===  Lot::STATUS_ACTIVE) {
-                $offers = Offer::find()->imOwner()->byLot($lot->id)->auction()->all();
-                for ($i = 0, $count = count($offers); $i < $count; $i++) {
-                    $offers_data[$i] = [
-                        'id' => $i + 1,
-                        'link' => $offers[$i]->link,
-                        'created_at' => $offers[$i]->created_at,
-                    ];
 
-                    $st = (int) $offers[$i]->status;
+    public function actionAuction() : Response
+    {
+        $link = trim(strval(Yii::$app->request->get('link', '')));
 
-                    if ($st === Offer::STATUS_WAITING) {
-                        $offers_data[$i]['status'] = false;
-                        $offers_data[$i]['desc'] = 'STATUS_WAITING';
-                    }
-                    if ($st === Offer::STATUS_AUCTION) {
-                        $offers_data[$i]['status'] = true;
-                        $offers_data[$i]['desc'] = 'STATUS_AUCTION ' . $offers[$i]->ended_at;
-                    }
-                }
+        $offer = Offer::find()->byLink($link)->auction()->limit(1)->one();
+
+        $output = [
+            'result' => 'error'
+        ];
+
+        if ($offer) {
+
+            $lot = Lot::find($offer->lot_id)->active()->limit(1)->one();
+
+            if ($lot) {
+                $output['result'] = 'success';
+
+                $output['offer'] = $offer;
+                $output['lot'] = $lot;
             }
-
-            $output['offers'] = $offers_data;
         }
 
         return $this->asJson($output);

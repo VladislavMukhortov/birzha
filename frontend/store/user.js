@@ -1,6 +1,9 @@
 export const state = () => {
     return {
-        lang: 'ru-RU'   // en-US ru-RU
+        // язык приложения, отображаемый для пользователя
+        lang: 'ru-RU',
+        // список языков для приложения
+        langList: ['en-US', 'ru-RU'],
     }
 }
 
