@@ -274,11 +274,6 @@ class Edit extends Model
             'result' => 'error',
         ];
 
-        if (!$this->validate()) {
-            $output['messages'] = $this->getFirstErrors();
-            return $output;
-        }
-
         // получаем объявление по ссылке для редактирования
         $lot = Lot::find()->my()->byLink($this->link)->hasEdit()->limit(1)->one();
         if (!$lot) {
@@ -290,6 +285,11 @@ class Edit extends Model
         $offer = Offer::find()->byLot($lot->id)->hasEditLot();
         if ($offer) {
             $output['messages'] = ['Сейчас объявление нельзя редактировать'];
+            return $output;
+        }
+
+        if (!$this->validate()) {
+            $output['messages'] = $this->getFirstErrors();
             return $output;
         }
 

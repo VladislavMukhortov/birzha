@@ -415,13 +415,6 @@ export default {
         }
     },
 
-    async fetch ({ $axios, store }) {
-        let cropList = await $axios.$get('/api/crop/list/market').then((res) => {
-            return res;
-        });
-        store.commit('lot/SET_CROP_LIST', cropList);
-    },
-
     data() {
         return {
             step_1: true,       // шаг создания объявления
@@ -473,6 +466,10 @@ export default {
             alertErrorShow: false,      // уведомление об ошибке при размещении
             errorMessages: [],          // сообщения об ошибке
         }
+    },
+
+    mounted() {
+        this.$store.dispatch('lot/GET_CROP_LIST');
     },
 
     computed: {

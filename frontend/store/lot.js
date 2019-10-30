@@ -26,9 +26,22 @@ export const mutations = {
     /**
      * Устанавливаем список культур на сайте
      * @param {[type]} state
-     * @param array data
+     * @param array payload
      */
-    SET_CROP_LIST(state, data) {
-        state.cropList = data;
+    SET_CROP_LIST(state, payload) {
+        state.cropList = payload;
+    },
+}
+
+
+export const actions = {
+    /**
+     * Устанавливаем список культур на сайте
+     */
+    async GET_CROP_LIST(context){
+        let data = await this.$axios.$get('/api/crop/list/market').then((res) => {
+            return res;
+        });
+        context.commit('SET_CROP_LIST', data);
     },
 }

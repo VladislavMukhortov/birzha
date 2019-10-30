@@ -387,13 +387,6 @@ export default {
         return /^[\w\-]+$/.test(params.link)
     },
 
-    async fetch ({ $axios, store }) {
-        let cropList = await $axios.$get('/api/crop/list/market').then((res) => {
-            return res;
-        });
-        store.commit('lot/SET_CROP_LIST', cropList);
-    },
-
     /**
      * Параметры в объекте, что бы избежать ошибок при 404
      */
@@ -513,6 +506,10 @@ export default {
 
             offers: offers.data,
         };
+    },
+
+    mounted() {
+        this.$store.dispatch('lot/GET_CROP_LIST');
     },
 
     computed: {
