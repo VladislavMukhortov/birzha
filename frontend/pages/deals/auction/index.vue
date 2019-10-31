@@ -34,10 +34,10 @@
                                     </template>
                                     <template v-else>
                                         <template v-if="item.is_my">
-                                            <b-link class="btn btn-primary" v-bind:to="'/orders/'+item.link">Посмотреть запросы к объявлению</b-link>
+                                            <b-link class="btn btn-info" v-bind:to="'/orders/'+item.link">Посмотреть запросы к объявлению</b-link>
                                         </template>
                                         <template v-else>
-                                            <b-link class="btn btn-primary" v-bind:to="'/market/'+item.link">Посмотреть объявление</b-link>
+                                            <b-link class="btn btn-secondary" v-bind:to="'/market/'+item.link">Посмотреть объявление</b-link>
                                         </template>
                                     </template>
                                 </div>

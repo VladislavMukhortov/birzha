@@ -78,59 +78,115 @@ class CreateController extends Controller
 
 
 
+    public function actionIndex() : Response
+    {
+        return $this->asJson(true);
+    }
+
+
+
     /**
      * Создание оффера начинается с подачи заявки на статус "твердо"
      * @param  string 'link' url объявления на которое делаем запрос
      * @return string
      */
-    public function actionIndex() : Response
+    public function actionRequest() : Response
     {
-        $link = trim(Yii::$app->request->post('link', ''));
+        $link = trim(strval(Yii::$app->request->post('link', '')));
+        $lot = Lot::find()->byLink($link)->active()->limit(1)->one();
 
         $output = [
-            'success' => false
+            'result' => 'error',
+            'messages' => '',
         ];
 
-        if (!$link) {
+        if (!$lot) {
+            $output['messages'] = 'ОЙ! Объявление не найдено!';
             return $this->asJson($output);
         }
 
-        $lot = Lot::find()->byLink($link)->active()->limit(1)->one();
-
-        if ($lot) {
-
-            // создатель объявления не равен обращающемуся
-            if ($lot->company_id !== Yii::$app->user->identity->company_id) {
-
-                $offer = Offer::find()->my()->byLot($lot->id)->auction()->limit(1)->one();
-                if ($offer) {
-                    // оффер уже подан
-                    $output['text'] = 'Вы уже подали заявку, ожидайте!';
-                } else {
-                    $offer = new Offer();
-                    Offer::getDb()->transaction(function($db) use ($offer, $lot) {
-                        $offer->lot_id = $lot->id;
-                        $offer->lot_owner_id = $lot->company_id;
-                        $offer->counterparty_id = Yii::$app->user->identity->company_id;
-                        $offer->setLink();
-                        $offer->setStatusWaiting();
-                        $offer->save();
-                    });
-
-                    if (!$offer->hasErrors()) {
-                        $output['success'] = true;
-                        $output['text'] = 'Отлично! Вы подали заявку, ожидайте!';
-                    }
-                }
-            }
-
-        } else {
-            $output['text'] = 'ОЙ! Объявление не найдено!';
+        // создатель объявления не равен обращающемуся
+        if ((int) $lot->company_id === (int) Yii::$app->user->identity->company_id) {
+            $output['messages'] = 'ОЙ! Объявление не найдено!';
+            return $this->asJson($output);
         }
+
+        // проверяем наличие запроса на "твердо" или статуса "твердо"
+        $offer = Offer::find()->my()->byLot($lot->id)->auction()->limit(1)->one();
+
+        if ($offer) {
+            // оффер уже подан
+            $output['messages'] = 'Вы уже подали заявку, ожидайте!';
+            return $this->asJson($output);
+        }
+
+        $offer = new Offer();
+        Offer::getDb()->transaction(function($db) use ($offer, $lot) {
+            $offer->lot_id = $lot->id;
+            $offer->lot_owner_id = $lot->company_id;
+            $offer->counterparty_id = Yii::$app->user->identity->company_id;
+            $offer->setLink();
+            $offer->setStatusWaiting();
+            $offer->save();
+        });
+
+        if ($offer->hasErrors()) {
+            $output['messages'] = 'Ой! Возникла ошибка, попробуйте позже';
+            return $this->asJson($output);
+        }
+
+        $output['result'] = 'success';
+        $output['messages'] = 'Отлично! Вы подали заявку, ожидайте!';
 
         return $this->asJson($output);
     }
 
+
+
+    /**
+     * Дать "твердо"
+     * @param  string 'link' url оффера которому двем "твердо"
+     * @return string
+     */
+    public function actionAuction() : Response
+    {
+        $time = (int) Yii::$app->request->post('time', 0);
+        $link = trim(strval(Yii::$app->request->post('link', '')));
+        $offer = Offer::find()->imOwner()->byLink($link)->waiting()->limit(1)->one();
+
+        $output = [
+            'result' => 'error',
+            'messages' => '',
+        ];
+
+        if (!$offer) {
+            $output['messages'] = 'ОЙ! Запрос не найден!';
+            return $this->asJson($output);
+        }
+
+        $other_offer = Offer::find()->imOwner()->byLot($offer->lot_id)->hasAuction();
+        // уже есть оффер к этому объявлению со статусом "твердо"
+        if ($other_offer) {
+            $output['messages'] = 'Может быть только один активный статус твердо';
+            return $this->asJson($output);
+        }
+
+        Offer::getDb()->transaction(function($db) use ($offer, $time) {
+            $offer->setEndedAt($time);
+            $offer->setStatusAuction();
+            $offer->save();
+        });
+
+        if ($offer->hasErrors()) {
+            $output['messages'] = 'Ой! Возникла ошибка, попробуйте позже';
+            return $this->asJson($output);
+        }
+
+        $output['result'] = 'success';
+        $output['messages'] = 'Отлично! Вы дали твердо!';
+
+        return $this->asJson($output);
+    }
 
 
 }

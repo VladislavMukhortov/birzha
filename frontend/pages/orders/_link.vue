@@ -12,25 +12,9 @@
 
                         <h1 class="section_title">My orders</h1>
 
-                        <template v-if="offers.length">
 
-                            <h2>На ваше объявление запросили "твердо"</h2>
+                        <RequestAuctionBlock />
 
-                            <b-list-group>
-                                <b-list-group-item v-for="item in offers" v-bind:key="item.link">
-                                    <span>#{{ item.id }}</span>
-                                    <span>Запросили: {{ item.created_at }}</span>
-                                    <span>{{ item.desc }}</span>
-                                    <template v-if="item.status">
-                                        <b-link to="">Перейти</b-link>
-                                    </template>
-                                    <template v-else>
-                                        <b-button variant="primary" v-on:click="startAuction(item.link)">Дать твердо</b-button>
-                                    </template>
-                                </b-list-group-item>
-                            </b-list-group>
-
-                        </template>
 
                         <h2>Редактирование объявления</h2>
 
@@ -359,11 +343,10 @@
 
                             <b-button
                                 variant="primary"
-                                v-on:click="onSubmit">Сохранить</b-button>
+                                v-on:click="onSubmit"
+                                v-bind:class="{ 'disabled': cantEdit }">Сохранить</b-button>
 
                         </div>
-
-                        <pre>{{ offers }}</pre>
 
                     </b-col>
                 </b-row>
@@ -376,10 +359,17 @@
 
 
 <script>
+
+import RequestAuctionBlock from '~/components/offer/RequestAuctionBlock.vue';
+
 export default {
+    components: {
+        RequestAuctionBlock,
+    },
+
     head() {
         return {
-            title: ' Edit order | site.com',
+            title: 'Edit order | site.com',
         }
     },
 
@@ -387,12 +377,8 @@ export default {
         return /^[\w\-]+$/.test(params.link)
     },
 
-    /**
-     * Параметры в объекте, что бы избежать ошибок при 404
-     */
     data() {
         return {
-            offers: {},         // информация об объявлении
             cantEdit: true,     // нельзя редактировать объявление
 
             deal: '',           // тип объявления (покупка или продажа)
@@ -448,15 +434,9 @@ export default {
             link: params.link
         }};
 
-        let [lot, offers] = await Promise.all([
-            $axios.$get('/api/lot/show/my-order', _param).then((res) => {
-                return res;
-            }),
-
-            $axios.$get('/api/offer/show/my-order', _param).then((res) => {
-                return res;
-            })
-        ]);
+        let lot = await $axios.$get('/api/lot/show/my-order', _param).then((res) => {
+            return res;
+        });
 
         // объявления нет, редиректим на 404
         if (lot.result == 'error') {
@@ -503,8 +483,6 @@ export default {
             cifPort: lot.data.cif_port,
             period: lot.data.period,
             text: lot.data.text,
-
-            offers: offers.data,
         };
     },
 
@@ -734,15 +712,16 @@ export default {
     },
 
     methods: {
-        startAuction(link) {
-            console.log(link);
-        },
 
         /**
          * Отправка и создание объявления
          * @return {[type]} [description]
          */
         async onSubmit() {
+            // if (this.cantEdit) {
+            //     return;
+            // }
+
             this.alertSuccessShow = false;
             this.alertErrorShow = false;
 

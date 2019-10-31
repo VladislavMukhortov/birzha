@@ -19,7 +19,10 @@
                             use-router></b-pagination-nav>
 
                         <b-list-group>
-                            <b-list-group-item v-for="item in ads" v-bind:to="'/market/'+item.link" v-bind:key="item.link">
+                            <b-list-group-item
+                                v-for="item in ads"
+                                v-bind:to="{name: 'market-link', params: {link: item.link}}"
+                                v-bind:key="item.link">
 
                                 <ShortDescriptionItemList v-bind:lot="item" />
 

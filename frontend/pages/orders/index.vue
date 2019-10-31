@@ -35,10 +35,14 @@
                                 </template>
 
                                 <div>
-                                    <b-link class="btn btn-info" v-bind:to="'/orders/'+item.link">Посмотреть</b-link>
+                                    <b-link
+                                        v-bind:to="{name: 'orders-link', params: {link: item.link}}"
+                                        class="btn btn-info">Посмотреть</b-link>
 
                                     <template v-if="item.is_edit">
-                                        <b-link class="btn btn-success" v-bind:to="'/orders/'+item.link">Редактировать</b-link>
+                                        <b-link
+                                            v-bind:to="{name: 'orders-link', params: {link: item.link}}"
+                                            class="btn btn-success">Редактировать</b-link>
                                     </template>
 
                                     <template v-if="item.is_remove">
@@ -51,7 +55,9 @@
                                     </template>
 
                                     <template v-if="item.is_auction">
-                                        <b-link class="btn btn-primary" v-bind:to="'/deals/auction/'+item.offer_link">Оффер</b-link>
+                                        <b-link
+                                            v-bind:to="{name: 'deals-auction-link', params: {link: item.offer_link}}"
+                                            class="btn btn-primary">Оффер</b-link>
                                     </template>
                                 </div>
 

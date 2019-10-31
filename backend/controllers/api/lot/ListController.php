@@ -190,7 +190,7 @@ class ListController extends Controller
                 'status' => [
                     Lot::STATUS_WAITING,
                     Lot::STATUS_ACTIVE,
-                    Lot::STATUS_COMMUNICATION,
+                    // Lot::STATUS_COMMUNICATION,
                 ],
             ])
             ->orderBy([

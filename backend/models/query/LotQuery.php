@@ -20,7 +20,7 @@ class LotQuery extends ActiveQuery
     public function byLink($link = '')
     {
         return $this->andWhere([
-            'link' => $link
+            'link' => $link,
         ]);
     }
 
@@ -33,7 +33,7 @@ class LotQuery extends ActiveQuery
     public function my()
     {
         return $this->andWhere([
-            'company_id' => Yii::$app->user->identity->company_id
+            'company_id' => Yii::$app->user->identity->company_id,
         ]);
     }
 

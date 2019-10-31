@@ -38,7 +38,7 @@ export const actions = {
     /**
      * Устанавливаем список культур на сайте
      */
-    async GET_CROP_LIST(context){
+    async GET_CROP_LIST(context) {
         let data = await this.$axios.$get('/api/crop/list/market').then((res) => {
             return res;
         });

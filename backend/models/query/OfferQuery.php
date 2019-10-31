@@ -67,6 +67,20 @@ class OfferQuery extends ActiveQuery
 
 
     /**
+     * Оффер в статусе ожидания "твердо"
+     * для проверки есть ли оффер в статусе ожидания "твердо"
+     * @return boolean
+     */
+    public function waiting()
+    {
+        return $this->andWhere([
+            'status' => Offer::STATUS_WAITING
+        ]);
+    }
+
+
+
+    /**
      * Оффер который ожидает "твердо" или уже в "твердо"
      * @return
      */

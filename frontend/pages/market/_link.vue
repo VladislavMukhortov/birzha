@@ -83,11 +83,10 @@ export default {
      */
     data() {
         return {
-            lot: {},                                // информация об объявлении
-
-            alertCreateOfferText: '',           // некорректный логин или пароль
-            alertCreateOfferVariant: 'success', // некорректный логин или пароль
-            alertCreateOfferShow: false,        // некорректный логин или пароль
+            lot: {},                            // информация об объявлении
+            alertCreateOfferText: '',           // текст для уведомления создания запроса на "твердо"
+            alertCreateOfferVariant: 'success', // тип уведомления
+            alertCreateOfferShow: false,        // показать / скрыть уведомление
         }
     },
 
@@ -96,19 +95,21 @@ export default {
      * @return object
      */
     async asyncData({ $axios, params }) {
-        let lot_param = {params: {
+        let _param = {params: {
             link: params.link
         }};
 
-        /**
-         * @param  Object res информация об объявлении
-         */
-        let res = await $axios.$get('/api/lot/show/market', lot_param).then((res) => {
+        let res = await $axios.$get('/api/lot/show/market', _param).then((res) => {
             return res;
+        }).catch((error) => {
+            return {
+                result: 'error',
+                lot: {},
+            };
         });
 
         // объявления нет, редиректим на 404
-        if (!res.success) {
+        if (res.result !== 'success') {
             $nuxt.$router.push('/market/404');
             return;
         }
@@ -121,17 +122,22 @@ export default {
          * Создаем оффер со статусом ожидания "твердо"
          */
         async createOffer() {
-            var params = new URLSearchParams();
-            params.append('link', this.lot.link);
+            var _param = new URLSearchParams();
+            _param.append('link', this.lot.link);
 
-            let res = await this.$axios.$post('/api/offer/create/index', params).then((res) => {
+            let res = await this.$axios.$post('/api/offer/create/request', _param).then((res) => {
                 return res;
+            }).catch((error) => {
+                return {
+                    result: 'error',
+                    messages: 'Ой! Возникла ошибка, попробуйте позже',
+                };
             });
 
-            this.alertCreateOfferVariant = (res.success) ? 'success' : 'danger';
-            this.alertCreateOfferText = (res.text) ? res.text : '';
+            this.alertCreateOfferVariant = (res.result == 'success') ? 'success' : 'danger';
+            this.alertCreateOfferText = res.messages
             this.alertCreateOfferShow = true;
-        }
+        },
     },
 };
 </script>

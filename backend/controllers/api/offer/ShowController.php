@@ -96,43 +96,28 @@ class ShowController extends Controller
     public function actionMyOrder() : Response
     {
         $link = trim(strval(Yii::$app->request->get('link', '')));
-
-        $lot = Lot::find()->my()->byLink($link)->notDeleted()->limit(1)->one();
+        $lot = Lot::find()->my()->byLink($link)->active()->limit(1)->one();
 
         $output = [
-            'result' => 'error'
+            'result' => 'error',
         ];
 
         if ($lot) {
             $output['result'] = 'success';
+            $output['data'] = [];
 
-            $offers_data = [];
+            // офферы к объявлению
+            $offers = Offer::find()->byLot($lot->id)->auction()->all();
 
-            if ((int) $lot->status ===  Lot::STATUS_ACTIVE) {
-
-                $offers = Offer::find()->imOwner()->byLot($lot->id)->auction()->all();
-
-                for ($i = 0, $count = count($offers); $i < $count; $i++) {
-                    $offers_data[$i] = [
-                        'id' => $i + 1,
-                        'link' => $offers[$i]->link,
-                        'created_at' => $offers[$i]->created_at,
-                    ];
-
-                    $st = (int) $offers[$i]->status;
-
-                    if ($st === Offer::STATUS_WAITING) {
-                        $offers_data[$i]['status'] = false;
-                        $offers_data[$i]['desc'] = 'STATUS_WAITING';
-                    }
-                    if ($st === Offer::STATUS_AUCTION) {
-                        $offers_data[$i]['status'] = true;
-                        $offers_data[$i]['desc'] = 'STATUS_AUCTION ' . $offers[$i]->ended_at;
-                    }
-                }
+            for ($i = 0, $count = count($offers); $i < $count; $i++) {
+                $output['data'][$i] = [
+                    'link' => strval($offers[$i]['link']),
+                    'created_at' => strval($offers[$i]['created_at']),
+                    'ended_at' => strval($offers[$i]['ended_at']),
+                    'status' => ((int) $offers[$i]['status'] === Offer::STATUS_AUCTION) ? true : false,
+                    'time' => Offer::DEFAULT_AUCTION_TIME,
+                ];
             }
-
-            $output['data'] = $offers_data;
         }
 
         return $this->asJson($output);

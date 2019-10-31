@@ -49,6 +49,8 @@ class Offer extends ActiveRecord
         '60' => 3600,   // 60 минут
         '120' => 7200,  // 120 минут
     ];
+    // время которое дается статус "твердо" по умолчанию
+    const DEFAULT_AUCTION_TIME = 30;
 
     /**
      * не активный (завершенный - стороны не договорились или устекло вермя) или удаленный оффер
@@ -186,11 +188,39 @@ class Offer extends ActiveRecord
 
 
     /**
-     * Устанавливаем статус
+     * Устанавливаем статус ожидание подтверждения статуса "твердо"
     */
     public function setStatusWaiting() : void
     {
         $this->status = self::STATUS_WAITING;
+    }
+
+
+
+    /**
+     * Устанавливаем статус "твердо"
+    */
+    public function setStatusAuction() : void
+    {
+        $this->status = self::STATUS_AUCTION;
+    }
+
+
+
+    /**
+     * Устанавливаем время окончания статуса "твердо" для оффера
+     * @param string $key ключ из массива AUCTION_TIME
+     */
+    public function setEndedAt($key) : void
+    {
+        if (!array_key_exists($key, self::AUCTION_TIME)) {
+            $key = Offer::DEFAULT_AUCTION_TIME;
+        }
+
+        $auction_time_s = self::AUCTION_TIME[$key];
+        $time = time() + $auction_time_s;
+        $this->auction_time_s = $auction_time_s;
+        $this->ended_at = Yii::$app->formatter->asDatetime($time, Yii::$app->params['db.commonDatetime']);
     }
 
 }
