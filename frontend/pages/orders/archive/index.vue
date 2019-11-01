@@ -1,8 +1,5 @@
 // Страница с личными объявлениями которые подал пользователь
-// которые отображаются на доске
-// - не имеют запросов на "твердо"
-// - имеют запросы на "твердо"
-// - имеют "твердо"
+// которые находятся в архиве
 
 <template>
 
@@ -12,7 +9,7 @@
                 <b-row class="justify-content-center">
                     <b-col cols="12" md="8">
 
-                        <h1 class="section_title">My orders</h1>
+                        <h1 class="section_title">My archive orders</h1>
 
                         <p>
                             <b-link class="btn btn-primary" to="/orders">Active</b-link>
@@ -34,36 +31,9 @@
 
                                 <div class="text-muted">Создано: {{ item.created_at }}</div>
 
-                                <template v-if="item.waiting_offer_count && !item.is_auction">
-                                    <div class="text-danger">Запросов "твердо": {{ item.waiting_offer_count }}</div>
-                                </template>
-
-                                <div>
-                                    <b-link
-                                        v-bind:to="{name: 'orders-link', params: {link: item.link}}"
-                                        class="btn btn-info">Посмотреть</b-link>
-
-                                    <template v-if="item.is_edit">
-                                        <b-link
-                                            v-bind:to="{name: 'orders-link', params: {link: item.link}}"
-                                            class="btn btn-success">Редактировать</b-link>
-                                    </template>
-
-                                    <template v-if="item.is_remove">
-                                        <b-button variant="danger" v-bind:id="'lot-item-remove-' + index">Удалить</b-button>
-                                        <b-popover v-bind:target="'lot-item-remove-' + index" triggers="click blur" placement="top">
-                                            <template v-slot:title>Подтвердить удаление</template>
-                                            <b-button variant="danger" v-on:click="lotDeletByLink(item.link)">Удалить</b-button>
-                                            <b-button v-on:click="onCloseLotPopover">Отмена</b-button>
-                                        </b-popover>
-                                    </template>
-
-                                    <template v-if="item.is_auction">
-                                        <b-link
-                                            v-bind:to="{name: 'deals-auction-link', params: {link: item.offer_link}}"
-                                            class="btn btn-primary">Оффер</b-link>
-                                    </template>
-                                </div>
+                                <b-link
+                                    v-bind:to="{name: 'archive-link', params: {link: item.link}}"
+                                    class="btn btn-info">Посмотреть</b-link>
 
                             </b-list-group-item>
                         </b-list-group>
@@ -96,7 +66,7 @@ export default {
 
     head() {
         return {
-            title: 'My orders | site.com',
+            title: 'My archive orders | site.com',
             meta: [{ hid: 'description', name: 'description', content: '' }],
         }
     },
@@ -118,7 +88,7 @@ export default {
             page: route.query.page || 1
         }};
 
-        let res = await $axios.$get('/api/lot/list/my-active-orders', _param).then((res) => {
+        let res = await $axios.$get('/api/lot/list/my-archive-orders', _param).then((res) => {
             return res;
         }).catch((error) => {
             return { data:{}, pagination_page_count: 0};
@@ -165,51 +135,6 @@ export default {
 
             this.lots = res.data;
             this.pagination_page_count = res.pagination_page_count;
-        },
-
-        /**
-         * Удаление объявления
-         * @param  string link ссылка на объявление
-         * @return
-         */
-        async lotDeletByLink(link) {
-            let _param = new URLSearchParams();
-            _param.append('link', link);
-
-            let res = await this.$axios.$post('/api/lot/delete/index', _param).then((res) => {
-                return res;
-            }).catch((error) => {
-                return {
-                    result: 'error',
-                    messages: 'При удалении возникла ошибка, попробуйте позже',
-                };
-            });
-
-            let variant = 'success';
-            let content = 'Успешно удалено';
-
-            if (res.result == 'success') {
-                this.updateLotData();
-            } else {
-                variant = 'danger';
-                content = res.messages;
-            }
-
-            // закрываем все popover
-            this.$root.$emit('bv::hide::popover');
-
-            // показываем уведомление что объявление удалено
-            this.$bvToast.toast(content, {
-                title: 'Удаление объявления',
-                autoHideDelay: 5000,
-                variant: variant,
-                solid: true,
-                toaster: 'b-toaster-top-center',
-            });
-        },
-
-        onCloseLotPopover() {
-            this.$root.$emit('bv::hide::popover');
         },
     },
 

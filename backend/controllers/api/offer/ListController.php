@@ -152,11 +152,7 @@ class ListController extends Controller
         $lot_ids = ArrayHelper::getColumn($offers, 'id');
         $offers_auction = Offer::find($lot_ids)
             ->select(['lot_id', 'link', 'status', 'ended_at'])
-            ->where([
-                'status' => [
-                    Offer::STATUS_AUCTION,
-                ]
-            ])
+            ->auction()
             ->all();
         $offers_auction = ArrayHelper::index($offers_auction, 'lot_id');
 

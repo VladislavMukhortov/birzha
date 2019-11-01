@@ -7,32 +7,17 @@
         <section class="section_block">
             <b-container>
                 <b-row>
-                    <b-col cols="12" md="10" lg="8">
 
-                        <h1 class="section_title">Auction deals order</h1>
+                    <b-col cols="12" md="8" lg="8">
 
+                        <BargainingUsersBlock v-bind:offer="offer" v-bind:deal="lot.deal" />
 
-                        <p>price: {{ lot.price }} {{ lot.currency }}</p>
+                        <hr>
 
-                        <b-form-group label-class="required" label="цена:">
-                            <b-input type="text" v-model="price"></b-input>
-                        </b-form-group>
-
-                        <b-button
-                            v-if="lot.deal == 'sell'"
-                            variant="secondary"
-                            v-on:click="newPrice">Bid (понизить) цену</b-button>
-                        <b-button
-                            v-else
-                            variant="secondary"
-                            v-on:click="newPrice">Push (повысить) цену</b-button>
-
-
-
-                        <pre>{{ lot }}</pre>
-                        <pre>{{ offer }}</pre>
+                        <FullInfo v-bind:lot="lot" />
 
                     </b-col>
+
                 </b-row>
             </b-container>
         </section>
@@ -43,7 +28,15 @@
 
 
 <script>
+import FullInfo from '~/components/lot/FullInfo.vue';
+import BargainingUsersBlock from '~/components/offer/BargainingUsersBlock.vue';
+
 export default {
+    components: {
+        FullInfo,
+        BargainingUsersBlock,
+    },
+
     head() {
         return {
             title: 'Auction deals | site.com',
@@ -51,7 +44,7 @@ export default {
     },
 
     validate({ params }) {
-        return /^[\w\-]+$/.test(params.link)
+        return /^[\w\-]+$/.test(params.link);
     },
 
     data() {
@@ -62,39 +55,27 @@ export default {
         }
     },
 
-    /**
-     * получаем данные о объявлении
-     * @return object
-     */
     async asyncData({ $axios, params }) {
         let _param = {params: {
             link: params.link
         }};
 
-        /**
-         * @param  Object res информация об объявлении
-         */
-        let res = await $axios.$get('/api/lot/show/auction', _param).then((res) => {
+        let data = await $axios.$get('/api/lot/show/auction', _param).then((res) => {
             return res;
+        }).catch((error) => {
+            return { result: 'error', lot: {} };
         });
 
-        // // объявления нет, редиректим на 404
-        // if (!res.success) {
-        //     $nuxt.$router.push('/market/404');
-        //     return;
-        // }
+        // объявления нет, редиректим на 404
+        if (data.result !== 'success') {
+            $nuxt.$router.push('/market/404');
+            return;
+        }
 
         return {
-            lot: res.offer,
-            offer: res.lot,
-
+            lot: data.lot,
+            offer: data.offer,
         };
-    },
-
-    methods: {
-        newPrice() {
-            console.log('123');
-        },
     },
 };
 </script>

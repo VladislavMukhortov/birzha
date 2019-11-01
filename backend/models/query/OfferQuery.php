@@ -68,13 +68,25 @@ class OfferQuery extends ActiveQuery
 
     /**
      * Оффер в статусе ожидания "твердо"
-     * для проверки есть ли оффер в статусе ожидания "твердо"
      * @return boolean
      */
     public function waiting()
     {
         return $this->andWhere([
-            'status' => Offer::STATUS_WAITING
+            'status' => Offer::STATUS_WAITING,
+        ]);
+    }
+
+
+
+    /**
+     * Оффер в статусе "твердо"
+     * @return
+     */
+    public function auction()
+    {
+        return $this->andWhere([
+            'status' => Offer::STATUS_AUCTION,
         ]);
     }
 
@@ -84,13 +96,13 @@ class OfferQuery extends ActiveQuery
      * Оффер который ожидает "твердо" или уже в "твердо"
      * @return
      */
-    public function auction()
+    public function waitingAndAuction()
     {
         return $this->andWhere([
             'status' => [
                 Offer::STATUS_WAITING,
-                Offer::STATUS_AUCTION
-            ]
+                Offer::STATUS_AUCTION,
+            ],
         ]);
     }
 

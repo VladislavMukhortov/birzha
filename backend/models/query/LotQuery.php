@@ -13,6 +13,37 @@ class LotQuery extends ActiveQuery
 
 
     /**
+     * Обявление по ID культуры
+     * @param  integer $crop_id ID культуры
+     * @return
+     */
+    public function byCropId($crop_id = 0)
+    {
+        return $this->andWhere([
+            'crop_id' => (int) $crop_id,
+        ]);
+    }
+
+
+
+    /**
+     * Обявление по типу сделки
+     * 'all' - все
+     * 'buy' - покупка
+     * 'sell' - продажа
+     * @param  string $deal тип сделки
+     * @return
+     */
+    public function byDeal($deal = '')
+    {
+        return $this->andWhere([
+            'deal' => $deal,
+        ]);
+    }
+
+
+
+    /**
      * Обявление по уникальному url
      * @param  string $link url объявления
      * @return
@@ -79,6 +110,59 @@ class LotQuery extends ActiveQuery
     {
         return $this->andWhere([
             'status' => Lot::STATUS_ACTIVE
+        ]);
+    }
+
+
+
+    /**
+     * Объявление находящийся в архиве
+     * @return
+     */
+    public function archive()
+    {
+        return $this->andWhere([
+            'status' => Lot::STATUS_ARCHIVE
+        ]);
+    }
+
+
+
+    /**
+     * Объявление используется в оффере, который находится в статусе переписки двух сторон
+     * @return
+     */
+    public function communication()
+    {
+        return $this->andWhere([
+            'status' => Lot::STATUS_COMMUNICATION
+        ]);
+    }
+
+
+
+    /**
+     * Объявление было закрыто, так как сделка состоялась
+     * @return
+     */
+    public function complete()
+    {
+        return $this->andWhere([
+            'status' => Lot::STATUS_COMPLETE
+        ]);
+    }
+
+
+
+    /**
+     * Сортируем по дате создания в порядке уменьшения
+     * @return
+     */
+    public function orderByCreatedAt()
+    {
+        return $this->orderBy([
+            'created_at' => SORT_DESC,
+            'id' => SORT_DESC,
         ]);
     }
 

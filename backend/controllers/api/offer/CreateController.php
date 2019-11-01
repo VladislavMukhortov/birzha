@@ -112,7 +112,7 @@ class CreateController extends Controller
         }
 
         // проверяем наличие запроса на "твердо" или статуса "твердо"
-        $offer = Offer::find()->my()->byLot($lot->id)->auction()->limit(1)->one();
+        $offer = Offer::find()->my()->byLot($lot->id)->waitingAndAuction()->limit(1)->one();
 
         if ($offer) {
             // оффер уже подан

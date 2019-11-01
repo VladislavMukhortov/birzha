@@ -55,7 +55,7 @@ export default {
 
     head() {
         return {
-            title: 'Market | site.com',
+            title: 'Market crops | site.com',
             meta: [{ hid: 'description', name: 'description', content: '' }],
         }
     },

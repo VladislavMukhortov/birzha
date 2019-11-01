@@ -11,7 +11,7 @@ use yii\db\Expression;
 use app\models\query\LotQuery;
 
 // use app\models\User;
-// use app\models\Crops;
+use app\models\Crops;
 
 /**
  * Таблица объявлений
@@ -287,6 +287,56 @@ class Lot extends ActiveRecord
 
 
     /**
+     * Полное описание объявления для страницы с объявлением
+     * @param  Lot    $lot объект объявления
+     * @return array
+     */
+    public function getFullInfo(Lot $lot) : array
+    {
+        $crop = Crops::findOne($lot->crop_id);
+
+        return [
+            'title' => Yii::t('app', 'crops.' . $crop->name),
+            'crop_id' => (int) $lot['crop_id'],
+            'deal' => strval($lot['deal']),
+            'price' => Yii::$app->formatter->asCurrency($lot['price'], $lot['currency']),
+            'quantity' => (int) $lot['quantity'],
+            'period' => strval($lot['period']),
+            'basis' => strval($lot['basis']),
+            'basis_location' => self::getBasisLocation($lot),
+            'quality' => self::getArrayQuality($lot),
+            'text' => strval($lot->text),
+        ];
+    }
+
+
+
+    /**
+     * Краткое описание объявления для списка объявлений
+     *
+     * Не устанавливается TITLE, так как он может быть разный и
+     * основывается на CROP_ID
+     *
+     * @param  Lot    $lot объект объявления
+     * @return array
+     */
+    public function getShortInfoArray(Lot $lot) : array
+    {
+        return [
+            'deal' => strval($lot['deal']),
+            'price' => Yii::$app->formatter->asCurrency($lot['price'], $lot['currency']),
+            'quantity' => (int) $lot['quantity'],
+            'period' => strval($lot['period']),
+            'link' => strval($lot['link']),
+            'basis' => strval($lot['basis']),
+            'basis_location' => self::getBasisLocation($lot),
+            'quality' => self::getStrQuality($lot),
+        ];
+    }
+
+
+
+    /**
      * Возвращаем строку с данными о базисе
      * @param  Lot    $lot объект объявления
      * @return string
@@ -456,206 +506,209 @@ class Lot extends ActiveRecord
             case 1:
                 // пшеница
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => strval($l['grain_admixture'])], // зерновая примесь
-                    ['name' => Yii::t('app', 'crops.quality.gluten'),          'val' => strval($l['gluten'])],          // клейковина
-                    ['name' => Yii::t('app', 'crops.quality.protein'),         'val' => strval($l['protein'])],         // протеин
-                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => strval($l['natural_weight'])],  // натура
-                    ['name' => Yii::t('app', 'crops.quality.falling_number'),  'val' => strval($l['falling_number'])],  // число падения
-                    ['name' => Yii::t('app', 'crops.quality.bug'),             'val' => strval($l['bug'])],             // клоп
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => (float) $l['grain_admixture']], // зерновая примесь
+                    ['name' => Yii::t('app', 'crops.quality.gluten'),          'val' => (float) $l['gluten']],          // клейковина
+                    ['name' => Yii::t('app', 'crops.quality.protein'),         'val' => (float) $l['protein']],         // протеин
+                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => (float) $l['natural_weight']],  // натура
+                    ['name' => Yii::t('app', 'crops.quality.falling_number'),  'val' => (float) $l['falling_number']],  // число падения
+                    ['name' => Yii::t('app', 'crops.quality.bug'),             'val' => (float) $l['bug']],             // клоп
+                    ['name' => Yii::t('app', 'crops.quality.w'),               'val' => (int) $l['w']],                 // W
                 ];
                 break;
             case 2:
                 // пшеница твердая
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => strval($l['grain_admixture'])], // зерновая примесь
-                    ['name' => Yii::t('app', 'crops.quality.gluten'),          'val' => strval($l['gluten'])],          // клейковина
-                    ['name' => Yii::t('app', 'crops.quality.protein'),         'val' => strval($l['protein'])],         // протеин
-                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => strval($l['natural_weight'])],  // натура
-                    ['name' => Yii::t('app', 'crops.quality.vitreousness'),    'val' => strval($l['vitreousness'])],    // стекловидность
-                    ['name' => Yii::t('app', 'crops.quality.bug'),             'val' => strval($l['bug'])],             // клоп
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => (float) $l['grain_admixture']], // зерновая примесь
+                    ['name' => Yii::t('app', 'crops.quality.gluten'),          'val' => (float) $l['gluten']],          // клейковина
+                    ['name' => Yii::t('app', 'crops.quality.protein'),         'val' => (float) $l['protein']],         // протеин
+                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => (float) $l['natural_weight']],  // натура
+                    ['name' => Yii::t('app', 'crops.quality.vitreousness'),    'val' => (float) $l['vitreousness']],    // стекловидность
+                    ['name' => Yii::t('app', 'crops.quality.bug'),             'val' => (float) $l['bug']],             // клоп
+                    ['name' => Yii::t('app', 'crops.quality.w'),               'val' => (int) $l['w']],                 // W
                 ];
                 break;
             case 3:
                 // ячмень
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => strval($l['grain_admixture'])], // зерновая примесь
-                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => strval($l['natural_weight'])],  // натура
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => (float) $l['grain_admixture']], // зерновая примесь
+                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => (float) $l['natural_weight']],  // натура
                 ];
                 break;
             case 4:
                 // кукуруза
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.ragweed'),         'val' => strval($l['ragweed'])],         // амброзия
-                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => strval($l['broken'])],          // битые
-                    ['name' => Yii::t('app', 'crops.quality.damaged'),         'val' => strval($l['damaged'])],         // повреждённые
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.ragweed'),         'val' => (float) $l['ragweed']],         // амброзия
+                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => (float) $l['broken']],          // битые
+                    ['name' => Yii::t('app', 'crops.quality.damaged'),         'val' => (float) $l['damaged']],         // повреждённые
                 ];
                 break;
             case 5:
                 // лен
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => strval($l['oil_content'])],     // масличность
-                    ['name' => Yii::t('app', 'crops.quality.peroxide_value'),  'val' => strval($l['peroxide_value'])],  // перекисное число
-                    ['name' => Yii::t('app', 'crops.quality.acid_value'),      'val' => strval($l['acid_value'])],      // кислотное число
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => (float) $l['oil_content']],     // масличность
+                    ['name' => Yii::t('app', 'crops.quality.peroxide_value'),  'val' => (float) $l['peroxide_value']],  // перекисное число
+                    ['name' => Yii::t('app', 'crops.quality.acid_value'),      'val' => (float) $l['acid_value']],      // кислотное число
                 ];
                 break;
             case 6:
                 // рапс
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => strval($l['oil_content'])],     // масличность
-                    ['name' => Yii::t('app', 'crops.quality.oil_admixture'),   'val' => strval($l['oil_admixture'])],   // масличная примесь
-                    ['name' => Yii::t('app', 'crops.quality.erucidic_acid'),   'val' => strval($l['erucidic_acid'])],   // эруковая кислота
-                    ['name' => Yii::t('app', 'crops.quality.peroxide_value'),  'val' => strval($l['peroxide_value'])],  // перекисное число
-                    ['name' => Yii::t('app', 'crops.quality.acid_value'),      'val' => strval($l['acid_value'])],      // кислотное число
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => (float) $l['oil_content']],     // масличность
+                    ['name' => Yii::t('app', 'crops.quality.oil_admixture'),   'val' => (float) $l['oil_admixture']],   // масличная примесь
+                    ['name' => Yii::t('app', 'crops.quality.erucidic_acid'),   'val' => (float) $l['erucidic_acid']],   // эруковая кислота
+                    ['name' => Yii::t('app', 'crops.quality.peroxide_value'),  'val' => (float) $l['peroxide_value']],  // перекисное число
+                    ['name' => Yii::t('app', 'crops.quality.acid_value'),      'val' => (float) $l['acid_value']],      // кислотное число
                 ];
                 break;
             case 7:
                 // горох
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => strval($l['broken'])],          // битые
-                    ['name' => Yii::t('app', 'crops.quality.damaged'),         'val' => strval($l['damaged'])],         // повреждённые
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => (float) $l['broken']],          // битые
+                    ['name' => Yii::t('app', 'crops.quality.damaged'),         'val' => (float) $l['damaged']],         // повреждённые
+                    ['name' => Yii::t('app', 'crops.quality.damaged'),         'val' => (int) $l['other_color']],       // другой цвет
                 ];
                 break;
             case 8:
                 // соевые бобы
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.protein'),         'val' => strval($l['protein'])],         // протеин
-                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => strval($l['oil_content'])],     // масличность
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.protein'),         'val' => (float) $l['protein']],         // протеин
+                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => (float) $l['oil_content']],     // масличность
                 ];
                 break;
             case 9:
                 // подсолнечник
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => strval($l['oil_content'])],     // масличность
-                    ['name' => Yii::t('app', 'crops.quality.oil_admixture'),   'val' => strval($l['oil_admixture'])],   // масличная примесь
-                    ['name' => Yii::t('app', 'crops.quality.peroxide_value'),  'val' => strval($l['peroxide_value'])],  // перекисное число
-                    ['name' => Yii::t('app', 'crops.quality.acid_value'),      'val' => strval($l['acid_value'])],      // кислотное число
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => (float) $l['oil_content']],     // масличность
+                    ['name' => Yii::t('app', 'crops.quality.oil_admixture'),   'val' => (float) $l['oil_admixture']],   // масличная примесь
+                    ['name' => Yii::t('app', 'crops.quality.peroxide_value'),  'val' => (float) $l['peroxide_value']],  // перекисное число
+                    ['name' => Yii::t('app', 'crops.quality.acid_value'),      'val' => (float) $l['acid_value']],      // кислотное число
                 ];
                 break;
             case 10:
                 // нут
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => strval($l['broken'])],          // битые
-                    ['name' => Yii::t('app', 'crops.quality.dirty'),           'val' => strval($l['dirty'])],           // маранные
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => (float) $l['broken']],          // битые
+                    ['name' => Yii::t('app', 'crops.quality.dirty'),           'val' => (float) $l['dirty']],           // маранные
                 ];
                 break;
             case 11:
                 // рыжик
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => strval($l['oil_content'])],     // масличность
-                    ['name' => Yii::t('app', 'crops.quality.oil_admixture'),   'val' => strval($l['oil_admixture'])],   // масличная примесь
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => (float) $l['oil_content']],     // масличность
+                    ['name' => Yii::t('app', 'crops.quality.oil_admixture'),   'val' => (float) $l['oil_admixture']],   // масличная примесь
                 ];
                 break;
             case 12:
                 // сафлор
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => strval($l['oil_content'])],     // масличность
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => (float) $l['oil_content']],     // масличность
                 ];
                 break;
             case 13:
                 // сорго
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
                 ];
                 break;
             case 14:
                 // просо
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
                 ];
                 break;
             case 15:
                 // кориандр
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => strval($l['broken'])],          // битые
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => (float) $l['broken']],          // битые
                 ];
                 break;
             case 16:
                 // горчица
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => strval($l['oil_content'])],     // масличность
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.oil_content'),     'val' => (float) $l['oil_content']],     // масличность
                 ];
                 break;
             case 17:
                 // чечевица
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => strval($l['broken'])],          // битые
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => (float) $l['broken']],          // битые
                 ];
                 break;
             case 18:
                 // рожь
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => strval($l['grain_admixture'])], // зерновая примесь
-                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => strval($l['natural_weight'])],  // натура
-                    ['name' => Yii::t('app', 'crops.quality.falling_number'),  'val' => strval($l['falling_number'])],  // число падения
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => (float) $l['grain_admixture']], // зерновая примесь
+                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => (float) $l['natural_weight']],  // натура
+                    ['name' => Yii::t('app', 'crops.quality.falling_number'),  'val' => (float) $l['falling_number']],  // число падения
                 ];
                 break;
             case 19:
                 // овес
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => strval($l['grain_admixture'])], // зерновая примесь
-                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => strval($l['natural_weight'])],  // натура
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => (float) $l['grain_admixture']], // зерновая примесь
+                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => (float) $l['natural_weight']],  // натура
                 ];
                 break;
             case 20:
                 // гречиха
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => strval($l['grain_admixture'])], // зерновая примесь
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.grain_admixture'), 'val' => (float) $l['grain_admixture']], // зерновая примесь
                 ];
                 break;
             case 21:
                 // тритикале
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.protein'),         'val' => strval($l['protein'])],         // протеин
-                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => strval($l['natural_weight'])],  // натура
-                    ['name' => Yii::t('app', 'crops.quality.ash'),             'val' => strval($l['ash'])],             // зольность
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.protein'),         'val' => (float) $l['protein']],         // протеин
+                    ['name' => Yii::t('app', 'crops.quality.natural_weight'),  'val' => (float) $l['natural_weight']],  // натура
+                    ['name' => Yii::t('app', 'crops.quality.ash'),             'val' => (float) $l['ash']],             // зольность
                 ];
                 break;
             case 22:
                 // рис
                 $quality = [
-                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => strval($l['moisture'])],        // влажность
-                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => strval($l['foreign_matter'])],  // сорная примесь
-                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => strval($l['broken'])],          // битые
+                    ['name' => Yii::t('app', 'crops.quality.moisture'),        'val' => (float) $l['moisture']],        // влажность
+                    ['name' => Yii::t('app', 'crops.quality.foreign_matter'),  'val' => (float) $l['foreign_matter']],  // сорная примесь
+                    ['name' => Yii::t('app', 'crops.quality.broken'),          'val' => (float) $l['broken']],          // битые
                 ];
                 break;
             default:

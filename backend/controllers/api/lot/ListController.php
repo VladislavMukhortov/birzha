@@ -116,52 +116,29 @@ class ListController extends Controller
     public function actionMarket() : Response
     {
         $crop_id = (int) Yii::$app->request->get('crop_id', 0);
-        $type_market = trim(Yii::$app->request->get('type_market', ''));
-        $type_market = strtolower($type_market);
+        $type_market = strtolower(trim(Yii::$app->request->get('type_market', '')));
 
-        if (!array_key_exists($type_market, Lot::DEAL)) {
-            $type_market = false;
-        }
+        $query = Lot::find()->byCropId($crop_id)->active()->orderByCreatedAt();
 
-        $query = (new Query())
-            ->from(Lot::tableName())
-            ->where([
-                'crop_id' => $crop_id,
-                'status' => Lot::STATUS_ACTIVE, // статус объявлений для отображения на доске
-            ])
-            ->orderBy([
-                'created_at' => SORT_DESC,
-                'id' => SORT_DESC,
-            ]);
-
-        if ($type_market) {
-            $query->andWhere(['deal' => $type_market]);
+        if (array_key_exists($type_market, Lot::DEAL)) {
+            $query->byDeal($type_market);
         }
 
         $data_provider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => Lot::LOT_ON_PAGE
-            ]
+                'pageSize' => Lot::LOT_ON_PAGE,
+            ],
         ]);
 
         $lots = $data_provider->getModels();
-        $data = [];
 
         $crop = Crops::findOne($crop_id);
 
+        $data = [];
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
-            $data[$i] = [
-                'title' => Yii::t('app', 'crops.' . $crop->name),
-                'deal' => strval($lots[$i]['deal']),
-                'price' => Yii::$app->formatter->asCurrency($lots[$i]['price'], $lots[$i]['currency']),
-                'quantity' => (int) $lots[$i]['quantity'],
-                'period' => strval($lots[$i]['period']),
-                'link' => strval($lots[$i]['link']),
-                'basis' => strval($lots[$i]['basis']),
-                'basis_location' => Lot::getBasisLocationArray($lots[$i]),
-                'quality' => Lot::getStrQuality($lots[$i]),
-            ];
+            $data[$i] = Lot::getShortInfoArray($lots[$i]);
+            $data[$i]['title'] = Yii::t('app', 'crops.' . $crop->name);
         }
 
         return $this->asJson([
@@ -177,36 +154,21 @@ class ListController extends Controller
      * Показываем актуальные объявления которые:
      * - отображаются на доске
      * - в статусе твердо
-     * - на этапе общения
      *
      * @return
      */
-    public function actionMyOrders() : Response
+    public function actionMyActiveOrders() : Response
     {
-        $query = (new Query())
-            ->from(Lot::tableName())
-            ->where([
-                'company_id' => Yii::$app->user->identity->company_id,
-                'status' => [
-                    Lot::STATUS_WAITING,
-                    Lot::STATUS_ACTIVE,
-                    // Lot::STATUS_COMMUNICATION,
-                ],
-            ])
-            ->orderBy([
-                'created_at' => SORT_DESC,
-                'id' => SORT_DESC,
-            ]);
+        $query = Lot::find()->my()->active()->orderByCreatedAt();
 
         $data_provider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => Lot::LOT_ON_PAGE
-            ]
+                'pageSize' => Lot::LOT_ON_PAGE,
+            ],
         ]);
 
         $lots = $data_provider->getModels();
-        $data = [];
 
         $lot_ids = ArrayHelper::getColumn($lots, 'id');
 
@@ -241,23 +203,15 @@ class ListController extends Controller
         // список культур
         $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
 
+        $data = [];
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
-            $data[$i] = [
-                'title' => Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]),
-                'deal' => strval($lots[$i]['deal']),
-                'price' => Yii::$app->formatter->asCurrency($lots[$i]['price'], $lots[$i]['currency']),
-                'quantity' => (int) $lots[$i]['quantity'],
-                'period' => strval($lots[$i]['period']),
-                'link' => strval($lots[$i]['link']),
-                'created_at' => strval($lots[$i]['created_at']),
-                'basis' => strval($lots[$i]['basis']),
-                'basis_location' => Lot::getBasisLocationArray($lots[$i]),
-                'quality' => Lot::getStrQuality($lots[$i]),
-                'is_edit' => true,      // возможность редактирования
-                'is_remove' => true,    // возможность удаления
-                'is_auction' => false,  // имеется ли оффер
-                'waiting_offer_count' => 0,  // кол-во запросов "твердо"
-            ];
+            $data[$i] = Lot::getShortInfoArray($lots[$i]);
+            $data[$i]['title'] = Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]);
+            $data[$i]['created_at'] = strval($lots[$i]['created_at']);
+            $data[$i]['is_edit'] = true;            // возможность редактирования
+            $data[$i]['is_remove'] = true;          // возможность удаления
+            $data[$i]['is_auction'] = false;        // имеется ли оффер
+            $data[$i]['waiting_offer_count'] = 0;   // кол-во запросов "твердо"
 
             if (isset($offers_auction[$lots[$i]['id']])) {
                 $data[$i]['is_edit'] = false;
@@ -276,5 +230,118 @@ class ListController extends Controller
             'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
         ]);
     }
+
+
+
+    /**
+     * Список личных объявлений
+     * Показываем объявления которые находятся в архиве
+     *
+     * @return
+     */
+    public function actionMyArchiveOrders() : Response
+    {
+        $query = Lot::find()->my()->archive()->orderByCreatedAt();
+
+        $data_provider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => Lot::LOT_ON_PAGE,
+            ],
+        ]);
+
+        $lots = $data_provider->getModels();
+
+        // список культур
+        $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
+
+        $data = [];
+        for ($i = 0, $count = count($lots); $i < $count; $i++) {
+            $data[$i] = Lot::getShortInfoArray($lots[$i]);
+            $data[$i]['title'] = Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]);
+            $data[$i]['created_at'] = strval($lots[$i]['created_at']);
+        }
+
+        return $this->asJson([
+            'data' => $data,
+            'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
+        ]);
+    }
+
+
+
+    /**
+     * Список личных объявлений
+     * Показываем объявления которые используются в оффере, который
+     * находится в статусе переписки двух сторон
+     *
+     * @return
+     */
+    public function actionMyCommunicationOrders() : Response
+    {
+        $query = Lot::find()->my()->communication()->orderByCreatedAt();
+
+        $data_provider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => Lot::LOT_ON_PAGE,
+            ],
+        ]);
+
+        $lots = $data_provider->getModels();
+
+        // список культур
+        $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
+
+        $data = [];
+        for ($i = 0, $count = count($lots); $i < $count; $i++) {
+            $data[$i] = Lot::getShortInfoArray($lots[$i]);
+            $data[$i]['title'] = Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]);
+            $data[$i]['created_at'] = strval($lots[$i]['created_at']);
+        }
+
+        return $this->asJson([
+            'data' => $data,
+            'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
+        ]);
+    }
+
+
+
+    /**
+     * Список личных объявлений
+     * Показываем объявления которые были закрыты, так как сделка состоялась
+     * @return
+     */
+    public function actionMyCompleteOrders() : Response
+    {
+        $query = Lot::find()->my()->complete()->orderByCreatedAt();
+
+        $data_provider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => Lot::LOT_ON_PAGE,
+            ],
+        ]);
+
+        $lots = $data_provider->getModels();
+
+        // список культур
+        $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
+
+        $data = [];
+        for ($i = 0, $count = count($lots); $i < $count; $i++) {
+            $data[$i] = Lot::getShortInfoArray($lots[$i]);
+            $data[$i]['title'] = Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]);
+            $data[$i]['created_at'] = strval($lots[$i]['created_at']);
+        }
+
+        return $this->asJson([
+            'data' => $data,
+            'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
+        ]);
+    }
+
+
 
 }

@@ -130,6 +130,9 @@ class ShowController extends Controller
 
         if ($lot) {
 
+            $output['result'] = 'success';
+            $output['lot'] = Lot::getFullInfo($lot);
+
             /**
              * Возможность взаимодействовать с объявлением
              * "free"    - свободно, возможность запросить "твердо"
@@ -155,7 +158,7 @@ class ShowController extends Controller
             $offer_ended_at = false;
             if (!Yii::$app->user->isGuest && $lot->company_id !== Yii::$app->user->identity->company_id) {
                 $offer = 'free';
-                $my_offer = Offer::find()->my()->byLot($lot->id)->auction()->limit(1)->one();
+                $my_offer = Offer::find()->my()->byLot($lot->id)->waitingAndAuction()->limit(1)->one();
                 if ($my_offer) {
                     $offer = ($my_offer->status === Offer::STATUS_AUCTION) ? 'auction' : 'wait';
                     $offer_link = strval($my_offer->link);
@@ -163,23 +166,7 @@ class ShowController extends Controller
                 }
             }
 
-            $crop = Crops::findOne($lot->crop_id);
-
-            $output['result'] = 'success';
-            $output['lot'] = [
-                'title' => Yii::t('app', 'crops.' . $crop->name),
-                'crop_id' => (int) $lot->crop_id,
-                'deal' => strval($lot->deal),
-                'basis' => strval($lot->basis),
-                'price' => Yii::$app->formatter->asCurrency($lot->price, $lot->currency),
-                'quantity' => strval($lot->quantity),
-                'period' => strval($lot->period),
-                'text' => strval($lot->text),
-                'link' => strval($lot->link),
-                'parity' => Lot::getBasisLocation($lot),
-                'offer' => $offer,
-                'quality' => Lot::getArrayQuality($lot),
-            ];
+            $output['lot']['offer'] = $offer;
 
             if ($offer_link) {
                 $output['lot']['offer_link'] = $offer_link;
@@ -260,14 +247,20 @@ class ShowController extends Controller
 
 
 
+    /**
+     * Данные объявления и оффера для взаимодействия в статусе "твердо"
+     * @param  string 'link' ссылка оффера
+     * @return
+     */
     public function actionAuction() : Response
     {
         $link = trim(strval(Yii::$app->request->get('link', '')));
 
+        // офер
         $offer = Offer::find()->byLink($link)->auction()->limit(1)->one();
 
         $output = [
-            'result' => 'error'
+            'result' => 'error',
         ];
 
         if ($offer) {
@@ -276,9 +269,8 @@ class ShowController extends Controller
 
             if ($lot) {
                 $output['result'] = 'success';
-
+                $output['lot'] = Lot::getFullInfo($lot);
                 $output['offer'] = $offer;
-                $output['lot'] = $lot;
             }
         }
 

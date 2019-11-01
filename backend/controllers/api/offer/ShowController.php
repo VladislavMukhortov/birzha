@@ -107,7 +107,7 @@ class ShowController extends Controller
             $output['data'] = [];
 
             // офферы к объявлению
-            $offers = Offer::find()->byLot($lot->id)->auction()->all();
+            $offers = Offer::find()->byLot($lot->id)->waitingAndAuction()->all();
 
             for ($i = 0, $count = count($offers); $i < $count; $i++) {
                 $output['data'][$i] = [
