@@ -226,6 +226,7 @@ export default {
             _params.append('company_name', this.companyName);
             _params.append('company_swift', this.companySwift);
             _params.append('company_iban', this.companyIban);
+            _params.append('timezone', new Date().getTimezoneOffset());
 
             let res = await this.$axios.$post('/api/auth/signup/index', _params).then((res) => {
                 return res;

@@ -12,6 +12,21 @@ class OfferQuery extends ActiveQuery
 {
 
     /**
+     * Только польхователи из оффера
+     * @return
+     */
+    public function inUser()
+    {
+        return $this->andWhere([
+            'or',
+            ['lot_owner_id' => Yii::$app->user->identity->company_id],
+            ['counterparty_id' => Yii::$app->user->identity->company_id]
+        ]);
+    }
+
+
+
+    /**
      * Оффер создан(начат) "этим" пользователем, то есть "этот" пользователь
      * подал заявку "твердо" на объявление
      * @return

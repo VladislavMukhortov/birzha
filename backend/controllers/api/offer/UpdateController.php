@@ -11,13 +11,12 @@ use yii\filters\VerbFilter;
 use yii\filters\auth\HttpHeaderAuth;
 use yii\web\Response;
 
-use app\models\Offer;
-use app\models\Lot;
+use app\models\form\offer\NewPrice;
 
 /**
- * API Информация об офферах
+ * API Создание оффера
  */
-class ShowController extends Controller
+class UpdateController extends Controller
 {
 
     /**
@@ -78,49 +77,42 @@ class ShowController extends Controller
 
 
 
-    /**
-     * @return string
-     */
     public function actionIndex() : Response
     {
-        return $this->asJson([]);
+        return $this->asJson(true);
     }
 
 
 
     /**
-     * Информация об офферах к обхявлению
-     * @param  string 'link' ссылка объявления
+     * Торг цены в оффере
+     *
+     * В статусе ТВЕРДО вторая сторона может 3 раза предложить свою цену.
+     * Владелец либо соглашается на цену либо предлагает свою.
+     * Когда вторая сторона предлагает владельце цену в третий раз
+     * то у владелец модежет либо отказать либо принять.
+     *
+     * @param  string 'link'  url оффера
+     * @param  float  'price' новая предлагаемая цена
      * @return string
      */
-    public function actionMyOrder() : Response
+    public function actionNewPrice() : Response
     {
-        $link = trim(strval(Yii::$app->request->get('link', '')));
-        $lot = Lot::find()->my()->byLink($link)->active()->limit(1)->one();
-
-        $output = [
+        $result = [
             'result' => 'error',
         ];
 
-        if ($lot) {
-            $output['result'] = 'success';
-            $output['data'] = [];
-
-            // офферы к объявлению
-            $offers = Offer::find()->byLot($lot->id)->waitingAndAuction()->all();
-
-            for ($i = 0, $count = count($offers); $i < $count; $i++) {
-                $output['data'][$i] = [
-                    'link' => strval($offers[$i]['link']),
-                    'created_at' => Yii::$app->formatter->asDatetime($offers[$i]['created_at']),
-                    'ended_at' => Yii::$app->formatter->asDatetime($offers[$i]['ended_at']),
-                    'status' => ((int) $offers[$i]['status'] === Offer::STATUS_AUCTION) ? true : false,
-                    'time' => Offer::DEFAULT_AUCTION_TIME,
-                ];
-            }
+        $model = new NewPrice();
+        if ($model->load(Yii::$app->request->post(), '')) {
+            $result = $model->save();
         }
 
-        return $this->asJson($output);
+        return $this->asJson($result);
     }
+
+
+
+
+
 
 }

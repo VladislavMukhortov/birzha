@@ -105,7 +105,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'string', 'max' => self::EMAIL_LENGTH_MAX],
             ['phone', 'string', 'max' => self::PHONE_LENGTH_MAX],
             ['position', 'string', 'max' => self::POS_LENGTH_MAX],
-            ['timezone', 'string', 'max' => 6],
+            ['timezone', 'string', 'max' => 20],
             ['language', 'string', 'max' => 5],
             ['verify_email', 'string', 'max' => self::VERIFY_EMAIL_LENGTH],
             ['verify_phone', 'string', 'max' => self::VERIFY_PHONE_LENGTH],

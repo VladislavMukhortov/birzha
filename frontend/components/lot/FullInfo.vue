@@ -5,23 +5,23 @@
     <div>
         <h1 class="section_title">{{ lot.title }}</h1>
 
-        <div>Тип: {{ lot.deal }}</div>
-        <div>Цена: {{ lot.price }}</div>
-        <div>Объем: {{ lot.quantity }} тонн</div>
-        <div>Период поставки: {{ lot.period }}</div>
-        <div>Базис: {{ lot.basis }}</div>
-        <div>Базис поставки: {{ lot.basis_location }}</div>
+        <div>Тип: <b>{{ lot.deal }}</b></div>
+        <div>Цена: <b>{{ lot.price }}</b></div>
+        <div>Объем: <b>{{ lot.quantity }} тонн</b></div>
+        <div>Период поставки: <b>{{ lot.period }}</b></div>
+        <div>Базис: <b>{{ lot.basis }}</b></div>
+        <div>Базис поставки: <b>{{ lot.basis_location }}</b></div>
 
         <hr>
 
         <div>Основные параметры:</div>
         <ul v-if="lot.quality.length" class="list-unstyled">
-            <li v-for="(item, index) in lot.quality" v-bind:key="index">{{ item.name }}: {{ item.val }}</li>
+            <li v-for="(item, index) in lot.quality" v-bind:key="index">{{ item.name }}: <b>{{ item.val }}</b></li>
         </ul>
 
         <template v-if="lot.text">
             <hr>
-            <div>Дополнительная информация:</div>
+            <div><b>Дополнительная информация:</b></div>
             <p>{{ lot.text }}</p>
         </template>
     </div>

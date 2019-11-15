@@ -27,6 +27,20 @@ class LotQuery extends ActiveQuery
 
 
     /**
+     * Обявление по ID
+     * @param  integer $crop_id ID
+     * @return
+     */
+    public function byId($id)
+    {
+        return $this->andWhere([
+            'id' => (int) $id,
+        ]);
+    }
+
+
+
+    /**
      * Обявление по типу сделки
      * 'all' - все
      * 'buy' - покупка

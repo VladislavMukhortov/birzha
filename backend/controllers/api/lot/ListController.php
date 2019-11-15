@@ -207,7 +207,8 @@ class ListController extends Controller
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
             $data[$i] = Lot::getShortInfoArray($lots[$i]);
             $data[$i]['title'] = Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]);
-            $data[$i]['created_at'] = strval($lots[$i]['created_at']);
+            $data[$i]['timeZone'] = Yii::$app->formatter->timeZone;
+            $data[$i]['created_at'] = Yii::$app->formatter->asDatetime($lots[$i]['created_at']);
             $data[$i]['is_edit'] = true;            // возможность редактирования
             $data[$i]['is_remove'] = true;          // возможность удаления
             $data[$i]['is_auction'] = false;        // имеется ли оффер
@@ -259,7 +260,7 @@ class ListController extends Controller
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
             $data[$i] = Lot::getShortInfoArray($lots[$i]);
             $data[$i]['title'] = Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]);
-            $data[$i]['created_at'] = strval($lots[$i]['created_at']);
+            $data[$i]['created_at'] = Yii::$app->formatter->asDatetime($lots[$i]['created_at']);
         }
 
         return $this->asJson([
@@ -277,7 +278,7 @@ class ListController extends Controller
      *
      * @return
      */
-    public function actionMyCommunicationOrders() : Response
+    /*public function actionMyCommunicationOrders() : Response
     {
         $query = Lot::find()->my()->communication()->orderByCreatedAt();
 
@@ -297,14 +298,14 @@ class ListController extends Controller
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
             $data[$i] = Lot::getShortInfoArray($lots[$i]);
             $data[$i]['title'] = Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]);
-            $data[$i]['created_at'] = strval($lots[$i]['created_at']);
+            $data[$i]['created_at'] = Yii::$app->formatter->asDatetime($lots[$i]['created_at']);
         }
 
         return $this->asJson([
             'data' => $data,
             'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
         ]);
-    }
+    }*/
 
 
 
@@ -313,7 +314,7 @@ class ListController extends Controller
      * Показываем объявления которые были закрыты, так как сделка состоялась
      * @return
      */
-    public function actionMyCompleteOrders() : Response
+    /*public function actionMyCompleteOrders() : Response
     {
         $query = Lot::find()->my()->complete()->orderByCreatedAt();
 
@@ -333,14 +334,14 @@ class ListController extends Controller
         for ($i = 0, $count = count($lots); $i < $count; $i++) {
             $data[$i] = Lot::getShortInfoArray($lots[$i]);
             $data[$i]['title'] = Yii::t('app', 'crops.' . $crops[$lots[$i]['crop_id']]);
-            $data[$i]['created_at'] = strval($lots[$i]['created_at']);
+            $data[$i]['created_at'] = Yii::$app->formatter->asDatetime($lots[$i]['created_at']);
         }
 
         return $this->asJson([
             'data' => $data,
             'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
         ]);
-    }
+    }*/
 
 
 

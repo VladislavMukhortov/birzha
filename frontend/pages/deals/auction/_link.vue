@@ -10,7 +10,7 @@
 
                     <b-col cols="12" md="8" lg="8">
 
-                        <BargainingUsersBlock v-bind:offer="offer" v-bind:deal="lot.deal" />
+                        <BargainingUsersBlock v-bind:offer="offer" />
 
                         <hr>
 
@@ -66,9 +66,9 @@ export default {
             return { result: 'error', lot: {} };
         });
 
-        // объявления нет, редиректим на 404
+        // объявления нет
         if (data.result !== 'success') {
-            $nuxt.$router.push('/market/404');
+            $nuxt.$router.push('/deals/auction');
             return;
         }
 

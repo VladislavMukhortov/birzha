@@ -43,17 +43,38 @@ class m190516_101123_create_company_table extends Migration
             'updated_at' => 'timestamp ON UPDATE NOW()'                 // дата изменения
         ], $tableOptions);
 
+        $company = [];
 
+        for ($i = 1; $i <= 1000; $i++) {
+            $id = $i;
+            $name = "Company #{$i}";
+            $location = "City #{$i}";
+            $swift = "111{$i}{$i}111";
+            $iban = "222{$i}{$i}222";
+            $bank_name = "Bank #{$i}";
+            $bank_location = "Bank city #{$i}";
+
+            $company[] = [
+                $id,
+                $name,
+                $location,
+                $swift,
+                $iban,
+                $bank_name,
+                $bank_location
+            ];
+        }
 
         // add data
-        $this->batchInsert('{{%company}}',
-            ['id', 'name',          'location', 'swift',    'iban',     'bank_name', 'bank_location'], [
-            [1,    'Company #1',    'City #1',  '1111111',  '1111111',  'Bank #1',   'Bank city #1'],
-            [2,    'Company #2',    'City #2',  '2222222',  '2222222',  'Bank #2',   'Bank city #2'],
-            [3,    'Company #3',    'City #3',  '3333333',  '3333333',  'Bank #3',   'Bank city #3'],
-            [4,    'Company #4',    'City #4',  '4444444',  '4444444',  'Bank #4',   'Bank city #4'],
-            [5,    'Company #5',    'City #5',  '5555555',  '5555555',  'Bank #5',   'Bank city #5']
-        ]);
+        $this->batchInsert('{{%company}}', [
+            'id',
+            'name',
+            'location',
+            'swift',
+            'iban',
+            'bank_name',
+            'bank_location'
+        ], $company);
     }
 
     /**

@@ -28,7 +28,7 @@ class m190516_101124_create_users_table extends Migration
             'company_id' => $this->integer()->unsigned()->defaultValue(null),   // ID компании
             'is_edit' => $this->boolean()->defaultValue(true),                  // измененный
             'status' => $this->boolean()->defaultValue(true),                   // статус пользователя
-            'timezone' => $this->string(6)->notNull()->defaultValue('+00:00'),  // часовой пояс
+            'timezone' => $this->string(30)->notNull()->defaultValue('UTC'),    // часовой пояс
             'language' => $this->string(5)->notNull()->defaultValue('en-US'),   // язык приложения
             'verify_email' => $this->string(32)->defaultValue(null),            // код для подтверждения email (NULL - подтвержден)
             'verify_phone' => $this->string(4)->defaultValue(null),             // код для подтверждения номера телефона (NULL - подтвержден)
@@ -68,21 +68,9 @@ class m190516_101124_create_users_table extends Migration
             $name = "{$first_name} {$second_name}";
 
             $link = security()->generateRandomString(15);
-            $email = "demo{$i}@demo.com";
+            $email = "{$i}@demo.com";
             $phone = '+7'. rand(100, 999) . rand(1000000, 9999999);
-            $company_id = 1;
-            if ($i >= 200) {
-                $company_id = 2;
-            }
-            if ($i >= 400) {
-                $company_id = 3;
-            }
-            if ($i >= 600) {
-                $company_id = 4;
-            }
-            if ($i >= 800) {
-                $company_id = 5;
-            }
+            $company_id = $i;
             // $image = '/uploads/a-' . rand(1, 20) . '.jpeg';
             $access_token = security()->generateRandomString(128);
 
@@ -98,11 +86,6 @@ class m190516_101124_create_users_table extends Migration
                 'General director',
                 $company_id,
                 false,
-                true,
-                '+00:00',
-                'en-US',
-                NULL,
-                NULL,
                 $access_token,
                 $password,
                 NULL
@@ -119,11 +102,6 @@ class m190516_101124_create_users_table extends Migration
             'position',
             'company_id',
             'is_edit',
-            'status',
-            'timezone',
-            'language',
-            'verify_email',
-            'verify_phone',
             'access_token',
             'password_hash',
             'password_reset_token'

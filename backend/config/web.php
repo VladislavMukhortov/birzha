@@ -21,7 +21,13 @@ $config = [
         'user' => [
             'identityClass' => app\models\User::class,
             'enableAutoLogin' => false,
-            'loginUrl' => ['auth/signin/index']
+            'loginUrl' => ['auth/signin/index'],
+            'on afterLogin' => function($event) {
+                // Если юзер авторизован то для вывода устанавливаем часовой пояс
+                if (Yii::$app->user->identity && Yii::$app->user->identity->timezone) {
+                    Yii::$app->formatter->timeZone = Yii::$app->user->identity->timezone;
+                }
+            },
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',

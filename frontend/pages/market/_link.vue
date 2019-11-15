@@ -28,7 +28,7 @@
                                 <p>
                                     <b-link
                                         to="/deals/auction"
-                                        class="btn btn-primary">Посмотреть список сделок</b-link>
+                                        class="btn btn-info">Посмотреть список сделок</b-link>
                                 </p>
                             </template>
 
@@ -60,7 +60,7 @@
                                     <div>{{ alertText }}</div>
                                     <b-link
                                         to="/deals/auction"
-                                        class="btn btn-primary">Посмотреть список сделок</b-link>
+                                        class="btn btn-info">Посмотреть список сделок</b-link>
                                 </b-alert>
 
                                 <b-alert

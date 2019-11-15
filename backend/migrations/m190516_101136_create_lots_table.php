@@ -157,19 +157,7 @@ class m190516_101136_create_lots_table extends Migration
         for ($i = 1; $i <= 1000; $i++) {
             $id = $i;
             $user_id = $i;
-            $company_id = 1;
-            if ($i >= 200) {
-                $company_id = 2;
-            }
-            if ($i >= 400) {
-                $company_id = 3;
-            }
-            if ($i >= 600) {
-                $company_id = 4;
-            }
-            if ($i >= 800) {
-                $company_id = 5;
-            }
+            $company_id = $i;
             $crop_id = rand(1, $crops_count);
             $deal = ((boolean) rand(0, 1)) ? 'buy' : 'sell';
             $price = rand(100, 9999) + (mt_rand(0 * 100, 1 * 100) / 100);

@@ -61,6 +61,7 @@ return [
             // 'schemaCache' => 'cache'
         ],
         'formatter' => [
+            'class' => yii\i18n\Formatter::class,
             'timeZone' => 'UTC',
             'dateFormat' => 'dd.MM.yyyy',
             'datetimeFormat' => 'HH:mm dd.MM.yyyy',

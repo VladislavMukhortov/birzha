@@ -161,19 +161,19 @@ class ShowController extends Controller
                 $my_offer = Offer::find()->my()->byLot($lot->id)->waitingAndAuction()->limit(1)->one();
                 if ($my_offer) {
                     $offer = ($my_offer->status === Offer::STATUS_AUCTION) ? 'auction' : 'wait';
-                    $offer_link = strval($my_offer->link);
-                    $offer_ended_at = strval($my_offer->ended_at);
+                    $offer_link = $my_offer->link;
+                    $offer_ended_at = $my_offer->ended_at;
                 }
             }
 
             $output['lot']['offer'] = $offer;
 
             if ($offer_link) {
-                $output['lot']['offer_link'] = $offer_link;
+                $output['lot']['offer_link'] = strval($offer_link);
             }
 
             if ($offer_ended_at) {
-                $output['lot']['offer_ended_at'] = $offer_ended_at;
+                $output['lot']['offer_ended_at'] = Yii::$app->formatter->asDatetime($offer_ended_at);
             }
 
         }
@@ -265,12 +265,38 @@ class ShowController extends Controller
 
         if ($offer) {
 
-            $lot = Lot::find($offer->lot_id)->active()->limit(1)->one();
+            $lot = Lot::find()->byId($offer->lot_id)->active()->limit(1)->one();
 
             if ($lot) {
                 $output['result'] = 'success';
                 $output['lot'] = Lot::getFullInfo($lot);
-                $output['offer'] = $offer;
+
+                $require_price_1 = (float) $offer['require_price_1'];
+                $require_price_2 = (float) $offer['require_price_2'];
+                $require_price_3 = (float) $offer['require_price_3'];
+                $lot_price_1 = (float) $offer['lot_price_1'];
+                $lot_price_2 = (float) $offer['lot_price_2'];
+
+                $output['offer'] = [
+                    /**
+                     * Определяем кто смотрит страницу, владелец объявления или контрагент(вторая сторона)
+                     */
+                    'lot_owner' => ((int) $offer['lot_owner_id'] === (int) Yii::$app->user->identity->company_id) ? true : false,
+                    'link' => strval($offer['link']),
+                    'deal' => strval($lot['deal']),
+                    'currency' => strval($lot['currency']),
+                    'lot_owner_id' => $offer['lot_owner_id'], // DELETE
+                    'counterparty_id' => $offer['counterparty_id'], // DELETE
+                    'ended_at' => Yii::$app->formatter->asDatetime($offer['ended_at']),
+                    'price' => [
+                        'require_1' => ($require_price_1) ? Yii::$app->formatter->asCurrency($require_price_1, $lot['currency']) : '',
+                        'require_2' => ($require_price_2) ? Yii::$app->formatter->asCurrency($require_price_2, $lot['currency']) : '',
+                        'require_3' => ($require_price_3) ? Yii::$app->formatter->asCurrency($require_price_3, $lot['currency']) : '',
+                        'lot_1' => ($lot_price_1) ? Yii::$app->formatter->asCurrency($lot_price_1, $lot['currency']) : '',
+                        'lot_2' => ($lot_price_2) ? Yii::$app->formatter->asCurrency($lot_price_2, $lot['currency']) : '',
+                    ],
+                    'price_offer' => $offer->priceOfferInAuction(),
+                ];
             }
         }
 

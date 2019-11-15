@@ -220,7 +220,85 @@ class Offer extends ActiveRecord
         $auction_time_s = self::AUCTION_TIME[$key];
         $time = time() + $auction_time_s;
         $this->auction_time_s = $auction_time_s;
-        $this->ended_at = Yii::$app->formatter->asDatetime($time, Yii::$app->params['db.commonDatetime']);
+        /**
+         * Не используем formatter->asDatetime, так как после авторизации пользователя
+         * он возвращает время в часовом поясе пользователя
+         */
+        $this->ended_at = date_format(date_create("@{$time}"), Yii::$app->params['db.commonDatetime']);
+    }
+
+
+
+    /**
+     * Определяем кто из пользователей предлагает цену.
+     * Контрагент имеет право 3 раза предложить свою цену. Владелец либо соглашается,
+     * либо указывает цену на которую он готов
+     *
+     * 'owner'         - цену вводит владелец объявления
+     * 'counterparty'  - цену вводит вторая сторона
+     * 'last'          - последний шаг, можно либо согласиться, либо отказаться
+     *
+     * @return string
+     */
+    public function priceOfferInAuction() : string
+    {
+        $str = 'counterparty';
+
+        $require_price_1 = (float) $this->require_price_1;
+        $require_price_2 = (float) $this->require_price_2;
+        $require_price_3 = (float) $this->require_price_3;
+        $lot_price_1 = (float) $this->lot_price_1;
+        $lot_price_2 = (float) $this->lot_price_2;
+
+        if ($require_price_1 || $require_price_2) {
+            $str = 'owner';
+        }
+
+        if ($lot_price_1 || $lot_price_2) {
+            $str = 'counterparty';
+        }
+
+        if ($require_price_3) {
+            $str = 'last';
+        }
+        return $str;
+    }
+
+
+
+    /**
+     * Устанавливаем цену
+     * @param float $price новая цена оффера, устанавливается во время торгов (ТВЕРДО)
+     */
+    public function setPrice($price) : void
+    {
+        // Цену предлагает контрагент (вторая сторона)
+        if ((int) $this->counterparty_id === Yii::$app->user->identity->company_id) {
+            if (!$this->require_price_1) {
+                $this->require_price_1 = (float) $price;
+                return;
+            }
+            if ($this->lot_price_1 && !$this->require_price_2) {
+                $this->require_price_2 = (float) $price;
+                return;
+            }
+            if ($this->lot_price_2 && !$this->require_price_3) {
+                $this->require_price_3 = (float) $price;
+                return;
+            }
+        }
+
+        // Цену устанавливает владелец объявления
+        if ((int) $this->lot_owner_id === Yii::$app->user->identity->company_id) {
+            if ($this->require_price_1 && !$this->lot_price_1) {
+                $this->lot_price_1 = (float) $price;
+                return;
+            }
+            if ($this->require_price_2 && !$this->lot_price_2) {
+                $this->lot_price_2 = (float) $price;
+                return;
+            }
+        }
     }
 
 }

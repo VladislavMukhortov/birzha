@@ -178,7 +178,8 @@ class ListController extends Controller
             if (isset($offers_auction[$offers[$i]['id']])) {
                 $data[$i]['is_auction'] = true;
                 $data[$i]['link'] = strval($offers_auction[$offers[$i]['id']]['link']);
-                $data[$i]['desc'] = sprintf('"Твердо" до %s', $offers_auction[$offers[$i]['id']]['ended_at']);
+                $ended_at = Yii::$app->formatter->asDatetime($offers_auction[$offers[$i]['id']]['ended_at']);
+                $data[$i]['desc'] = sprintf('"Твердо" до %s', $ended_at);
             } else {
                 // Запросили "твердо" к моему объявлению
                 if ((int) $offers[$i]['lot_owner_id'] === Yii::$app->user->identity->company_id) {

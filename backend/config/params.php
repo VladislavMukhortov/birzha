@@ -20,7 +20,8 @@ return [
     'user.pathCropImage' => '/uploads/crop/',
 
 
-    'db.commonDatetime' => 'php:Y-m-d H:i:s',               // шаблон времени для записи в БД
+    'db.commonDatetimeformatter' => 'php:Y-m-d H:i:s',      // шаблон времени для записи в БД для formatter
+    'db.commonDatetime' => 'Y-m-d H:i:s',                   // шаблон времени для записи в БД
 
     'frontendURL' => 'http://dev.russiangrainmarket.ru/',
 ];

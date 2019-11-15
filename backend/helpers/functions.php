@@ -141,3 +141,54 @@ if (!function_exists('tofloat')) {
     }
 }
 
+if (!function_exists('convertTimeZoneFromJS')) {
+    /**
+     * Преобразуем часовой пояс полученный от пользователя в строку для хранения в БД
+     *
+     * @param  string $tz
+     * @return string
+     */
+    function convertTimeZoneFromJS($tz = '') : string
+    {
+        switch ($tz) {
+            case '0'    : return 'UTC';                  // +00:00
+            case '-60'  : return 'Europe/Berlin';        // +01:00
+            case '60'   : return 'America/Scoresbysund'; // -01:00
+            case '-120' : return 'Europe/Kiev';          // +02:00
+            case '120'  : return 'America/Noronha';      // -02:00
+            case '-180' : return 'Europe/Moscow';        // +03:00
+            case '180'  : return 'America/Santiago';     // -03:00
+            case '-210' : return 'Asia/Tehran';          // +03:30
+            case '210'  : return 'America/St_Johns';     // -03:30
+            case '-240' : return 'Asia/Dubai';           // +04:00
+            case '240'  : return 'America/Dominica';     // -04:00
+            case '-270' : return 'Asia/Kabul';           // +04:30
+            case '-300' : return 'Asia/Yekaterinburg';   // +05:00
+            case '300'  : return 'America/Cayman';       // -05:00
+            case '-330' : return 'Asia/Colombo';         // +05:30
+            case '-345' : return 'Asia/Kathmandu';       // +05:45
+            case '-360' : return 'Asia/Omsk';            // +06:00
+            case '360'  : return 'America/Chicago';      // -06:00
+            case '-390' : return 'Asia/Yangon';          // +06:30
+            case '-420' : return 'Asia/Bangkok';         // +07:00
+            case '420'  : return 'America/Chihuahua';    // -07:00
+            case '-480' : return 'Asia/Hong_Kong';       // +08:00
+            case '480'  : return 'America/Los_Angeles';  // -08:00
+            case '-525' : return 'Australia/Eucla';      // +08:45
+            case '-540' : return 'Asia/Tokyo';           // +09:00
+            case '540'  : return 'America/Anchorage';    // -09:00
+            case '-570' : return 'Australia/Darwin';     // +09:30
+            case '570'  : return 'Pacific/Marquesas';    // -09:30
+            case '-600' : return 'Asia/Vladivostok';     // +10:00
+            case '600'  : return 'America/Adak';         // -10:00
+            case '-630' : return 'Australia/Adelaide';   // +10:30
+            case '-660' : return 'Australia/Sydney';     // +11:00
+            case '660'  : return 'Pacific/Midway';       // -11:00
+            case '-720' : return 'Asia/Kamchatka';       // +12:00
+            case '-780' : return 'Antarctica/McMurdo';   // +13:00
+            case '-840' : return 'Pacific/Apia';         // +14:00
+            default     : return 'UTC';                  // +00:00
+        }
+    }
+}
+

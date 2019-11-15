@@ -21,6 +21,7 @@ class Signup extends Model
     public $company_name;
     public $company_swift;
     public $company_iban;
+    public $timezone;
 
 
 
@@ -36,6 +37,7 @@ class Signup extends Model
             'company_name' => '',
             'company_swift' => '',
             'company_iban' => '',
+            'timezone' => '',
         ];
     }
 
@@ -52,9 +54,10 @@ class Signup extends Model
                 'required',
             ],
             [
-                ['member_name','member_phone','member_email','company_name','company_swift','company_iban',],
+                ['member_name','member_phone','member_email','company_name','company_swift','company_iban','timezone'],
                 'trim',
             ],
+            ['timezone', 'default', 'value' => '0',],
         ];
     }
 
@@ -102,7 +105,7 @@ class Signup extends Model
             $user->setEmail($this->member_email);
             $user->setPhone($this->member_phone);
             $user->company_id = $company->id;
-            $user->timezone = '+00:00';
+            $user->timezone = convertTimeZoneFromJS($this->timezone);
             $user->language = Yii::$app->language;
             $user->setVerifyEmail();
             $user->setVerifyPhone();
