@@ -271,7 +271,7 @@ class Lot extends ActiveRecord
     */
     public function setStatus() : void
     {
-        $this->status = (int) self::STATUS_ACTIVE;
+        $this->status = self::STATUS_ACTIVE;
     }
 
 
@@ -281,7 +281,17 @@ class Lot extends ActiveRecord
     */
     public function setStatusDelete() : void
     {
-        $this->status = (int) self::STATUS_ARCHIVE;
+        $this->status = self::STATUS_ARCHIVE;
+    }
+
+
+
+    /**
+     * Устанавливаем статус - удалено
+    */
+    public function setStatusCommunication() : void
+    {
+        $this->status = self::STATUS_COMMUNICATION;
     }
 
 

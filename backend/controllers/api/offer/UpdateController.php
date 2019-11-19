@@ -12,6 +12,8 @@ use yii\filters\auth\HttpHeaderAuth;
 use yii\web\Response;
 
 use app\models\form\offer\NewPrice;
+use app\models\form\offer\AcceptPrice;
+use app\models\form\offer\CancelPrice;
 
 /**
  * API Создание оффера
@@ -112,6 +114,45 @@ class UpdateController extends Controller
 
 
 
+    /**
+     * Принимаем цену которую торговали в твердо
+     * @return string
+     */
+    public function actionAcceptPrice() : Response
+    {
+        $result = [
+            'result' => 'error',
+        ];
+
+        $model = new AcceptPrice();
+        if ($model->load(Yii::$app->request->post(), '')) {
+            $result = $model->save();
+        }
+
+        return $this->asJson($result);
+    }
+
+
+
+    /**
+     * Отказ от цены.
+     * Используется только владельцем объявления, когда вторая сторона предлагает
+     * свою цену в третий раз.
+     * @return string
+     */
+    public function actionCancelPrice() : Response
+    {
+        $result = [
+            'result' => 'error',
+        ];
+
+        $model = new CancelPrice();
+        if ($model->load(Yii::$app->request->post(), '')) {
+            $result = $model->save();
+        }
+
+        return $this->asJson($result);
+    }
 
 
 

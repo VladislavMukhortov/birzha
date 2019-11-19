@@ -188,6 +188,18 @@ class Offer extends ActiveRecord
 
 
     /**
+     * Устанавливаем статус оффера как удаленный
+     * Когда стороны не договорились о цене
+     * Либо закончилось время для "твердо"
+    */
+    public function setStatusInactive() : void
+    {
+        $this->status = self::STATUS_INACTIVE;
+    }
+
+
+
+    /**
      * Устанавливаем статус ожидание подтверждения статуса "твердо"
     */
     public function setStatusWaiting() : void
@@ -203,6 +215,18 @@ class Offer extends ActiveRecord
     public function setStatusAuction() : void
     {
         $this->status = self::STATUS_AUCTION;
+    }
+
+
+
+    /**
+     * Устанавливаем статус коммуникации
+     * Этот статус следует за статусом "твердо",
+     * когда стороны согласны к дальнейшиму сотрудничеству
+    */
+    public function setStatusCommunication() : void
+    {
+        $this->status = self::STATUS_COMMUNICATION;
     }
 
 
@@ -250,18 +274,87 @@ class Offer extends ActiveRecord
         $lot_price_1 = (float) $this->lot_price_1;
         $lot_price_2 = (float) $this->lot_price_2;
 
-        if ($require_price_1 || $require_price_2) {
+        if ($require_price_1) {
             $str = 'owner';
         }
 
-        if ($lot_price_1 || $lot_price_2) {
+        if ($lot_price_1 && !$require_price_2) {
             $str = 'counterparty';
         }
+
+        if ($require_price_2 && !$lot_price_2) {
+            $str = 'owner';
+        }
+
+        if ($lot_price_2 && !$require_price_3) {
+            $str = 'counterparty';
+        }
+
+        // if ($require_price_1 || $require_price_2) {
+        //     $str = 'owner';
+        // }
+
+        // if ($lot_price_1 || $lot_price_2) {
+        //     $str = 'counterparty';
+        // }
 
         if ($require_price_3) {
             $str = 'last';
         }
         return $str;
+    }
+
+
+
+    /**
+     * [priceListInAuction description]
+     * @param  string $currency буквенный код валюты
+     * @return array
+     */
+    public function priceListInAuction($currency) : array
+    {
+        $price = [
+            'require_1' => '',
+            'require_2' => '',
+            'require_3' => '',
+            'lot_1' => '',
+            'lot_2' => '',
+        ];
+
+        $is_lot_owner = (int) $this->lot_owner_id === Yii::$app->user->identity->company_id;
+
+        if ((float) $this->require_price_1) {
+            $require_1 = Yii::$app->formatter->asCurrency((float) $this->require_price_1, $currency);
+            $price['require_1'] = ($is_lot_owner)
+                ? sprintf('%s: %s', 'Контрагент запросил цену', $require_1)
+                : sprintf('%s: %s', 'Вы запросили цену', $require_1);
+        }
+        if ((float) $this->require_price_2) {
+            $require_2 = Yii::$app->formatter->asCurrency((float) $this->require_price_2, $currency);
+            $price['require_2'] = ($is_lot_owner)
+                ? sprintf('%s: %s', 'Контрагент запросил цену', $require_2)
+                : sprintf('%s: %s', 'Вы запросили цену', $require_2);
+        }
+        if ((float) $this->require_price_3) {
+            $require_3 = Yii::$app->formatter->asCurrency((float) $this->require_price_3, $currency);
+            $price['require_3'] = ($is_lot_owner)
+                ? sprintf('%s: %s', 'Контрагент запросил цену', $require_3)
+                : sprintf('%s: %s', 'Вы запросили цену', $require_3);
+        }
+        if ((float) $this->lot_price_1) {
+            $lot_1 = Yii::$app->formatter->asCurrency((float) $this->lot_price_1, $currency);
+            $price['lot_1'] = ($is_lot_owner)
+                ? sprintf('%s: %s', 'Вы установили цену', $lot_1)
+                : sprintf('%s: %s', 'Владелец установил цену', $lot_1);
+        }
+        if ((float) $this->lot_price_2) {
+            $lot_2 = Yii::$app->formatter->asCurrency((float) $this->lot_price_2, $currency);
+            $price['lot_2'] = ($is_lot_owner)
+                ? sprintf('%s: %s', 'Вы установили цену', $lot_2)
+                : sprintf('%s: %s', 'Владелец установил цену', $lot_2);
+        }
+
+        return $price;
     }
 
 

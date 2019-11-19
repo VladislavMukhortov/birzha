@@ -105,21 +105,9 @@ class NewPrice extends Model
 
         $output['result'] = 'success';
 
-        $require_price_1 = (float) $offer->require_price_1;
-        $require_price_2 = (float) $offer->require_price_2;
-        $require_price_3 = (float) $offer->require_price_3;
-        $lot_price_1 = (float) $offer->lot_price_1;
-        $lot_price_2 = (float) $offer->lot_price_2;
-
         $lot = Lot::find()->byId($offer->lot_id)->active()->limit(1)->one();
 
-        $output['offer']['price'] = [
-            'require_1' => ($require_price_1) ? Yii::$app->formatter->asCurrency($require_price_1, $lot->currency) : '',
-            'require_2' => ($require_price_2) ? Yii::$app->formatter->asCurrency($require_price_2, $lot->currency) : '',
-            'require_3' => ($require_price_3) ? Yii::$app->formatter->asCurrency($require_price_3, $lot->currency) : '',
-            'lot_1' => ($lot_price_1) ? Yii::$app->formatter->asCurrency($lot_price_1, $lot->currency) : '',
-            'lot_2' => ($lot_price_2) ? Yii::$app->formatter->asCurrency($lot_price_2, $lot->currency) : '',
-        ];
+        $output['offer']['price'] = $offer->priceListInAuction($lot['currency']);
         $output['offer']['price_offer'] = $offer->priceOfferInAuction();
 
         return $output;
