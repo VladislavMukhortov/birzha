@@ -75,7 +75,7 @@ class AcceptPrice extends Model
         $transaction_lot = Lot::getDb()->beginTransaction();
 
         // определяем цену
-        $price = 0;
+        $price = $lot->price;
         if ($offer->require_price_1) {
             $price = $offer->require_price_1;
         }

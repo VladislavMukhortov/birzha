@@ -21,7 +21,7 @@
                             no-page-detect
                             use-router></b-pagination-nav>
 
-                        <b-list-group>
+                        <b-list-group v-if="offers.length">
                             <b-list-group-item v-for="item in offers" v-bind:key="item.link">
 
                                 <ShortDescriptionItemList v-bind:lot="item" />
@@ -30,20 +30,32 @@
 
                                 <div>
                                     <template v-if="item.is_auction">
-                                        <b-link class="btn btn-primary" v-bind:to="'/deals/auction/'+item.link">Перейти в сделку</b-link>
+                                        <b-link
+                                            v-bind:to="{name: 'deals-auction-link', params: {link: item.link}}"
+                                            class="btn btn-primary">Перейти в сделку</b-link>
                                     </template>
                                     <template v-else>
                                         <template v-if="item.is_my">
-                                            <b-link class="btn btn-info" v-bind:to="'/orders/'+item.link">Посмотреть запросы к объявлению</b-link>
+                                            <b-link
+                                                v-bind:to="{name: 'orders-link', params: {link: item.link}}"
+                                                class="btn btn-info">Посмотреть запросы к объявлению</b-link>
                                         </template>
                                         <template v-else>
-                                            <b-link class="btn btn-secondary" v-bind:to="'/market/'+item.link">Посмотреть объявление</b-link>
+                                            <b-link
+                                                v-bind:to="{name: 'market-link', params: {link: item.link}}"
+                                                class="btn btn-secondary">Посмотреть объявление</b-link>
                                         </template>
                                     </template>
                                 </div>
 
+
+
                             </b-list-group-item>
                         </b-list-group>
+                        <div v-else>
+                            <h2 class="section_subtitle">У вас нет сделок и/или запросов на сделку</h2>
+                            <b-link to="/deals" class="btn btn-primary">Deals</b-link>
+                        </div>
 
                         <b-pagination-nav
                             v-if="offers.length"
@@ -154,23 +166,4 @@ export default {
 
 
 <style lang='scss'>
-.order-item {
-}
-
-.order-item-title {
-    position: relative;
-    padding: 0 150px 0 0;
-    text-transform: uppercase;
-}
-
-.order-item-price {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.order-item-desc {
-    position: relative;
-    padding: 0 150px 0 0;
-}
 </style>

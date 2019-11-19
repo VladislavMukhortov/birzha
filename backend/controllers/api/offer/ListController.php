@@ -206,60 +206,34 @@ class ListController extends Controller
      */
     public function actionCommunication() : Response
     {
-        /*$tl = Lot::tableName();
+        $tl = Lot::tableName();
         $to = Offer::tableName();
 
+        // получаю информацию об объявлениях которые ожидают "твердо" или в статусе "твердо"
         $query = (new Query())
             ->select([
-                "{$tl}.id",                 // удалить, нельзя показывать
-                "{$tl}.company_id",         // удалить, нельзя показывать
-                "{$tl}.crop_id",
-                "{$tl}.deal",
-                "{$tl}.price",
-                "{$tl}.currency",
-                "{$tl}.quantity",
-                "{$tl}.period",
-                "{$tl}.basis",
-                "{$tl}.fob_port",
-                "{$tl}.fob_terminal",
-                "{$tl}.cif_country",
-                "{$tl}.cif_port",
-                "{$tl}.moisture",
-                "{$tl}.foreign_matter",
-                "{$tl}.grain_admixture",
-                "{$tl}.gluten",
-                "{$tl}.protein",
-                "{$tl}.natural_weight",
-                "{$tl}.falling_number",
-                "{$tl}.vitreousness",
-                "{$tl}.ragweed",
-                "{$tl}.bug",
-                "{$tl}.oil_content",
-                "{$tl}.oil_admixture",
-                "{$tl}.broken",
-                "{$tl}.damaged",
-                "{$tl}.dirty",
-                "{$tl}.ash",
-                "{$tl}.erucidic_acid",
-                "{$tl}.peroxide_value",
-                "{$tl}.acid_value",
-                "{$to}.counterparty_id",
-                "{$to}.link",
-                "{$to}.status",
-                "{$to}.created_at",
-                "{$to}.ended_at",
+                "{$tl}.*",
+                "{$to}.link AS offer_link",
             ])
-            ->from($tl)
+            ->from($to)
             ->where([
                 "{$to}.status" => Offer::STATUS_COMMUNICATION,
             ])
-            ->andWhere(["or", "{$to}.lot_owner_id = :company_id", "{$to}.counterparty_id = :company_id"])
-            ->rightJoin("{$to}", "{$to}.lot_id = {$tl}.id")
+            ->andWhere([
+                "or",
+                "{$to}.lot_owner_id = :my_company_id",
+                "{$to}.counterparty_id = :my_company_id",
+            ])
+            ->leftJoin("{$tl}", "{$tl}.id = {$to}.lot_id")
             ->orderBy([
                 "{$to}.created_at" => SORT_DESC,
                 "{$to}.id" => SORT_DESC,
             ])
-            ->params([':company_id' => Yii::$app->user->identity->company_id]);
+            // груперуем по ID объявления, что бы исключить дубликаты своего объявления
+            ->groupBy("{$to}.lot_id")
+            ->params([
+                ':my_company_id' => Yii::$app->user->identity->company_id
+            ]);
 
         $data_provider = new ActiveDataProvider([
             'query' => $query,
@@ -271,21 +245,18 @@ class ListController extends Controller
         $offers = $data_provider->getModels();
         $data = [];
 
-        $crops = Crops::find()->allArray();
-        $crops = ArrayHelper::map($crops, 'id', 'name');
+        // названия культур
+        $crops = ArrayHelper::map(Crops::find()->allArray(), 'id', 'name');
 
         for ($i = 0, $count = count($offers); $i < $count; $i++) {
             $data[$i] = [
-                // 'id' => strval($offers[$i]['id']),                    // удалить, нельзя показывать
-                // 'company_id' => strval($offers[$i]['company_id']),    // удалить, нельзя показывать
                 'title' => Yii::t('app', 'crops.' . $crops[$offers[$i]['crop_id']]),
                 'deal' => strval($offers[$i]['deal']),
-                'basis' => strval($offers[$i]['basis']),
                 'price' => Yii::$app->formatter->asCurrency($offers[$i]['price'], $offers[$i]['currency']),
-                'quantity' => strval($offers[$i]['quantity']),
+                'quantity' => (int) $offers[$i]['quantity'],
                 'period' => strval($offers[$i]['period']),
-                'link' => strval($offers[$i]['link']),
-                'created_at' => strval($offers[$i]['created_at']),
+                'link' => strval($offers[$i]['offer_link']),
+                'basis' => strval($offers[$i]['basis']),
                 'basis_location' => Lot::getBasisLocationArray($offers[$i]),
                 'quality' => Lot::getStrQuality($offers[$i]),
             ];
@@ -294,7 +265,7 @@ class ListController extends Controller
         return $this->asJson([
             'data' => $data,
             'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
-        ]);*/
+        ]);
     }
 
 
