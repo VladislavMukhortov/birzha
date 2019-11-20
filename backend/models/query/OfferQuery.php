@@ -124,6 +124,19 @@ class OfferQuery extends ActiveQuery
 
 
     /**
+     * Оффер в статусе общения
+     * @return
+     */
+    public function communication()
+    {
+        return $this->andWhere([
+            'status' => Offer::STATUS_COMMUNICATION,
+        ]);
+    }
+
+
+
+    /**
      * Оффер в статусе "твердо"
      * для проверки есть ли оффер в статусе "твердо"
      * @return boolean

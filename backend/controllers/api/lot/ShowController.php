@@ -182,6 +182,7 @@ class ShowController extends Controller
     }
 
 
+
     /**
      * Данные об объявлении для просмотра/редактирования
      * @param  string 'link' ссылка объявления
@@ -285,6 +286,52 @@ class ShowController extends Controller
                     'price' => $offer->priceListInAuction($lot['currency']),
                     'price_offer' => $offer->priceOfferInAuction(),
                 ];
+            }
+        }
+
+        return $this->asJson($output);
+    }
+
+
+
+    /**
+     * Данные объявления, оффера и чата для взаимодействия в статусе общения
+     * @param  string 'link' ссылка оффера
+     * @return
+     */
+    public function actionCommunication() : Response
+    {
+        $link = trim(strval(Yii::$app->request->get('link', '')));
+
+        // офер
+        $offer = Offer::find()->byLink($link)->communication()->limit(1)->one();
+
+        $output = [
+            'result' => 'error',
+        ];
+
+        if ($offer) {
+
+            $lot = Lot::find()->byId($offer->lot_id)->communication()->limit(1)->one();
+
+            if ($lot) {
+                $output['result'] = 'success';
+                $output['lot'] = Lot::getFullInfo($lot);
+
+                // $output['offer'] = [
+                //     /**
+                //      * Определяем кто смотрит страницу, владелец объявления или контрагент(вторая сторона)
+                //      */
+                //     'lot_owner' => ((int) $offer['lot_owner_id'] === (int) Yii::$app->user->identity->company_id) ? true : false,
+                //     'link' => strval($offer['link']),
+                //     'deal' => strval($lot['deal']),
+                //     'currency' => strval($lot['currency']),
+                //     'lot_owner_id' => $offer['lot_owner_id'], // DELETE
+                //     'counterparty_id' => $offer['counterparty_id'], // DELETE
+                //     'ended_at' => Yii::$app->formatter->asDatetime($offer['ended_at']),
+                //     'price' => $offer->priceListInAuction($lot['currency']),
+                //     'price_offer' => $offer->priceOfferInAuction(),
+                // ];
             }
         }
 

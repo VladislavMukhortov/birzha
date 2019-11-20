@@ -1,10 +1,25 @@
-// Страница для сделки (оффера) который в статусе "твердо"
-// ведется торг между сторонами сделки
+// Страница для сделки (оффера) который на этапе общения
+// не показывать контакты друг друга
 
 <template>
 
     <main>
+        <section class="section_block">
+            <b-container>
+                <b-row>
 
+                    <b-col cols="12" md="8" lg="8">
+
+
+                        <hr>
+
+                        <FullInfo v-bind:lot="lot" />
+
+                    </b-col>
+
+                </b-row>
+            </b-container>
+        </section>
     </main>
 
 </template>
@@ -12,10 +27,16 @@
 
 
 <script>
+import FullInfo from '~/components/lot/FullInfo.vue';
+
 export default {
+    components: {
+        FullInfo,
+    },
+
     head() {
         return {
-            title: 'Auction deals | site.com',
+            title: 'Communication deals | site.com',
         }
     },
 
@@ -25,34 +46,32 @@ export default {
 
     data() {
         return {
-            offer: {},
+            lot: {},
+            // offer: {},
         }
     },
 
-    /**
-     * получаем данные о объявлении
-     * @return object
-     */
     async asyncData({ $axios, params }) {
-        let lot_param = {params: {
+        let _param = {params: {
             link: params.link
         }};
 
-        /**
-         * @param  Object res информация об объявлении
-         */
-        // let res = await $axios.$get('/api/lot/market-show/index', lot_param).then((res) => {
-        //     return res;
-        // });
+        let data = await $axios.$get('/api/lot/show/communication', _param).then((res) => {
+            return res;
+        }).catch((error) => {
+            return { result: 'error', lot: {} };
+        });
 
-        // // объявления нет, редиректим на 404
-        // if (!res.success) {
-        //     $nuxt.$router.push('/market/404');
-        //     return;
-        // }
+        // объявления нет
+        if (data.result !== 'success') {
+            $nuxt.$router.push('/deals/communication');
+            return;
+        }
 
-        // return { lot: res.lot };
-        return true;
+        return {
+            lot: data.lot,
+            // offer: data.offer,
+        };
     },
 
     methods: {
