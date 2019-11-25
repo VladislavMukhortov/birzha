@@ -352,7 +352,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param  string $email
      * @return string
      */
-    public function cleanEmail(string $email) : string
+    public static function cleanEmail(string $email) : string
     {
         $email = mb_convert_encoding(strval($email), 'UTF-8', 'UTF-8');
         $email = mb_substr($email, 0, self::EMAIL_LENGTH_MAX);
@@ -379,7 +379,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param  string $phone
      * @return string
      */
-    public function cleanPhoneNumber(string $phone) : string
+    public static function cleanPhoneNumber(string $phone) : string
     {
         $phone = mb_convert_encoding(strval($phone), 'UTF-8', 'UTF-8');
         $phone = mb_substr($phone, 0, self::PHONE_LENGTH_MAX);

@@ -48,7 +48,7 @@ class OfferController extends Controller
                 'status' => Offer::STATUS_INACTIVE,
                 'ended_at' => NULL,
             ], [
-                'and'
+                'and',
                 ['status' => Offer::STATUS_AUCTION],
                 ['>', 'ended_at', $now]
             ]

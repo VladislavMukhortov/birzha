@@ -50,6 +50,7 @@ class EmailNotification
 
             return (boolean) $sending;
         }
+		return false;
     }
 
 
@@ -89,6 +90,7 @@ class EmailNotification
 
             return (boolean) $sending;
         }
+		return false;
     }
 
 
@@ -126,6 +128,7 @@ class EmailNotification
 
             return (boolean) $sending;
         }
+		return false;
     }
 
 
@@ -163,6 +166,7 @@ class EmailNotification
 
             return (boolean) $sending;
         }
+		return false;
     }
 
 
@@ -200,103 +204,7 @@ class EmailNotification
 
             return (boolean) $sending;
         }
+		return false;
     }
-
-
-
-
-
-
-
-    /**
-     * отправляем пользователю сообщение для подтверждения привязки email к его странице
-     * @param  User  $user пользователь
-  */
-    // public static function sendMailAboutChangeEmail(User $user)
-    // {
-    //     if (filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
-    //         Yii::$app->mailer->compose([
-    //             'html' => '_profile/settings/change-email-html',
-    //             'text' => '_profile/settings/change-email-text'
-    //         ], [
-    //             'user' => $user
-    //         ])
-    //         ->setFrom([Yii::$app->params['noreplyEmail'] => Yii::$app->name . ' robot'])
-    //         ->setTo($user->email)
-    //         ->setSubject(Yii::$app->name . ' - Привязка email к странице')
-    //         ->send();
-    //     }
-    // }
-
-
-    /**
-     * отправляем пользователю уведомление о новой рассылке на сайте
-     * вызываем по крону в ProfileController->actionSendNoticeRequest
-     * @param  array $user пользователь которому отправляем уведомление
-     */
-    // public static function sendMailNoticeRequest($user)
-    // {
-    //     if (filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
-    //         $mailer = Yii::createObject([
-    //             'class' => 'yii\swiftmailer\Mailer',
-    //             'transport' => [
-    //                 'class' => 'Swift_SmtpTransport',
-    //                 'host' => 'smtp.beget.com',
-    //                 'username' => 'notice-mailer@metressa.com',
-    //                 'password' => '%ntCOqK8O*2ZaDUz',
-    //                 'port' => '465',
-    //                 'encryption' => 'ssl'
-    //             ],
-    //         ]);
-
-    //         $mailer->compose([
-    //             'html' => '_cron/notice-request-html',
-    //             'text' => '_cron/notice-request-text'
-    //         ], [
-    //             'user' => $user
-    //         ])
-    //         ->setFrom([Yii::$app->params['noreplyEmail'] => Yii::$app->name . ' robot'])
-    //         ->setTo($user['email'])
-    //         ->setSubject(Yii::$app->name . ' - Свежее предложение')
-    //         ->send();
-    //     }
-    // }
-
-
-
-
-
-    /**
-     * отправляем сообщение с формы обратной связи
-     * вызываем в FeedbackForm->send
-     * @param  array $data  данные с формы
-     * @return boolean
-     */
-    // public static function sendFeedbackForm($data = [])
-    // {
-    //     $success = false;
-
-    //     if (filter_var(Yii::$app->params['supportEmail'], FILTER_VALIDATE_EMAIL)) {
-    //         $success = Yii::$app->mailer->compose([
-    //             'text' => '_site/feedback-text'
-    //         ], [
-    //             'data' => $data
-    //         ])
-    //         ->setFrom([Yii::$app->params['noreplyEmail'] => $data['name']])
-    //         ->setTo(Yii::$app->params['supportEmail'])
-    //         ->setSubject(Yii::$app->name . ' - ' . $data['cause'])
-    //         ->send();
-    //     }
-
-    //     return (boolean) $success;
-    // }
-
-
-
-
-
-
-
-
 
 }
