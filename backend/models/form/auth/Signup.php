@@ -80,6 +80,7 @@ class Signup extends Model
 
         $company = new Company();
         Company::getDb()->transaction(function($db) use ($company) {
+			
             $company->setName($this->company_name);
             $company->setSWIFT($this->company_swift);
             $company->setIBAN($this->company_iban);
@@ -115,9 +116,12 @@ class Signup extends Model
         });
 
         if ($user->hasErrors()) {
+			Company::find()->where(['id' => $company->id])->one()->delete();
             $result['messages'] = $user->getFirstErrors();
             return $result;
         }
+		
+		
 
         $result['result'] = 'success';
         // данные для авторизации не передаются так как авторизация проходит после подтверждения почты
