@@ -12,7 +12,7 @@ class OfferQuery extends ActiveQuery
 {
 
     /**
-     * Только польхователи из оффера
+     * Только пользователи из оффера
      * @return
      */
     public function inUser()

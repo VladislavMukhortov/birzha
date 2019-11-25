@@ -9,6 +9,8 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\db\Query;
 
+use app\models\query\MessagesQuery;
+
 use app\models\User;
 use app\models\Company;
 
@@ -17,6 +19,7 @@ use app\models\Company;
  * сообщения хранятся в base64
  *
  * @property integer   id
+ * @property integer   offer_id         ID оффера
  * @property integer   sender_id        ID отправителя
  * @property integer   receiver_id      ID получателя
  * @property integer   type             тип контента сообщения
@@ -32,14 +35,20 @@ use app\models\Company;
 class Messages extends ActiveRecord
 {
 
-    const DEFAULT_DIALOG_COUNT = 50;    // кол-во диалогов для запроса
-    const MESSAGES_COUNT = 40;          // кол-во сообщений для запроса
-    const MESSAGE_PREVIEW_LENGTH = 25;  // длина сообщений для превью
+    public const DEFAULT_DIALOG_COUNT = 50;    // кол-во диалогов для запроса
+    public const MESSAGES_COUNT = 40;          // кол-во сообщений для запроса
+    public const MESSAGE_PREVIEW_LENGTH = 25;  // длина сообщений для превью
+
+
+    public const TYPE_TEXT = 'text';
+    public const TYPE_IMG = 'img';
+    public const TYPE_LINK = 'link';
 
     // тип контента сообщения
-    const TYPE = [
-        'text' => 1,    // текст
-        'img' => 2,     // картинка
+    public const TYPE = [
+        self::TYPE_TEXT => 1,   // текст
+        self::TYPE_IMG => 2,    // картинка
+        self::TYPE_LINK => 3,   // ссылка (не используется)
     ];
 
 
@@ -93,6 +102,99 @@ class Messages extends ActiveRecord
             ['text', 'string'],
             ['translation', 'default', 'value' => NULL],
         ];
+    }
+
+
+
+    /**
+     * @return MessagesQuery
+     */
+    public static function find()
+    {
+        return new MessagesQuery(get_called_class());
+    }
+
+
+
+    /**
+     * Устанавливаем текст сообщения
+     * @param string $text
+     */
+    public function setText($text = '') : void
+    {
+        $text = trim($text);
+        $text = preg_replace('/[\t\n\r\s]+/', ' ', $text);
+        $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
+        $text = base64_encode($text);
+        $this->text = $text;
+    }
+
+
+
+    /**
+     * Устанавливаем текст перевода текста сообщения
+     * @param string $text
+     */
+    public function setTranslationText($text = '') : void
+    {
+        $this->translation = NULL;
+    }
+
+
+
+    /**
+     * Тип сообщения - текст
+    */
+    public function setTypeText() : void
+    {
+        $this->type = self::TYPE[self::TYPE_TEXT];
+    }
+
+
+
+    /**
+     * Тип сообщения - картинка
+    */
+    public function setTypeImage() : void
+    {
+        $this->type = self::TYPE[self::TYPE_IMG];
+    }
+
+
+
+    /**
+     * Время создания сообщения
+    */
+    public function setCreatedAt() : void
+    {
+        /**
+         * Не используем formatter->asDatetime, так как после авторизации пользователя
+         * он возвращает время в часовом поясе пользователя
+         */
+        $time = time();
+        $this->created_at = date_format(date_create("@{$time}"), Yii::$app->params['db.commonDatetime']);
+    }
+
+
+
+    /**
+     * Устанавливаем время окончания статуса "твердо" для оффера
+     * @param string $key ключ из массива AUCTION_TIME
+     */
+    public function setEndedAt($key) : void
+    {
+        if (!array_key_exists($key, self::AUCTION_TIME)) {
+            $key = Offer::DEFAULT_AUCTION_TIME;
+        }
+
+        $auction_time_s = self::AUCTION_TIME[$key];
+        $time = time() + $auction_time_s;
+        $this->auction_time_s = $auction_time_s;
+        /**
+         * Не используем formatter->asDatetime, так как после авторизации пользователя
+         * он возвращает время в часовом поясе пользователя
+         */
+        $this->ended_at = date_format(date_create("@{$time}"), Yii::$app->params['db.commonDatetime']);
     }
 
 

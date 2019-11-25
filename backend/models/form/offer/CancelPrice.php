@@ -23,7 +23,7 @@ class CancelPrice extends Model
     public function attributeLabels() : array
     {
         return [
-            'link' => 'Валюта',
+            'link' => 'Ссылка',
         ];
     }
 

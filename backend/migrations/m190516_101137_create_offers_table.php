@@ -18,7 +18,7 @@ class m190516_101137_create_offers_table extends Migration
         }
 
         $this->createTable('{{%offers}}', [
-            'id' => $this->primaryKey(),
+            'id' => $this->primaryKey()->unsigned(),
             'lot_id' => $this->integer()->unsigned()->notNull(),                    // ID объявления
             'lot_owner_id' => $this->integer()->unsigned()->notNull(),              // ID компании которая подала объявление покупки/продажи
             'counterparty_id' => $this->integer()->unsigned()->notNull(),           // ID компании(второй стороны) которая проявила интерес к объявлению

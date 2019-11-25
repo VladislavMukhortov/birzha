@@ -10,6 +10,7 @@
 
                     <b-col cols="12" md="8" lg="8">
 
+                        <MessagesBlock />
 
                         <hr>
 
@@ -28,10 +29,12 @@
 
 <script>
 import FullInfo from '~/components/lot/FullInfo.vue';
+import MessagesBlock from '~/components/offer/MessagesBlock.vue';
 
 export default {
     components: {
         FullInfo,
+        MessagesBlock,
     },
 
     head() {
@@ -47,7 +50,6 @@ export default {
     data() {
         return {
             lot: {},
-            // offer: {},
         }
     },
 
@@ -70,7 +72,6 @@ export default {
 
         return {
             lot: data.lot,
-            // offer: data.offer,
         };
     },
 

@@ -53,6 +53,9 @@ export const actions = {
             return { result: 'error', data: [], };
         });
 
-        context.commit('SET_AUCTION_LIST', data.data);
+        if (data.result === 'success') {
+            context.commit('SET_AUCTION_LIST', data.data);
+        }
+
     },
 }

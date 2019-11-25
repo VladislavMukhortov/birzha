@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\controllers\api\company;
+namespace app\controllers\api\messages;
 
 use Yii;
 use yii\rest\Controller;
@@ -11,12 +11,12 @@ use yii\filters\VerbFilter;
 use yii\filters\auth\HttpHeaderAuth;
 use yii\web\Response;
 
-use app\models\Company;
+use app\models\form\messages\MessagesList;
 
 /**
- * API Личные данные трейдера
+ * API Получение списка сообщений
  */
-class MyController extends Controller
+class ListController extends Controller
 {
 
     /**
@@ -78,44 +78,19 @@ class MyController extends Controller
 
 
     /**
+     * Получаем список сообщений
      * @return string
      */
     public function actionIndex() : Response
     {
-        $user = Yii::$app->user->identity;
+        $result = [];
 
-        $company = Company::findOne($user->company_id);
-
-        if ($company) {
-            $data = [
-                'success' => true,
-
-                'id' => (int) $company->id,
-                'name' => strval($company->name),
-                'location' => strval($company->location),
-                'swift' => strval($company->swift),
-                'iban' => strval($company->iban),
-                'bank_name' => strval($company->bank_name),
-                'bank_location' => strval($company->bank_location),
-                'email' => strval($company->email),
-                'phone' => strval($company->phone),
-                'site' => strval($company->site),
-                'director' => strval($company->director),
-                'text' => strval($company->text),
-                'is_verify' => (boolean) $company->is_verify,
-                'verify_email' => (boolean) ! $company->verify_email,
-                'verify_phone' => (boolean) ! $company->verify_phone
-            ];
-        } else {
-            $company = [
-                'success' => false,
-                'error' => 'Company not found'
-            ];
+        $model = new MessagesList();
+        if ($model->load(Yii::$app->request->post(), '')) {
+            $result = $model->show();
         }
 
-        return $this->asJson($data);
+        return $this->asJson($result);
     }
-
-
 
 }

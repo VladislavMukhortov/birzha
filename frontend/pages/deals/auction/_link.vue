@@ -62,7 +62,7 @@ export default {
         let data = await $axios.$get('/api/lot/show/auction', _param).then((res) => {
             return res;
         }).catch((error) => {
-            return { result: 'error', lot: {} };
+            return { result: 'error', lot: {}, offer: {} };
         });
 
         // объявления нет

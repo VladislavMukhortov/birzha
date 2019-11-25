@@ -114,7 +114,9 @@ export default {
          */
         let res = await $axios.$get('/api/offer/list/auction', _param).then((res) => {
             return res;
-        })
+        }).catch((error) => {
+            return { data: [], pagination_page_count: 0 };
+        });
 
         return {
             offers: res.data,
@@ -154,7 +156,9 @@ export default {
              */
             let res = await this.$axios.$get('/api/offer/list/auction', _param).then((res) => {
                 return res;
-            })
+            }).catch((error) => {
+                return { data: [], pagination_page_count: 0 };
+            });
 
             this.offers = res.data;
             this.pagination_page_count = res.pagination_page_count;

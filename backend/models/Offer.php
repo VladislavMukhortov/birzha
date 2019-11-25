@@ -43,6 +43,7 @@ class Offer extends ActiveRecord
 
     /**
      * время на которое дается статус "твердо"
+     * ключи - кол-во минут
      */
     const AUCTION_TIME = [
         '30' => 1800,   // 30 минут

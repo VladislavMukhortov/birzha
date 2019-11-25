@@ -19,9 +19,10 @@ class m190819_084159_create_messages_table extends Migration
 
         $this->createTable('{{%messages}}', [
             'id' => $this->primaryKey()->unsigned(),
+            'offer_id' => $this->integer()->unsigned()->notNull(),      // ID оффера
             'sender_id' => $this->integer()->unsigned()->notNull(),     // ID пользователя - отправитель
             'receiver_id' => $this->integer()->unsigned()->notNull(),   // ID пользователя - получатель
-            'type' => $this->tinyInteger()->unsigned()->notNull(),      // тип контанта сообщения
+            'type' => $this->tinyInteger()->notNull(),                  // тип контанта сообщения
             'text' => $this->string()->notNull(),                       // текст сообщения
             'translation' => $this->string()->defaultValue(null),       // перевод текста сообщения
             'is_new' => $this->boolean()->defaultValue(true),           // прочитано ли сообщение (false - прочитано, true - новое)
@@ -33,9 +34,20 @@ class m190819_084159_create_messages_table extends Migration
 
         $table_name = $this->db->getSchema()->getRawTableName('{{%messages}}');
 
+        // add foreign key for table `offers`
+        $this->addForeignKey(
+            "{$table_name}_offer_id_fk",
+            "{$table_name}",
+            'offer_id',
+            '{{%offers}}',
+            'id',
+            'NO ACTION',
+            'CASCADE'
+        );
+
         // add foreign key for table `users`
         $this->addForeignKey(
-            "{$table_name}_im_id_fk",
+            "{$table_name}_sender_id_fk",
             "{$table_name}",
             'sender_id',
             '{{%users}}',

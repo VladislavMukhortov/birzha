@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\controllers\api\offer;
+namespace app\controllers\api\messages;
 
 use Yii;
 use yii\rest\Controller;
@@ -11,14 +11,15 @@ use yii\filters\VerbFilter;
 use yii\filters\auth\HttpHeaderAuth;
 use yii\web\Response;
 
-use app\models\form\offer\NewPrice;
-use app\models\form\offer\AcceptPrice;
-use app\models\form\offer\CancelPrice;
+use yii\web\UploadedFile;
+
+use app\models\form\messages\CreateTextMessage;
+use app\models\form\messages\CreateFileMessage;
 
 /**
- * API Создание оффера
+ * API Получение списка сообщений
  */
-class UpdateController extends Controller
+class CreateController extends Controller
 {
 
     /**
@@ -79,32 +80,17 @@ class UpdateController extends Controller
 
 
 
-    public function actionIndex() : Response
-    {
-        return $this->asJson(true);
-    }
-
-
-
     /**
-     * Торг цены в оффере
-     *
-     * В статусе ТВЕРДО вторая сторона может 3 раза предложить свою цену.
-     * Владелец либо соглашается на цену либо предлагает свою.
-     * Когда вторая сторона предлагает владельце цену в третий раз
-     * то у владелец модежет либо отказать либо принять.
-     *
-     * @param  string 'link'  url оффера
-     * @param  float  'price' новая предлагаемая цена
+     * Создаем текстовое сообщение
      * @return string
      */
-    public function actionNewPrice() : Response
+    public function actionTextMessage() : Response
     {
         $result = [
             'result' => 'error',
         ];
 
-        $model = new NewPrice();
+        $model = new CreateTextMessage();
         if ($model->load(Yii::$app->request->post(), '')) {
             $result = $model->save();
         }
@@ -115,45 +101,45 @@ class UpdateController extends Controller
 
 
     /**
-     * Принимаем цену которую торговали в твердо
+     * Загружаем файл
      * @return string
      */
-    public function actionAcceptPrice() : Response
+    public function actionFileMessage() : Response
     {
+        /*
+         * https://serversideup.net/uploading-files-vuejs-axios/
+         * http://qaru.site/questions/15390433/post-file-along-with-form-data-vue-axios
+         * https://stackoverflow.com/questions/49478991/post-file-along-with-form-data-vue-axios
+         * https://makitweb.com/how-to-upload-file-with-vue-js-and-php/
+         */
         $result = [
             'result' => 'error',
         ];
 
-        $model = new AcceptPrice();
-        if ($model->load(Yii::$app->request->post(), '')) {
-            $result = $model->save();
-        }
+        // File name
+        $filename = $_FILES['file']['name'];
+
+        // File extension
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+        $result['filename'] = $filename;
+        $result['extension'] = $extension;
+
+        /*$model = new CreateFileMessage();
+        // if ($model->load(Yii::$app->request->post(), '')) {
+            // $result = $model->save();
+        // }
+
+        if (Yii::$app->request->isPost) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            if ($model->upload()) {
+                // file is uploaded successfully
+                return;
+            }
+        }*/
 
         return $this->asJson($result);
     }
-
-
-
-    /**
-     * Отказ от цены.
-     * Используется только владельцем объявления, когда вторая сторона предлагает
-     * свою цену в третий раз.
-     * @return string
-     */
-    public function actionCancelPrice() : Response
-    {
-        $result = [
-            'result' => 'error',
-        ];
-
-        $model = new CancelPrice();
-        if ($model->load(Yii::$app->request->post(), '')) {
-            $result = $model->save();
-        }
-
-        return $this->asJson($result);
-    }
-
 
 
 }

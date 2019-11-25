@@ -150,11 +150,11 @@ export default {
             passwordConfirm: '',        // подтверждение пароля
             showAlertErrorPassword: false,
 
-            showAlertEdit: false,         // уведомление об успешном изменении личных данных
-            memberNameState: '',            // состояние - имя пользователя
-            memberPhoneState: '',           // состояние - телефон пользователя
-            memberEmailState: '',           // состояние - почта пользователя
-            memberPositionState: '',        // состояние - должность пользователя
+            showAlertEdit: false,           // уведомление об успешном изменении личных данных
+            memberNameState: null,          // состояние - имя пользователя
+            memberPhoneState: null,         // состояние - телефон пользователя
+            memberEmailState: null,         // состояние - почта пользователя
+            memberPositionState: null,      // состояние - должность пользователя
             memberNameStateText: '',        // текст состояния - имя пользователя
             memberPhoneStateText: '',       // текст состояния - телефон пользователя
             memberEmailStateText: '',       // текст состояния - почта пользователя

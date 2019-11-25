@@ -25,7 +25,7 @@ class NewPrice extends Model
     public function attributeLabels() : array
     {
         return [
-            'link' => 'Валюта',
+            'link' => 'Ссылка',
             'price' => 'Цена',
         ];
     }

@@ -28,7 +28,7 @@ class MyController extends Controller
             'corsFilter' => [
                 'class' => Cors::className(),
                 'cors' => [
-                    'Origin' => app()->params['cors.origin'],
+                    'Origin' => Yii::$app->params['cors.origin'],
                     'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS'],
                     'Access-Control-Request-Headers' => ['*'],
                     'Access-Control-Allow-Credentials' => true,

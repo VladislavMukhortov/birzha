@@ -33,7 +33,7 @@ class ListController extends Controller
             'corsFilter' => [
                 'class' => Cors::className(),
                 'cors' => [
-                    'Origin' => app()->params['cors.origin'],
+                    'Origin' => Yii::$app->params['cors.origin'],
                     'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS'],
                     'Access-Control-Request-Headers' => ['*'],
                     'Access-Control-Allow-Credentials' => true,
@@ -118,6 +118,7 @@ class ListController extends Controller
             ->from($to)
             ->where([
                 "{$to}.status" => [Offer::STATUS_WAITING, Offer::STATUS_AUCTION],
+                "{$tl}.status" => Lot::STATUS_ACTIVE,
             ])
             ->andWhere([
                 "or",

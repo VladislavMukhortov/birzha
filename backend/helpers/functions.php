@@ -107,17 +107,6 @@ if (!function_exists('h')) {
     }
 }
 
-if (!function_exists('h')) {
-    /**
-     * @param $string
-     * @return string
-     */
-    function h(string $string) : string
-    {
-        return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    }
-}
-
 if (!function_exists('tofloat')) {
     /**
      * Форматирует цену введеное пользователем в корректное число типа float

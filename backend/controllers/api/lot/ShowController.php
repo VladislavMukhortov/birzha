@@ -34,7 +34,7 @@ class ShowController extends Controller
             'corsFilter' => [
                 'class' => Cors::className(),
                 'cors' => [
-                    'Origin' => app()->params['cors.origin'],
+                    'Origin' => Yii::$app->params['cors.origin'],
                     'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS'],
                     'Access-Control-Request-Headers' => ['*'],
                     'Access-Control-Allow-Credentials' => true,
@@ -317,21 +317,6 @@ class ShowController extends Controller
             if ($lot) {
                 $output['result'] = 'success';
                 $output['lot'] = Lot::getFullInfo($lot);
-
-                // $output['offer'] = [
-                //     /**
-                //      * Определяем кто смотрит страницу, владелец объявления или контрагент(вторая сторона)
-                //      */
-                //     'lot_owner' => ((int) $offer['lot_owner_id'] === (int) Yii::$app->user->identity->company_id) ? true : false,
-                //     'link' => strval($offer['link']),
-                //     'deal' => strval($lot['deal']),
-                //     'currency' => strval($lot['currency']),
-                //     'lot_owner_id' => $offer['lot_owner_id'], // DELETE
-                //     'counterparty_id' => $offer['counterparty_id'], // DELETE
-                //     'ended_at' => Yii::$app->formatter->asDatetime($offer['ended_at']),
-                //     'price' => $offer->priceListInAuction($lot['currency']),
-                //     'price_offer' => $offer->priceOfferInAuction(),
-                // ];
             }
         }
 

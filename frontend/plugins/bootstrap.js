@@ -14,7 +14,7 @@ import {
     // EmbedPlugin,
     FormPlugin,
     // FormCheckboxPlugin,
-    // FormFilePlugin,
+    FormFilePlugin,
     FormGroupPlugin,
     FormInputPlugin,
     FormRadioPlugin,
@@ -54,7 +54,7 @@ Vue.use(ButtonPlugin);
 // Vue.use(EmbedPlugin);
 Vue.use(FormPlugin);
 // Vue.use(FormCheckboxPlugin);
-// Vue.use(FormFilePlugin);
+Vue.use(FormFilePlugin);
 Vue.use(FormGroupPlugin);
 Vue.use(FormInputPlugin);
 Vue.use(FormRadioPlugin);

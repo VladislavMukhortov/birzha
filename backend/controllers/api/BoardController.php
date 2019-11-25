@@ -26,7 +26,7 @@ class BoardController extends Controller
             'corsFilter' => [
                 'class' => Cors::className(),
                 'cors' => [
-                    'Origin' => ['http://localhost:3000'],
+                    'Origin' => Yii::$app->params['cors.origin'],
                     'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS'],
                     'Access-Control-Request-Headers' => ['*'],
                     'Access-Control-Allow-Credentials' => true,
@@ -39,9 +39,6 @@ class BoardController extends Controller
                     'index' => ['GET', 'POST', 'OPTIONS']
                 ]
             ],
-            // 'authenticator' => [
-            //     'class' => HttpHeaderAuth::className()
-            // ]
         ]);
     }
 

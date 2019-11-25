@@ -16,12 +16,10 @@
                             v-bind:show="alertSuccessShow"
                             v-on:dismissed="alertSuccessShow=false">
                             <p>Объявление успешно размещено.</p>
-                            <p>
-                                <b-link to="/orders">Посмотреть свои объявления</b-link>
-                            </p>
-                            <p>
-                                <b-link to="/market">Перейти на доску объявлений</b-link>
-                            </p>
+                            <div>
+                                <b-link class="btn btn-primary" to="/orders">My orders</b-link>
+                                <b-link class="btn btn-primary" to="/market">Market</b-link>
+                            </div>
                         </b-alert>
 
                         <b-alert
