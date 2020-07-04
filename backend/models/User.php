@@ -206,7 +206,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $token password reset token
      * @return bool
     */
-    public function isPasswordResetTokenValid($token) : bool
+    public static function isPasswordResetTokenValid($token) : bool
     {
         if (empty($token)) {
             return false;

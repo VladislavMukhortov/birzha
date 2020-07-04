@@ -96,6 +96,25 @@ class ListController extends Controller
         return $this->asJson($crops);
     }
 
+    /**
+     * Подробная информация о культуре
+     * @return string
+     */
+
+    public function actionInfo() : Response
+    {   
+        $get = Yii::$app->request->get();
+        $id = $get['id'];
+        $info = Crops::find()
+            ->select('name, description, image')
+            ->where(["id" => $id])
+            ->one();
+
+        $info['name'] = Yii::t('app', 'crops.' . $info['name']);
+
+        return $this->asJson($info);
+    }
+
 
 
 }

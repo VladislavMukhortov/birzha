@@ -14,26 +14,26 @@
 
                 <b-row>
 
-                    <b-col sm="4">
+                    <div class="deals-btn-wrapper">
                         <p>Сделки которые ожидают "твердо" и которые имеют статус "твердо"</p>
                         <p>
-                            <b-link class="btn btn-primary btn-block" to="/deals/auction">auction</b-link>
+                            <b-link class="btn btn-block" to="/deals/auction">auction</b-link>
                         </p>
-                    </b-col>
+                    </div>
 
-                    <b-col sm="4">
-                        <p>Сделки которые находятся на этапе общения</p>
+                    <div class="deals-btn-wrapper">
+                        <p>Сделки которые находятся на этапе общения</p><br>
                         <p>
-                            <b-link class="btn btn-primary btn-block" to="/deals/communication">communication</b-link>
+                            <b-link class="btn btn-block" to="/deals/communication">communication</b-link>
                         </p>
-                    </b-col>
+                    </div>
 
-                    <b-col sm="4">
-                        <p>Завершенные сделки</p>
+                    <div class="deals-btn-wrapper">
+                        <p>Завершенные сделки</p><br>
                         <p>
-                            <b-link class="btn btn-primary btn-block" to="/deals/archive">archive</b-link>
+                            <b-link class="btn btn-block" to="/deals/archive">archive</b-link>
                         </p>
-                    </b-col>
+                    </div>
 
                 </b-row>
 
@@ -59,4 +59,30 @@ export default {
 
 
 <style lang='scss'>
+.deals-btn-wrapper{
+    border-radius: 10px !important;
+    border: 1px #000 solid !important;
+    margin: 2px;
+    padding: 5px;
+    width: 32.9% !important;
+    min-height: 200px;
+    align-items: center;
+}
+.deals-btn-wrapper .btn{
+    margin-top: 20%;
+    margin-left: 5%;
+    text-align: center;
+    width: 90%;
+    display: inline-block;
+    background: rgba(123,121,127, 1) !important;
+    border-radius: 10px !important;
+    border: 1px #000 solid !important;
+    color: #000 !important;
+    text-align: center;
+    transition: 0.3s;
+}
+.deals-btn-wrapper .btn:hover{
+    background:  rgba(107,98,108, 0.6) !important;
+    border-color: rgba(107,98,108, 0.6) !important;
+}
 </style>

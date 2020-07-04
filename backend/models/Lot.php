@@ -143,7 +143,7 @@ class Lot extends ActiveRecord
     ];
 
     const LINK_LENGTH = 15;     // длина ссылки по умолчанию
-    const LOT_ON_PAGE  = 10;    // кол-во записей на странице
+    const LOT_ON_PAGE  = 9;    // кол-во записей на странице
 
 
 
@@ -301,7 +301,7 @@ class Lot extends ActiveRecord
      * @param  Lot    $lot объект объявления
      * @return array
      */
-    public function getFullInfo(Lot $lot) : array
+    public static function getFullInfo(Lot $lot) : array
     {
         $crop = Crops::findOne($lot->crop_id);
 
@@ -330,7 +330,7 @@ class Lot extends ActiveRecord
      * @param  Lot    $lot объект объявления
      * @return array
      */
-    public function getShortInfoArray(Lot $lot) : array
+    public static function getShortInfoArray(Lot $lot) : array
     {
         return [
             'deal' => strval($lot['deal']),
@@ -351,7 +351,7 @@ class Lot extends ActiveRecord
      * @param  Lot    $lot объект объявления
      * @return string
      */
-    public function getBasisLocation(Lot $lot) : string
+    public static function getBasisLocation(Lot $lot) : string
     {
         $location = '';
 
@@ -375,7 +375,7 @@ class Lot extends ActiveRecord
      * @param  array  $lot объект объявления
      * @return string
      */
-    public function getBasisLocationArray($lot = []) : string
+    public static function getBasisLocationArray($lot = []) : string
     {
         $location = '';
 
@@ -400,7 +400,7 @@ class Lot extends ActiveRecord
      * @param  array  $l объект объявления. Должно быть переданны все параметры и ID культуры
      * @return string
      */
-    public function getStrQuality($l = []) : string
+    public static function getStrQuality($l = []) : string
     {
         $quality = '';
         $crop_id = isset($l['crop_id']) ? (int) $l['crop_id'] : 0;
@@ -507,7 +507,7 @@ class Lot extends ActiveRecord
      * @param  array  $l объект объявления. Должно быть переданны все параметры и ID культуры
      * @return array
      */
-    public function getArrayQuality($l = []) : array
+    public static function getArrayQuality($l = []) : array
     {
         $quality = [];
         $crop_id = isset($l['crop_id']) ? (int) $l['crop_id'] : 0;

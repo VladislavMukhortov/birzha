@@ -5,15 +5,16 @@
     <div class="order-item">
         <h4 class="order-item-title">
             <span>{{ lot.title }}</span>
-            <span class="order-item-price">{{ lot.price }}</span>
         </h4>
-        <div class="order-item-desc">
-            <span>{{ lot.deal }}</span>
-            <span class="order-item-price">{{ lot.quantity }} тонн</span>
-        </div>
-        <div>{{ lot.quality }}</div>
-        <div>{{ lot.period }}</div>
-        <div>{{ lot.basis }} | {{ lot.basis_location }}</div>
+        <hr>
+        
+        <p>Тип сделки - <span>{{ lot.deal }}</span></p>
+        <p>Вес - <span>{{ lot.quantity }} тонн</span></p>
+        <p>Цена - <span>{{ lot.price }}</span></p>
+        
+        <!-- <div>{{ lot.quality }}</div> -->
+        <p>Год урожая - {{ lot.period }}</p>
+        <!-- <div>{{ lot.basis }} | {{ lot.basis_location }}</div> -->
     </div>
 
 </template>
@@ -33,9 +34,27 @@ export default {
 
 
 <style lang='scss'>
-.order-item {
-
+@media(min-width: 320px){
+    span.wrap-list div.list-group a{
+        display: block;
+        margin: 1px;
+        height: 300px;
+    }
 }
+@media(min-width: 1400px){
+        span.wrap-list div.list-group a{
+        display: inline-block;
+        width: 241px;
+        margin: 1px;
+        height: 300px;
+    }
+}
+.list-group{
+    display: inline-block;
+    width: 100%;
+}
+
+
 
 .order-item-title {
     position: relative;

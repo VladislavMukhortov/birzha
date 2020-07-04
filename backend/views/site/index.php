@@ -22,7 +22,9 @@ $this->registerLinkTag(['rel' => 'image_src', 'href' => '']);
         <div class="row">
             <div class="col-12">
                 <h1>Hello this grain market web site</h1>
-
+                <pre>
+                    <?php print_r($companyCorn);?>
+                </pre>
                 <p>
                     <?php echo Html::a('Go to board', ['board/index']) ?>
                 </p>

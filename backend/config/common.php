@@ -36,7 +36,7 @@ return [
             'messageConfig' => [
                 'charset' => 'UTF-8',
                 'from' => [
-                    getenv('MAILER_USERNAME') => 'Metressa - онлайн знакомства'
+                    getenv('MAILER_USERNAME') => 'Биржа'
                 ]
             ],
             // dev - true | prod - false
@@ -47,7 +47,7 @@ return [
                 'username' => getenv('MAILER_USERNAME'),
                 'password' => getenv('MAILER_PASSWORD'),
                 'port' => getenv('MAILER_PORT'),
-                'encryption' => getenv('MAILER_ENCRYPTION')
+                'encryption' => getenv('MAILER_ENCRYPTION'),
             ]
         ],
         'db' => [

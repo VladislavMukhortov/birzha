@@ -22,6 +22,8 @@ class m190516_101137_create_offers_table extends Migration
             'lot_id' => $this->integer()->unsigned()->notNull(),                    // ID объявления
             'lot_owner_id' => $this->integer()->unsigned()->notNull(),              // ID компании которая подала объявление покупки/продажи
             'counterparty_id' => $this->integer()->unsigned()->notNull(),           // ID компании(второй стороны) которая проявила интерес к объявлению
+            'user_owner_id' => $this->integer()->unsigned()->notNull(),             // ID пользователя который подал заявлеине
+            'user_counterparty_id' => $this->integer()->unsigned()->notNull(),      // ID пользователя который проявил интерес к объявлению
 
             'require_price_1' => $this->decimal(10,2)->unsigned()->defaultValue(null),  // первая цена оффера от второй стороны
             'require_price_2' => $this->decimal(10,2)->unsigned()->defaultValue(null),  // вторая цена оффера от второй стороны
@@ -70,6 +72,26 @@ class m190516_101137_create_offers_table extends Migration
             "{$table_name}",
             'lot_id',
             '{{%lots}}',
+            'id',
+            'NO ACTION',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            "{$table_name}_user_owner_id_fk",
+            "{$table_name}",
+            'user_owner_id',
+            '{{%users}}',
+            'id',
+            'NO ACTION',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            "{$table_name}_user_counterparty_id_fk",
+            "{$table_name}",
+            'user_counterparty_id',
+            '{{%users}}',
             'id',
             'NO ACTION',
             'CASCADE'

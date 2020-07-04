@@ -17,6 +17,7 @@ use yii\data\ActiveDataProvider;
 use app\models\Offer;
 use app\models\Lot;
 use app\models\Crops;
+use app\models\User;
 
 /**
  * API Списки офферов
@@ -266,6 +267,45 @@ class ListController extends Controller
         return $this->asJson([
             'data' => $data,
             'pagination_page_count' => $data_provider->getPagination()->getPageCount(), // кол-во страниц с результатами
+        ]);
+    }
+
+    public function actionGetUserById(){
+
+        $to = Offer::tableName();
+        $tu = User::tableName();
+
+        $variable = "{$to}.user_owner_id";
+        $activeUser = \Yii::$app->user->identity->id;
+
+        $offersUsers = ( new Query())
+        ->select("user_owner_id, user_counterparty_id")
+        ->from($to)
+        // ->andWhere([
+        //     "or",
+        //     "user_owner_id = {$activeUser}",
+        // ])
+        ->all();
+
+        foreach($offersUsers as $item){
+            if($item['user_owner_id'] == $activeUser){
+                $interlocutor = ( new Query())
+                ->select("*")
+                ->from($tu)
+                ->where(["id" => "{$item['user_counterparty_id']}"])
+                ->one();
+            }
+            elseif($item['user_counterparty_id'] == $activeUser){
+                $interlocutor = ( new Query())
+                ->select("*")
+                ->from($tu)
+                ->where(["id" => "{$item['user_owner_id']}"])
+                ->one();
+            }
+        }
+
+        return $this->asJson([
+            'user' => $interlocutor
         ]);
     }
 

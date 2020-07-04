@@ -113,8 +113,9 @@
                                     v-bind:state="textState"></b-textarea>
                                 <b-form-invalid-feedback>{{ textStateText }}</b-form-invalid-feedback>
                             </b-form-group>
-
-                            <b-button type="submit" variant="primary">Сохранить</b-button>
+                            <div class="wrapper-save">
+                            <b-button type="submit" variant="success">Сохранить</b-button>
+                            </div>
 
                         </b-form>
 
@@ -260,5 +261,12 @@ export default {
 
 
 <style lang='scss'>
-
+.wrapper-save .btn:hover{
+    background:  #6ff1a1 !important;
+    border-color: #6ff1a1 !important;
+}
+.cust-wrapper-success{
+    display: inline-block;
+    width: 100%;
+}
 </style>

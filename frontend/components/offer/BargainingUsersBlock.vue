@@ -120,9 +120,6 @@
         </template>
 
 
-
-        <pre>{{ offer }}</pre>
-
     </div>
 
 </template>

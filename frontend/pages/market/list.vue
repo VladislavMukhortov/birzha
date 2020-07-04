@@ -7,7 +7,6 @@
             <b-container>
                 <b-row class="justify-content-center">
                     <b-col cols="12" md="8" lg="8">
-
                         <h1 class="section_title text-center">{{ page_title }}</h1>
 
                         <b-pagination-nav
@@ -16,20 +15,23 @@
                             v-bind:link-gen="linkGen"
                             v-bind:number-of-pages="pagination_page_count"
                             no-page-detect
-                            use-router></b-pagination-nav>
+                            use-router>
+                        </b-pagination-nav>
+                        <span class="wrap-list">
+                            <b-list-group>
+                                <b-list-group-item
+                                    v-for="item in ads"
+                                    v-bind:to="{name: 'market-link', params: {link: item.link}}"
+                                    v-bind:key="item.link">
 
-                        <b-list-group>
-                            <b-list-group-item
-                                v-for="item in ads"
-                                v-bind:to="{name: 'market-link', params: {link: item.link}}"
-                                v-bind:key="item.link">
+                                    <ShortDescriptionItemList v-bind:lot="item" />
+                                    <div class="more-info">
+                                        <span class="btn-link">Подробнее</span>
+                                    </div>
 
-                                <ShortDescriptionItemList v-bind:lot="item" />
-
-                                <span class="btn-link">Подробнее</span>
-
-                            </b-list-group-item>
-                        </b-list-group>
+                                </b-list-group-item>
+                            </b-list-group>
+                        </span>
 
                         <b-pagination-nav
                             v-if="ads.length"
@@ -37,7 +39,8 @@
                             v-bind:link-gen="linkGen"
                             v-bind:number-of-pages="pagination_page_count"
                             no-page-detect
-                            use-router></b-pagination-nav>
+                            use-router>
+                        </b-pagination-nav>
 
                     </b-col>
                 </b-row>
@@ -185,9 +188,26 @@ export default {
 
 
 <style lang='scss'>
-.order-item {
-}
 
+.more-info{
+    background: rgba(123,121,127, 1);
+    border-radius: 10px;
+    width: 200px;
+    height: 30px; 
+    text-align: center;
+    transition: 0.3s;
+}
+.more-info:hover{
+    background:  rgba(107,98,108, 0.6);
+}
+.btn-link{
+    color: #000;
+    font-size: 20px;
+}
+.btn-link:hover{
+    text-decoration: none;
+    color: #000;
+}
 .order-item-title {
     position: relative;
     padding: 0 150px 0 0;

@@ -87,7 +87,7 @@ class DataChange extends ActiveRecord
      * @param string $key  название параметра из БД который меняем
      * @param mixed  $val  значение старого параметра
      */
-    public function add(string $key, $val) : void
+    public static function add(string $key, $val) : void
     {
         $user_id = (int) Yii::$app->user->identity->id;
         $key = mb_convert_encoding(strval($key), 'UTF-8', 'UTF-8');

@@ -8,6 +8,10 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\ContactForm;
+use app\models\User;
+use app\models\Company;
+use app\models\Lot;
+use yii\db\Query;
 
 class SiteController extends Controller
 {

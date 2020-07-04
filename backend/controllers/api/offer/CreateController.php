@@ -119,12 +119,14 @@ class CreateController extends Controller
             $output['messages'] = 'Вы уже подали заявку, ожидайте!';
             return $this->asJson($output);
         }
-
+        
         $offer = new Offer();
         Offer::getDb()->transaction(function($db) use ($offer, $lot) {
             $offer->lot_id = $lot->id;
             $offer->lot_owner_id = $lot->company_id;
             $offer->counterparty_id = Yii::$app->user->identity->company_id;
+            $offer->user_owner_id = $lot->user_id;
+            $offer->user_counterparty_id = Yii::$app->user->identity->id;
             $offer->setLink();
             $offer->setStatusWaiting();
             $offer->save();

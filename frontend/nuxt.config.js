@@ -114,8 +114,8 @@ export default {
     */
     axios: {
         // See https://github.com/nuxt-community/axios-module
-        baseURL: 'http://gm.local',
-        // baseURL: 'http://gm.russiangrainmarket.ru',
+        //baseURL: 'http://gm.local',
+        baseURL: 'http://gm.russiangrainmarket.ru',
         https: false
     },
 

@@ -12,12 +12,14 @@
                 <b-row class="justify-content-center">
                     <b-col cols="12" md="8">
 
-                        <h1 class="section_title">My orders</h1>
-
-                        <p>
-                            <b-link class="btn btn-primary" to="/orders">Active</b-link>
-                            <b-link class="btn btn-warning" to="/orders/archive">Archive</b-link>
-                        </p>
+                        <h1 class="section_title section_title-align">My orders</h1>
+                        <div class="wrap-top-btn for-margin">
+                            
+                                <span class="margin-for-320"><b-link class="btn" to="/orders">Active</b-link></span>
+                                <b-link class="btn" to="/orders/archive">Archive</b-link>
+                            
+                        </div>
+                        
 
                         <b-pagination-nav
                             v-if="lots.length"
@@ -39,30 +41,32 @@
                                 </template>
 
                                 <div>
-                                    <b-link
-                                        v-bind:to="{name: 'orders-link', params: {link: item.link}}"
-                                        class="btn btn-info">Посмотреть</b-link>
-
-                                    <template v-if="item.is_edit">
+                                    <div class="item-btn">
                                         <b-link
                                             v-bind:to="{name: 'orders-link', params: {link: item.link}}"
-                                            class="btn btn-success">Редактировать</b-link>
-                                    </template>
+                                            class="btn cust-btn">Посмотреть</b-link>
 
-                                    <template v-if="item.is_remove">
-                                        <b-button variant="danger" v-bind:id="'lot-item-remove-' + index">Удалить</b-button>
-                                        <b-popover v-bind:target="'lot-item-remove-' + index" triggers="click blur" placement="top">
-                                            <template v-slot:title>Подтвердить удаление</template>
-                                            <b-button variant="danger" v-on:click="lotDeletByLink(item.link)">Удалить</b-button>
-                                            <b-button v-on:click="onCloseLotPopover">Отмена</b-button>
-                                        </b-popover>
-                                    </template>
-
-                                    <template v-if="item.is_auction">
-                                        <b-link
-                                            v-bind:to="{name: 'deals-auction-link', params: {link: item.offer_link}}"
-                                            class="btn btn-primary">Оффер</b-link>
-                                    </template>
+                                        <template v-if="item.is_edit">
+                                            <b-link
+                                                v-bind:to="{name: 'orders-link', params: {link: item.link}}"
+                                                class="btn cust-btn">Редактировать</b-link>
+                                        </template>
+                                    
+                                        <template v-if="item.is_remove">
+                                            <b-button variant="danger" v-bind:id="'lot-item-remove-' + index">Удалить</b-button>
+                                            <b-popover v-bind:target="'lot-item-remove-' + index" triggers="click blur" placement="top">
+                                                <template v-slot:title>Подтвердить удаление</template>
+                                                <b-button variant="danger" v-on:click="lotDeletByLink(item.link)">Удалить</b-button>
+                                                <b-button v-on:click="onCloseLotPopover">Отмена</b-button>
+                                            </b-popover>
+                                        </template>
+                                    
+                                        <template v-if="item.is_auction">
+                                            <b-link
+                                                v-bind:to="{name: 'deals-auction-link', params: {link: item.offer_link}}"
+                                                class="btn btn-primary">Оффер</b-link>
+                                        </template>
+                                    </div>
                                 </div>
 
                             </b-list-group-item>
@@ -219,4 +223,215 @@ export default {
 
 
 <style lang='scss'>
+.section_title-align{
+    text-align: center;
+}
+.for-margin{
+    margin-bottom: 16px;
+}
+@media(min-width: 320px){
+    .wrap-top-btn{
+        display: inline-block;
+        width: 100%;
+    }
+    .wrap-top-btn a.btn{
+        // margin-bottom: 31px;
+        width: 100%;
+        display: inline-block;
+        border-radius: 10px;
+        color: #000;
+        border: 1px #000 solid;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .wrap-top-btn a.nuxt-link-exact-active{
+        // margin-bottom: 31px;
+        width: 100%;
+        display: inline-block;
+        background: rgba(123,121,127, 1);
+        border-radius: 10px;
+        border: 1px #000 solid;
+        color: #000;
+        text-align: center;
+        transition: 0.3s;
+
+    }
+    .margin-for-320 a{
+        margin-bottom: 10px;
+    }
+    .cust-btn{
+        margin-bottom: 15px;
+        width: 100%;
+        display: inline-block;
+        background: rgba(123,121,127, 1);
+        border-radius: 10px;
+        border: 1px #000 solid;
+        color: #000;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .item-btn .btn-danger{
+        margin-bottom: 15px;
+        width: 100%;
+        display: inline-block;
+        border-radius: 10px;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+}
+@media(min-width: 1024px){
+    .wrap-top-btn{
+        display: inline-block;
+        width: 100%;
+    }
+    .wrap-top-btn a.btn{
+        // margin-bottom: 31px;
+        width: 49.6%;
+        display: inline-block;
+        border-radius: 10px;
+        color: #000;
+        border: 1px #000 solid;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .wrap-top-btn a.nuxt-link-exact-active{
+        // margin-bottom: 31px;
+        width: 49.6%;
+        display: inline-block;
+        background: rgba(123,121,127, 1);
+        border-radius: 10px;
+        border: 1px #000 solid;
+        color: #000;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .margin-for-320 a{
+        margin-bottom: 0px;
+    }
+    .cust-btn{
+        margin-bottom: 15px;
+        width: 38%;
+        display: inline-block;
+        background: rgba(123,121,127, 1);
+        border-radius: 10px;
+        border: 1px #000 solid;
+        color: #000;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .item-btn .btn-danger{
+        margin-bottom: 15px;
+        width: 22.5%;
+        display: inline-block;
+        border-radius: 10px;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+}
+@media(min-width: 1400px){
+    .wrap-top-btn{
+        display: inline-block;
+        width: 100%;
+    }
+    .wrap-top-btn a.btn{
+        // margin-bottom: 31px;
+        width: 49.7%;
+        display: inline-block;
+        border-radius: 10px;
+        color: #000;
+        border: 1px #000 solid;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .wrap-top-btn a.nuxt-link-exact-active{
+        // margin-bottom: 31px;
+        width: 49.7%;
+        display: inline-block;
+        background: rgba(123,121,127, 1);
+        border-radius: 10px;
+        border: 1px #000 solid;
+        color: #000;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .margin-for-320 a{
+        margin-bottom: 0px;
+    }
+    .cust-btn{
+        margin-bottom: 15px;
+        width: 38%;
+        display: inline-block;
+        background: rgba(123,121,127, 1);
+        border-radius: 10px;
+        border: 1px #000 solid;
+        color: #000;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .item-btn .btn-danger{
+        margin-bottom: 15px;
+        width: 22.5%;
+        display: inline-block;
+        border-radius: 10px;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+}
+
+.wrap-top-btn a.nuxt-link-exact-active:hover{
+    background:  rgba(107,98,108, 0.6);
+    border-color: rgba(107,98,108, 0.6);
+}
+.btn:hover{
+    background:  rgba(107,98,108, 0.6);
+    border-color: rgba(107,98,108, 0.6);
+}
+.item-btn{
+    width: 100%;  
+}
+.cust-btn:hover{
+    background:  rgba(107,98,108, 0.6);
+    border-color: rgba(107,98,108, 0.6);
+}
+.item-btn .btn-danger:hover{
+    background:  rgba(247,112,137, 0.6);
+    border-color: rgba(247,112,137, 0.6);
+}
+.popover{
+    width: 100%;
+}
+.popover .btn-danger{
+    margin-bottom: 15px !important;
+    width: 49% !important;
+    display: inline-block !important;
+    border-radius: 10px !important;
+    background: #ff2d55 !important;
+    border: 1px #ff2d55 solid !important;
+    color: #000 !important;
+    text-align: center !important;
+    transition: 0.3s !important;
+}
+.popover .btn-danger:hover{
+    background:  rgba(247,112,137, 0.6) !important;
+    border-color: rgba(247,112,137, 0.6) !important;
+}
+.popover .btn{
+    margin-bottom: 15px;
+    width: 49%;
+    display: inline-block;
+    background: rgba(123,121,127, 1);
+    border-radius: 10px;
+    border: 1px #000 solid;
+    color: #000;
+    text-align: center;
+    transition: 0.3s;
+}
+.popover .btn:hover{
+    background:  rgba(107,98,108, 0.6);
+    border-color: rgba(107,98,108, 0.6);
+    color: #000 !important;
+}
 </style>

@@ -75,8 +75,9 @@ class ListController extends Controller
      * @return [type] [description]
      */
     public function actionIndex() : Response
-    {
+    {  
         return $this->asJson();
+        
     }
 
 

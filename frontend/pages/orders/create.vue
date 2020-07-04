@@ -6,394 +6,414 @@
                 <b-row>
 
                     <b-col cols="12" md="8">
+                        <div class="wrap-create">
+                            <h1 class="section_title">Новая заявка</h1>
 
-                        <h1 class="section_title">Новая заявка</h1>
+                            <b-alert
+                                variant="success"
+                                dismissible
+                                fade
+                                v-bind:show="alertSuccessShow"
+                                v-on:dismissed="alertSuccessShow=false">
+                                <p>Объявление успешно размещено.</p>
 
-                        <b-alert
-                            variant="success"
-                            dismissible
-                            fade
-                            v-bind:show="alertSuccessShow"
-                            v-on:dismissed="alertSuccessShow=false">
-                            <p>Объявление успешно размещено.</p>
-                            <div>
-                                <b-link class="btn btn-primary" to="/orders">My orders</b-link>
-                                <b-link class="btn btn-primary" to="/market">Market</b-link>
+                                <div class="cust-wrapper-success">
+                                        <b-link class="btn" to="/orders">My orders</b-link>
+                                        <b-link class="btn" to="/market">Market</b-link> 
+                                </div>
+                            </b-alert>
+
+                            <b-alert
+                                variant="danger"
+                                dismissible
+                                fade
+                                v-bind:show="alertErrorShow"
+                                v-on:dismissed="alertErrorShow=false">
+                                <div v-for="(value, name) in errorMessages">{{ value }}</div>
+                            </b-alert>
+
+                            <!-- STEP NUMBER -->
+                            <div class="orders-steps">
+                                <div class="orders-step-wrap first-item">
+                                    <div class="orders-steps-item" v-bind:class="{ '_active': step_1 }">
+                                        <strong class="orders-steps-item-link" v-on:click="oneStep">Товар объём цена</strong>
+                                        <div>Подсказка</div>
+                                    </div>
+                                </div>
+                                <div class="orders-step-wrap">
+                                    <div class="orders-steps-item" v-bind:class="{ '_active': step_2 }">
+                                        <strong class="orders-steps-item-link" v-on:click="twoStep">Качество товара</strong>
+                                        <div>Подсказка</div>
+                                    </div>
+                                </div>
+                                <div class="orders-step-wrap last-item">
+                                    <div class="orders-steps-item" v-bind:class="{ '_active': step_3 }">
+                                        <strong class="orders-steps-item-link" v-on:click="threeStep">Место поставки</strong>
+                                        <div>Подсказка</div>
+                                    </div>
+                                </div>
                             </div>
-                        </b-alert>
-
-                        <b-alert
-                            variant="danger"
-                            dismissible
-                            fade
-                            v-bind:show="alertErrorShow"
-                            v-on:dismissed="alertErrorShow=false">
-                            <div v-for="(value, name) in errorMessages">{{ value }}</div>
-                        </b-alert>
-
-                        <!-- STEP NUMBER -->
-                        <div class="orders-steps">
-                            <div class="orders-steps-item" v-bind:class="{ '_active': step_1 }">
-                                <strong class="orders-steps-item-link" v-on:click="oneStep">Товар объём цена</strong>
-                                <div>Подсказка</div>
-                            </div>
-                            <div class="orders-steps-item" v-bind:class="{ '_active': step_2 }">
-                                <strong class="orders-steps-item-link" v-on:click="twoStep">Качество товара</strong>
-                                <div>Подсказка</div>
-                            </div>
-                            <div class="orders-steps-item" v-bind:class="{ '_active': step_3 }">
-                                <strong class="orders-steps-item-link" v-on:click="threeStep">Место поставки</strong>
-                                <div>Подсказка</div>
-                            </div>
-                        </div>
 
 
-                        <!-- STEP 1 -->
-                        <div class="orders-step" v-bind:class="{ '_active': step_1 }">
-                            <b-form-group>
-                                <b-radio-group
-                                    v-model="deal"
-                                    v-bind:options="dealList"
-                                    buttons
-                                    button-variant="outline-primary"
-                                    name="deal-radios"></b-radio-group>
-                            </b-form-group>
+                            <!-- STEP 1 -->
+                            <div class="orders-step" v-bind:class="{ '_active': step_1 }">
+                                <div class="cust-wrapper-top">
+                                    <b-form-group>
+                                        <b-radio-group
+                                            v-model="deal"
+                                            v-bind:options="dealList"
+                                            buttons
+                                            button-variant=""
+                                            name="deal-radios"></b-radio-group>
+                                    </b-form-group>
+                                </div>
+                                <b-form-group label-class="required" label="Выберите культуру:">
+                                    <b-select v-model="cropId">
+                                        <option v-bind:value="0" disabled>Наименование товара</option>
+                                        <template v-for="crop_item in cropList">
+                                            <option v-bind:value="crop_item.id">{{ crop_item.name }}</option>
+                                        </template>
+                                    </b-select>
+                                </b-form-group>
 
-                            <b-form-group label-class="required" label="Выберите культуру:">
-                                <b-select v-model="cropId">
-                                    <option v-bind:value="0" disabled>Наименование товара</option>
-                                    <template v-for="crop_item in cropList">
-                                        <option v-bind:value="crop_item.id">{{ crop_item.name }}</option>
-                                    </template>
-                                </b-select>
-                            </b-form-group>
+                                <b-form-group label-class="required" label="Валюта и цена за тонну:">
+                                    <b-input-group>
 
-                            <b-form-group label-class="required" label="Валюта и цена за тонну:">
-                                <b-input-group>
+                                        <b-input-group-prepend>
+                                            <b-select v-model="currency">
+                                                <template v-for="currency_item in currencyList">
+                                                    <option v-bind:value="currency_item.name">{{ currency_item.name }}</option>
+                                                </template>
+                                            </b-select>
+                                        </b-input-group-prepend>
 
-                                    <b-input-group-prepend>
-                                        <b-select v-model="currency">
-                                            <template v-for="currency_item in currencyList">
-                                                <option v-bind:value="currency_item.name">{{ currency_item.name }}</option>
-                                            </template>
-                                        </b-select>
-                                    </b-input-group-prepend>
+                                        <b-input type="text" v-model="price"></b-input>
 
-                                    <b-input type="text" v-model="price"></b-input>
-
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group label-class="required" label="Укажите объём тонн:">
-                                <b-input type="text" v-model="quantity"></b-input>
-                            </b-form-group>
-
-                            <b-button
-                                variant="primary"
-                                v-bind:class="{ 'disabled': !firstStepCompleted }"
-                                v-on:click="twoStep">Качество товара</b-button>
-                        </div>
-
-
-                        <!-- STEP 2 -->
-                        <div class="orders-step" v-bind:class="{ '_active': step_2 }">
-
-                            <b-form-group
-                                label="Влажность:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 100%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="100" v-model="moisture"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                label="Сорная примесь:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 100%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="100" v-model="foreignMatter"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="wVievs"
-                                label="W:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 1000w">
-                                <b-input-group append="w">
-                                    <b-input type="number" min="0" max="1000" v-model="w"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="grainAdmixtureVievs"
-                                label="Зерновая примесь:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 100%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="100" v-model="grainAdmixture"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="glutenVievs"
-                                label="Клейковина:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 12 - 40%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="12" max="40" v-model="gluten"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="proteinVievs"
-                                label="Протеин:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 80%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="80" v-model="protein"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="naturalWeightVievs"
-                                label="Натура:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 50 - 1000 грам/литр">
-                                <b-input-group append="грам/литр">
-                                    <b-input type="number" min="50" max="1000" v-model="naturalWeight"></b-input>
                                     </b-input-group>
-                            </b-form-group>
+                                </b-form-group>
 
-                            <b-form-group
-                                v-if="fallingNumberVievs"
-                                label="Число падения:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 50 - 500 штук">
-                                <b-input-group append="штук">
-                                    <b-input type="number" min="50" max="500" v-model="fallingNumber"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="vitreousnessVievs"
-                                label="Стекловидность:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 20 - 95%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="20" max="95" v-model="vitreousness"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="ragweedVievs"
-                                label="Амброзия:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 500 штук/кг">
-                                <b-input-group append="штук/кг">
-                                    <b-input type="number" min="0" max="500" v-model="ragweed"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="bugVievs"
-                                label="Клоп:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 20%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="20" v-model="bug"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="oilContentVievs"
-                                label="Масличность:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 80%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="80" v-model="oilContent"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="oilAdmixtureVievs"
-                                label="Масличная примесь:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 100%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="100" v-model="oilAdmixture"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="brokenVievs"
-                                label="Битые:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 100%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="100" v-model="broken"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="damagedVievs"
-                                label="Повреждённые:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 100%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="100" v-model="damaged"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="dirtyVievs"
-                                label="Маранные:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 100%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="100" v-model="dirty"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="ashVievs"
-                                label="Зольность:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 100%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="100" v-model="ash"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="erucidicAcidVievs"
-                                label="Эруковая кислота:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 20%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="20" v-model="erucidicAcid"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="peroxideValueVievs"
-                                label="Перекисное число:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 20%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="20" v-model="peroxideValue"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="acidValueVievs"
-                                label="Кислотное число:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 0 - 20%">
-                                <b-input-group append="%">
-                                    <b-input type="number" min="0" max="20" v-model="acidValue"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group
-                                v-if="otherColorVievs"
-                                label="Другой цвет:"
-                                label-class="required"
-                                label-cols="4"
-                                description="Значение 1 - 5">
-                                <b-input-group>
-                                    <b-input type="number" min="1" max="5" v-model="otherColor"></b-input>
-                                </b-input-group>
-                            </b-form-group>
-
-                            <b-form-group label-cols="4" label="Год урожая:">
-                                <b-input type="text" v-model="cropYear"></b-input>
-                            </b-form-group>
-
-                            <b-button
-                                variant="secondary"
-                                v-on:click="oneStep">Назад</b-button>
-
-                            <b-button
-                                variant="primary"
-                                v-bind:class="{ 'disabled': !twoStepCompleted }"
-                                v-on:click="threeStep">Место поставки</b-button>
-                        </div>
+                                <b-form-group label-class="required" label="Укажите объём тонн:">
+                                    <b-input type="text" v-model="quantity"></b-input>
+                                </b-form-group>
+                                <div class="wrapper-save">
+                                <b-button
+                                    variant="success"
+                                    v-bind:class="{ 'disabled': !firstStepCompleted }"
+                                    v-on:click="twoStep">Качество товара</b-button>
+                                </div>
+                            </div>
 
 
-                        <!-- STEP 3 -->
-                        <div class="orders-step" v-bind:class="{ '_active': step_3 }">
+                            <!-- STEP 2 -->
+                            <div class="orders-step" v-bind:class="{ '_active': step_2 }">
 
-                            <b-form-group label="Basis:">
-                                <b-tabs content-class="" justified pills align="center">
-                                    <b-tab active v-on:click="basis = 'FOB'" title="FOB">
-                                        <p class="small">FOB - загружено на судно в порту отгрузки</p>
-                                        <b-form-group v-if="basis == 'FOB'" label-class="required" label="Порт:">
-                                            <b-input type="text" v-model="fobPort"></b-input>
-                                        </b-form-group>
-                                        <b-form-group v-if="basis == 'FOB'" label-class="required" label="Терминал:">
-                                            <b-input type="text" v-model="fobTerminal"></b-input>
-                                        </b-form-group>
-                                    </b-tab>
-                                    <b-tab v-on:click="basis = 'CIF'" title="CIF">
-                                        <p class="small">CIF - доставка в порт назначения</p>
-                                        <b-form-group v-if="basis == 'CIF'" label-class="required" label="Страна:">
-                                            <b-input type="text" v-model="cifCountry"></b-input>
-                                        </b-form-group>
-                                        <b-form-group v-if="basis == 'CIF'" label-class="required" label="Порт:">
-                                            <b-input type="text" v-model="cifPort"></b-input>
-                                        </b-form-group>
-                                    </b-tab>
-                                </b-tabs>
-                            </b-form-group>
+                                <b-form-group
+                                    label="Влажность:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 100%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="100" v-model="moisture"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
 
-                            <b-form-group label-class="required" label="Период поставки:">
-                                <b-input type="text" v-model="period"></b-input>
-                            </b-form-group>
+                                <b-form-group
+                                    label="Сорная примесь:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 100%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="100" v-model="foreignMatter"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
 
-                            <b-form-group label="Дополнительная информация:">
-                                <b-textarea rows="3" v-model="text"></b-textarea>
-                            </b-form-group>
+                                <b-form-group
+                                    v-if="wVievs"
+                                    label="W:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 1000w">
+                                    <b-input-group append="w">
+                                        <b-input type="number" min="0" max="1000" v-model="w"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
 
-                            <b-button
-                                variant="secondary"
-                                v-on:click="twoStep">Назад</b-button>
-                            <b-button
-                                variant="primary"
-                                v-bind:class="{ 'disabled': !threeStepCompleted }"
-                                v-on:click="onSubmit">Опубликовать</b-button>
+                                <b-form-group
+                                    v-if="grainAdmixtureVievs"
+                                    label="Зерновая примесь:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 100%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="100" v-model="grainAdmixture"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="glutenVievs"
+                                    label="Клейковина:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 12 - 40%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="12" max="40" v-model="gluten"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="proteinVievs"
+                                    label="Протеин:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 80%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="80" v-model="protein"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="naturalWeightVievs"
+                                    label="Натура:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 50 - 1000 грам/литр">
+                                    <b-input-group append="грам/литр">
+                                        <b-input type="number" min="50" max="1000" v-model="naturalWeight"></b-input>
+                                        </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="fallingNumberVievs"
+                                    label="Число падения:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 50 - 500 штук">
+                                    <b-input-group append="штук">
+                                        <b-input type="number" min="50" max="500" v-model="fallingNumber"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="vitreousnessVievs"
+                                    label="Стекловидность:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 20 - 95%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="20" max="95" v-model="vitreousness"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="ragweedVievs"
+                                    label="Амброзия:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 500 штук/кг">
+                                    <b-input-group append="штук/кг">
+                                        <b-input type="number" min="0" max="500" v-model="ragweed"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="bugVievs"
+                                    label="Клоп:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 20%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="20" v-model="bug"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="oilContentVievs"
+                                    label="Масличность:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 80%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="80" v-model="oilContent"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="oilAdmixtureVievs"
+                                    label="Масличная примесь:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 100%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="100" v-model="oilAdmixture"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="brokenVievs"
+                                    label="Битые:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 100%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="100" v-model="broken"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="damagedVievs"
+                                    label="Повреждённые:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 100%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="100" v-model="damaged"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="dirtyVievs"
+                                    label="Маранные:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 100%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="100" v-model="dirty"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="ashVievs"
+                                    label="Зольность:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 100%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="100" v-model="ash"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="erucidicAcidVievs"
+                                    label="Эруковая кислота:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 20%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="20" v-model="erucidicAcid"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="peroxideValueVievs"
+                                    label="Перекисное число:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 20%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="20" v-model="peroxideValue"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="acidValueVievs"
+                                    label="Кислотное число:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 0 - 20%">
+                                    <b-input-group append="%">
+                                        <b-input type="number" min="0" max="20" v-model="acidValue"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group
+                                    v-if="otherColorVievs"
+                                    label="Другой цвет:"
+                                    label-class="required"
+                                    label-cols="4"
+                                    description="Значение 1 - 5">
+                                    <b-input-group>
+                                        <b-input type="number" min="1" max="5" v-model="otherColor"></b-input>
+                                    </b-input-group>
+                                </b-form-group>
+
+                                <b-form-group label-cols="4" label="Год урожая:">
+                                    <b-input type="text" v-model="cropYear"></b-input>
+                                </b-form-group>
+                                    <div class="wrapper-back">
+                                        <b-button
+                                            variant=""
+                                            v-on:click="oneStep">Назад</b-button>
+                                    </div>  
+                                    <div class="wrapper-save">  
+                                        <b-button
+                                            variant="success"
+                                            v-bind:class="{ 'disabled': !twoStepCompleted }"
+                                            v-on:click="threeStep">Место поставки</b-button>
+                                </div>
+                            </div>
+
+
+                            <!-- STEP 3 -->
+                            <div class="orders-step" v-bind:class="{ '_active': step_3 }">
+
+                                <b-form-group label="Basis:">
+                                    <div class="this">
+                                        <b-tabs content-class="" justified pills align="center">
+                                            <b-tab active v-on:click="basis = 'FOB'" title="FOB">
+                                                <p class="small">FOB - загружено на судно в порту отгрузки</p>
+                                                <b-form-group v-if="basis == 'FOB'" label-class="required" label="Порт:">
+                                                    <b-input type="text" v-model="fobPort"></b-input>
+                                                </b-form-group>
+                                                <b-form-group v-if="basis == 'FOB'" label-class="required" label="Терминал:">
+                                                    <b-input type="text" v-model="fobTerminal"></b-input>
+                                                </b-form-group>
+                                            </b-tab>
+                                            <b-tab v-on:click="basis = 'CIF'" title="CIF">
+                                                <p class="small">CIF - доставка в порт назначения</p>
+                                                <b-form-group v-if="basis == 'CIF'" label-class="required" label="Страна:">
+                                                    <b-input type="text" v-model="cifCountry"></b-input>
+                                                </b-form-group>
+                                                <b-form-group v-if="basis == 'CIF'" label-class="required" label="Порт:">
+                                                    <b-input type="text" v-model="cifPort"></b-input>
+                                                </b-form-group>
+                                            </b-tab>
+                                        </b-tabs>
+                                    </div>
+                                </b-form-group>
+
+                                <b-form-group label-class="required" label="Период поставки:">
+                                    <b-input type="text" v-model="period"></b-input>
+                                </b-form-group>
+
+                                <b-form-group label="Дополнительная информация:">
+                                    <b-textarea rows="3" v-model="text"></b-textarea>
+                                </b-form-group>
+                                <div class="wrapper-back">
+                                    <b-button
+                                        variant="secondary"
+                                        v-on:click="twoStep">Назад</b-button>
+                                </div>
+                                <div class="wrapper-save">
+                                    <b-button
+                                        variant="success"
+                                        v-bind:class="{ 'disabled': !threeStepCompleted }"
+                                        v-on:click="onSubmit">Опубликовать</b-button>
+                                </div>
+                            </div>
                         </div>
 
                     </b-col>
-
+                    
                     <b-col cols="12" md="4">
-                        <h2 class="section_title">Ваше Объявление</h2>
-                        <p>{{ lotVievsDeal }}</p>
-                        <p>{{ lotVievsCropName }}</p>
-                        <p>{{ lotVievsPrice }}</p>
-                        <p>{{ lotVievsBasis }}</p>
+                        <div class="data-wrapper">
+                            <h2 class="section_title">Ваше Объявление</h2>
+                            <p>{{ lotVievsDeal }}</p>
+                            <p>{{ lotVievsCropName }}</p>
+                            <p>{{ lotVievsPrice }}</p>
+                            <p>{{ lotVievsBasis }}</p>
+                        </div>
                     </b-col>
+                    
 
                 </b-row>
             </b-container>
@@ -948,36 +968,6 @@ export default {
 
 
 <style lang='scss'>
-.orders-steps {
-    display: table;
-    width: 100%;
-    margin: 1.5rem 0;
-    border: 1px solid gray;
-    border-radius: 3px;
-}
-
-.orders-steps-item {
-    position: relative;
-    display: table-cell;
-    width: 33.33%;
-    padding: 5px 10px;
-    border-left: 1px solid gray;
-    color: gray;
-    background-color: $light;
-
-    &:first-child {
-        border-left: 0;
-    }
-
-    &._active {
-        color: $body-color;
-        background-color: $white;
-
-        .orders-steps-item-link {
-            color: $primary;
-        }
-    }
-}
 
 .orders-steps-item-link {
     cursor: pointer;
@@ -995,10 +985,369 @@ export default {
     }
 }
 
+
+.orders-steps div._active strong{
+    color: #000 !important;
+}
+
 .input-group {
     > .input-group-prepend > .custom-select  {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
 }
+.wrap-create{
+    border: 1px #000 solid;
+    border-radius: 10px;
+    padding: 15px;
+
+}
+
+.wrapper-back .btn:hover{
+    background:  rgba(107,98,108, 0.6) !important;
+    border-color: rgba(107,98,108, 0.6) !important;
+}
+.data-wrapper{
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px #000 solid;
+}
+
+@media(max-width: 425px){
+    .wrap-create{
+        margin-bottom: 10px;
+    }
+
+    .orders-steps {
+        display: block;
+        width: 100% !important;
+        margin: 1.5rem 0;
+        
+        
+       // border-radius: 3px;
+    }
+
+    .orders-step-wrap{
+        border: 1px solid gray;
+        border-radius: 10px;
+        margin: 5px;
+    }
+
+    .orders-steps-item {
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 5px 10px;      
+        color: gray;
+        background-color: $light;
+        border-radius: 10px;
+        
+
+        &:first-child {
+            border-left: 0;
+        }
+
+        &._active {
+            color: $body-color;
+            background-color: $white;
+
+            .orders-steps-item-link {
+                color: $primary;
+            }
+        }
+    }
+    .orders-steps{
+        border-radius: 10px;
+        //border: 1px #000 solid;
+    }
+    .wrapper-save .btn{
+        width: 100% !important;
+        display: inline-block;
+        background: #32d270 !important;
+        border-radius: 10px !important;
+        border: 1px #6ff1a1 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .wrapper-back .btn{
+        width: 100% !important;
+        margin-bottom: 5px;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px rgba(123,121,127, 1) !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    div.cust-wrapper-success .btn{
+        width: 100%;
+        display: inline-block;
+        background: white !important;
+        border-radius: 10px !important;
+        color: #000 !important;
+        border: 1px #000 solid !important;
+        text-align: center;
+        transition: 0.3s;
+        margin: 2.5px;
+    }
+    div.cust-wrapper-success .nuxt-link-active{
+        width: 100%;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px #000 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    div.cust-wrapper-success .btn:hover{
+        background:  rgba(107,98,108, 0.6) !important;
+        border-color: rgba(107,98,108, 0.6) !important;
+    }
+}
+@media(min-width: 768px){
+    .orders-steps {
+        display: table;
+        width: 100%;
+        margin: 1.5rem 0;
+        
+    }
+
+    .orders-step-wrap{
+        position: relative;
+        display: table-cell;
+        width: 33.33%;        
+        color: gray;
+        background-color: $light;  
+       
+       
+    }
+
+    .orders-steps-item {
+        width: 100%;
+        padding: 5px 10px;
+        height: 80px;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        &:first-child {
+            border-left: 0;
+        }
+
+        &._active {
+            color: $body-color;
+            background-color: $white;
+
+            .orders-steps-item-link {
+                color: $primary;
+            }
+        }
+    }
+
+    .first-item{
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-right: 1px #000 solid;
+    }
+    .last-item{
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-left: 1px #000 solid;
+    }
+
+    .orders-steps{
+        border-radius: 10px;
+        border: 1px #000 solid;
+       
+    }
+
+    .wrapper-back .btn{
+        width: 100% !important;
+        margin-bottom: 5px;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px rgba(123,121,127, 1) !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .wrapper-save .btn{
+        width: 100%;
+        display: inline-block;
+        background: #32d270 !important;
+        border-radius: 10px !important;
+        border: 1px #6ff1a1 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    div.cust-wrapper-success .btn{
+        width: 45%;
+        display: inline-block;
+        background: white !important;
+        border-radius: 10px !important;
+        color: #000 !important;
+        border: 1px #000 solid !important;
+        text-align: center;
+        transition: 0.3s;
+        margin: 2.5px;
+    }
+    div.cust-wrapper-success .nuxt-link-active{
+        width: 45%;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px #000 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    div.cust-wrapper-success .btn:hover{
+        background:  rgba(107,98,108, 0.6) !important;
+        border-color: rgba(107,98,108, 0.6) !important;
+    }
+}
+@media(min-width: 1024px){
+.orders-steps {
+        display: table;
+        width: 100%;
+        margin: 1.5rem 0;
+        
+    }
+
+    .orders-step-wrap{
+        position: relative;
+        display: table-cell;
+        width: 33.33%;        
+        color: gray;
+        background-color: $light;  
+       
+       
+    }
+
+    .orders-steps-item {
+        width: 100%;
+        padding: 5px 10px;
+        height: 80px;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        &:first-child {
+            border-left: 0;
+        }
+
+        &._active {
+            color: $body-color;
+            background-color: $white;
+
+            .orders-steps-item-link {
+                color: $primary;
+            }
+        }
+    }
+
+    .first-item{
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-right: 1px #000 solid;
+    }
+    .last-item{
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-left: 1px #000 solid;
+    }
+
+    .orders-steps{
+        border-radius: 10px;
+        border: 1px #000 solid;
+       
+    }
+
+    .wrapper-back .btn{
+        width: 50% !important;
+        margin-bottom: 5px;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px rgba(123,121,127, 1) !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .wrapper-save .btn{
+        width: 50%;
+        display: inline-block;
+        background: #32d270 !important;
+        border-radius: 10px !important;
+        border: 1px #6ff1a1 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    div.cust-wrapper-success .btn{
+        width: 45%;
+        display: inline-block;
+        background: white !important;
+        border-radius: 10px !important;
+        color: #000 !important;
+        border: 1px #000 solid !important;
+        text-align: center;
+        transition: 0.3s;
+        margin: 2.5px;
+    }
+    div.cust-wrapper-success .nuxt-link-active{
+        width: 45%;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px #000 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    div.cust-wrapper-success .btn:hover{
+        background:  rgba(107,98,108, 0.6) !important;
+        border-color: rgba(107,98,108, 0.6) !important;
+    }
+}
+div.cust-wrapper-top div.btn-group{
+    width: 100%;
+}
+div.cust-wrapper-top div.btn-group .btn{
+    width: 49.7%;
+    display: inline-block;
+    background: white !important;
+    border-radius: 10px !important;
+    color: #000 !important;
+    border: 1px #000 solid !important;
+    text-align: center;
+    transition: 0.3s;
+    margin: 2.5px;
+}
+div.cust-wrapper-top div.btn-group .active{
+    width: 49.7%;
+    display: inline-block;
+    background: rgba(123,121,127, 1) !important;
+    border-radius: 10px !important;
+    border: 1px #000 solid !important;
+    color: #000 !important;
+    text-align: center;
+    transition: 0.3s;
+}
+div.cust-wrapper-top div.btn-group .btn:hover{
+    background:  rgba(107,98,108, 0.6) !important;
+    border-color: rgba(107,98,108, 0.6) !important;
+}
+.wrapper-save .btn:hover{
+    background:  #6ff1a1 !important;
+    border-color: #6ff1a1 !important;
+}
+.cust-wrapper-success{
+    display: inline-block;
+    width: 100%;
+}
+
+
+
 </style>

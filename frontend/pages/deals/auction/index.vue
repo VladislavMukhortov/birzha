@@ -26,24 +26,26 @@
 
                                 <ShortDescriptionItemList v-bind:lot="item" />
 
-                                <div class="text-danger">{{ item.desc }}</div>
+                                <div class="text-success">{{ item.desc }}</div><br>
 
-                                <div>
-                                    <template v-if="item.is_auction">
+                                <div class="custom-btn">
+                                   
+                                    <template v-if="item.is_auction">                                      
                                         <b-link
                                             v-bind:to="{name: 'deals-auction-link', params: {link: item.link}}"
-                                            class="btn btn-primary">Перейти в сделку</b-link>
+                                            class="btn">Перейти в сделку</b-link>
                                     </template>
+                                    
                                     <template v-else>
                                         <template v-if="item.is_my">
                                             <b-link
                                                 v-bind:to="{name: 'orders-link', params: {link: item.link}}"
-                                                class="btn btn-info">Посмотреть запросы к объявлению</b-link>
+                                                class="btn">Посмотреть запросы к объявлению</b-link>
                                         </template>
                                         <template v-else>
                                             <b-link
                                                 v-bind:to="{name: 'market-link', params: {link: item.link}}"
-                                                class="btn btn-secondary">Посмотреть объявление</b-link>
+                                                class="btn">Посмотреть объявление</b-link>
                                         </template>
                                     </template>
                                 </div>
@@ -52,9 +54,9 @@
 
                             </b-list-group-item>
                         </b-list-group>
-                        <div v-else>
+                        <div v-else class="custom-btn">
                             <h2 class="section_subtitle">У вас нет сделок и/или запросов на сделку</h2>
-                            <b-link to="/deals" class="btn btn-primary">Deals</b-link>
+                            <b-link to="/deals" class="btn">Deals</b-link>
                         </div>
 
                         <b-pagination-nav
@@ -170,4 +172,36 @@ export default {
 
 
 <style lang='scss'>
+@media (max-width: 768px){
+    .custom-btn a{
+        width: 100%;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px #000 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .custom-btn a:hover{
+        background:  rgba(107,98,108, 0.6) !important;
+        border-color: rgba(107,98,108, 0.6) !important;
+    }
+}
+@media (min-width: 1024px){
+    .custom-btn a{
+        width: 45%;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px #000 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .custom-btn a:hover{
+        background:  rgba(107,98,108, 0.6) !important;
+        border-color: rgba(107,98,108, 0.6) !important;
+    }
+}
 </style>

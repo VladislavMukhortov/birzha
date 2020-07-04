@@ -3,7 +3,9 @@
     <div class="site-page">
 
         <Header />
-        <nuxt />
+        <div class="main-site-controller">
+            <nuxt />
+        </div>
         <Footer />
 
     </div>
@@ -27,4 +29,7 @@ export default {
 
 
 <style lang='scss'>
+.main-site-controller{
+    min-height: 800px;
+}
 </style>

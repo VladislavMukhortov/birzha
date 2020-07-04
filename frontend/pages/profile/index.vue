@@ -58,9 +58,9 @@
                                     type="text"></b-input>
                                 <b-form-invalid-feedback>{{ memberPositionStateText }}</b-form-invalid-feedback>
                             </b-form-group>
-
-                            <b-button type="submit" variant="primary">Сохранить</b-button>
-
+                            <div class="custom-btn-save">    
+                                <b-button type="submit" variant="success">Сохранить</b-button>
+                            </div>
                         </b-form>
 
                     </b-col>
@@ -68,24 +68,28 @@
                     <b-col cols="12" md="8" lg="6">
 
                         <h1 class="section_title">Данные Контрагента</h1>
-
-                        <pre>{{company}}</pre>
-                        <nuxt-link class="btn btn-primary" to="/profile/verified">Редактировать</nuxt-link>
+                        <div class="custom-btn">
+                            <nuxt-link class="btn" to="/profile/verified">Редактировать</nuxt-link>
+                        </div>
+                        
 
                     </b-col>
 
                 </b-row>
+                <div class="change_pass">
+                    <b-row>
+                        <b-col cols="12" md="8" lg="6">
 
-                <b-row>
-                    <b-col cols="12" md="8" lg="6">
+                            <h1 class="section_title">Задать пароль</h1>
 
-                        <h1 class="section_title">Задать пароль</h1>
+                            <p>Обновлен: {{ changePasswordAt }}</p>
+                            <div class="custom-btn">
+                                <b-button v-b-modal.js-modal-change-password>Изменить</b-button>
+                            </div>
 
-                        <p>Обновлен: {{ changePasswordAt }}</p>
-                        <b-button v-b-modal.js-modal-change-password variant="primary">Изменить</b-button>
-
-                    </b-col>
-                </b-row>
+                        </b-col>
+                    </b-row>
+                </div>
 
             </b-container>
         </section>
@@ -98,21 +102,22 @@
 
             <div class="d-block">
                 <b-form v-on:submit.prevent="onSubmitFormChangePassword">
+                    <div class="custom-modal">
+                        <b-alert
+                            variant="danger"
+                            fade
+                            v-bind:show="showAlertErrorPassword">{{ textAlertErrorPassword }}</b-alert>
 
-                    <b-alert
-                        variant="danger"
-                        fade
-                        v-bind:show="showAlertErrorPassword">{{ textAlertErrorPassword }}</b-alert>
+                        <b-form-group label="Введите пароль" label-class="required">
+                            <b-input required v-model="password" type="password"></b-input>
+                        </b-form-group>
 
-                    <b-form-group label="Введите пароль" label-class="required">
-                        <b-input required v-model="password" type="password"></b-input>
-                    </b-form-group>
+                        <b-form-group label="Подтвердите пароль" label-class="required">
+                            <b-input required v-model="passwordConfirm" type="password"></b-input>
+                        </b-form-group>
 
-                    <b-form-group label="Подтвердите пароль" label-class="required">
-                        <b-input required v-model="passwordConfirm" type="password"></b-input>
-                    </b-form-group>
-
-                    <b-button type="submit" variant="primary" block>Сохранить</b-button>
+                        <b-button type="submit" variant="success" block>Сохранить</b-button>
+                    </div>
                 </b-form>
             </div>
 
@@ -159,6 +164,7 @@ export default {
             memberPhoneStateText: '',       // текст состояния - телефон пользователя
             memberEmailStateText: '',       // текст состояния - почта пользователя
             memberPositionStateText: '',    // текст состояния - должность пользователя
+            textAlertErrorPassword: '',
         };
     },
 
@@ -269,5 +275,110 @@ export default {
 
 
 <style lang='scss'>
+@media (max-width: 768px){
+    .custom-btn button{
+        width: 100%;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px #000 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .custom-btn button:hover{
+        background:  rgba(107,98,108, 0.6) !important;
+        border-color: rgba(107,98,108, 0.6) !important;
+        color: #000 !important;
+    }
+    .custom-btn a{
+        width: 100%;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px #000 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .custom-btn a:hover{
+        background:  rgba(107,98,108, 0.6) !important;
+        border-color: rgba(107,98,108, 0.6) !important;
+        color: #000 !important;
+    }
+    // .change_pass .row .col-md-8{
+    //     width: 100%;
+    //     float: left;
+    // }
+    .change_pass .row .col-md-8{
+        margin: 0 auto;
+        
+    }
+}
+@media (min-width: 1024px){
+    .custom-btn button{
+        width: 45%;
+        display: inline-block;
+        background: rgba(123,121,127, 1) !important;
+        border-radius: 10px !important;
+        border: 1px #000 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .custom-btn button:hover{
+        background:  rgba(107,98,108, 0.6) !important;
+        border-color: rgba(107,98,108, 0.6) !important;
+        color: #000 !important;
+    }
+    .custom-btn a{
+        width: 45%;
+        display: inline-block;
+        background: rgba(76,217,100, 1) !important;
+        border-radius: 10px !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .custom-btn a:hover{
+        background:  #6ff1a1 !important;
+        border-color: #6ff1a1 !important;
+        color: #000 !important;
+    }
+    .custom-btn-save button{
+        width: 45%;
+        display: inline-block;
+        background: rgba(76,217,100, 1) !important;
+        border-radius: 10px !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .custom-btn-save button:hover{
+        background:  #6ff1a1 !important;
+        border-color: #6ff1a1 !important;
+        color: #000 !important;
+    }
+    
+}
+.custom-modal input{
+    border-radius: 10px;
+}
+
+.custom-modal .btn{
+    width: 100%;
+    display: inline-block;
+    background: rgba(76,217,100, 1) !important;
+    border-radius: 10px !important;
+    color: #000 !important;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.custom-modal .btn:hover{
+    background:  #6ff1a1 !important;
+    border-color: #6ff1a1 !important;
+    color: #000 !important;
+}
 
 </style>

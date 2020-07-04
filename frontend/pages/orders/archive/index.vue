@@ -10,12 +10,12 @@
                     <b-col cols="12" md="8">
 
                         <h1 class="section_title">My archive orders</h1>
-
-                        <p>
-                            <b-link class="btn btn-primary" to="/orders">Active</b-link>
-                            <b-link class="btn btn-warning" to="/orders/archive">Archive</b-link>
-                        </p>
-
+                        <div class="wrap-top-btn">
+                            <p>
+                                <span class="margin-for-320"><b-link class="btn" to="/orders">Active</b-link></span>
+                                <b-link class="btn" to="/orders/archive">Archive</b-link>
+                            </p>
+                        </div>
                         <b-pagination-nav
                             v-if="lots.length"
                             v-model="page_number"
@@ -33,7 +33,7 @@
 
                                 <b-link
                                     v-bind:to="{name: 'archive-link', params: {link: item.link}}"
-                                    class="btn btn-info">Посмотреть</b-link>
+                                    class="btn cust-btn">Посмотреть</b-link>
 
                             </b-list-group-item>
                         </b-list-group>
@@ -57,6 +57,7 @@
 
 
 <script>
+
 import ShortDescriptionItemList from '~/components/lot/ShortDescriptionItemList.vue';
 
 export default {
@@ -144,4 +145,7 @@ export default {
 
 
 <style lang='scss'>
+*{
+    margin: 0 auto;
+}
 </style>

@@ -10,7 +10,7 @@
                 <b-row>
                     <b-col cols="12" md="10" lg="8">
 
-                        <h1 class="section_title">My orders</h1>
+                        <h1 class="section_title section_title-align">My orders</h1>
 
 
                         <RequestAuctionBlock />
@@ -39,14 +39,17 @@
                             v-bind:show="cantEdit">Объявление нельзя редактировать пока оно в статусе "твердо"</b-alert>
 
                         <div>
+                            
+                            <div class="cust-wrapper-top">
                             <b-form-group>
                                 <b-radio-group
                                     v-model="deal"
                                     v-bind:options="dealList"
                                     buttons
-                                    button-variant="outline-primary"
+                                    button-variant=""
                                     name="deal-radios"></b-radio-group>
                             </b-form-group>
+                            </div>
 
                             <b-form-group label-class="required" label="Выберите культуру:">
                                 <b-select v-model="cropId">
@@ -309,30 +312,30 @@
                             <b-form-group label-cols="4" label="Год урожая:">
                                 <b-input type="text" v-model="cropYear" v-bind:readonly="cantEdit"></b-input>
                             </b-form-group>
-
-                            <b-form-group label="Basis:">
-                                <b-tabs justified pills align="center">
-                                    <b-tab v-bind:active="basis == 'FOB'" v-on:click="basis = 'FOB'" title="FOB">
-                                        <p class="small">FOB - загружено на судно в порту отгрузки</p>
-                                        <b-form-group label-class="required" label="Порт:">
-                                            <b-input type="text" v-model="fobPort" v-bind:readonly="cantEdit"></b-input>
-                                        </b-form-group>
-                                        <b-form-group label-class="required" label="Терминал:">
-                                            <b-input type="text" v-model="fobTerminal" v-bind:readonly="cantEdit"></b-input>
-                                        </b-form-group>
-                                    </b-tab>
-                                    <b-tab v-bind:active="basis == 'CIF'" v-on:click="basis = 'CIF'" title="CIF">
-                                        <p class="small">CIF - доставка в порт назначения</p>
-                                        <b-form-group label-class="required" label="Страна:">
-                                            <b-input type="text" v-model="cifCountry" v-bind:readonly="cantEdit"></b-input>
-                                        </b-form-group>
-                                        <b-form-group label-class="required" label="Порт:">
-                                            <b-input type="text" v-model="cifPort" v-bind:readonly="cantEdit"></b-input>
-                                        </b-form-group>
-                                    </b-tab>
-                                </b-tabs>
-                            </b-form-group>
-
+                            <div class="this">
+                                <b-form-group label="Basis:">
+                                    <b-tabs justified pills align="center">
+                                        <b-tab v-bind:active="basis == 'FOB'" v-on:click="basis = 'FOB'" title="FOB">
+                                            <p class="small">FOB - загружено на судно в порту отгрузки</p>
+                                            <b-form-group label-class="required" label="Порт:">
+                                                <b-input type="text" v-model="fobPort" v-bind:readonly="cantEdit"></b-input>
+                                            </b-form-group>
+                                            <b-form-group label-class="required" label="Терминал:">
+                                                <b-input type="text" v-model="fobTerminal" v-bind:readonly="cantEdit"></b-input>
+                                            </b-form-group>
+                                        </b-tab>
+                                        <b-tab v-bind:active="basis == 'CIF'" v-on:click="basis = 'CIF'" title="CIF">
+                                            <p class="small">CIF - доставка в порт назначения</p>
+                                            <b-form-group label-class="required" label="Страна:">
+                                                <b-input type="text" v-model="cifCountry" v-bind:readonly="cantEdit"></b-input>
+                                            </b-form-group>
+                                            <b-form-group label-class="required" label="Порт:">
+                                                <b-input type="text" v-model="cifPort" v-bind:readonly="cantEdit"></b-input>
+                                            </b-form-group>
+                                        </b-tab>
+                                    </b-tabs>
+                                </b-form-group>
+                            </div>
                             <b-form-group label-class="required" label="Период поставки:">
                                 <b-input type="text" v-model="period" v-bind:readonly="cantEdit"></b-input>
                             </b-form-group>
@@ -340,11 +343,12 @@
                             <b-form-group label="Дополнительная информация:">
                                 <b-textarea rows="3" v-model="text" v-bind:readonly="cantEdit"></b-textarea>
                             </b-form-group>
-
-                            <b-button
-                                variant="primary"
-                                v-on:click="onSubmit"
-                                v-bind:class="{ 'disabled': cantEdit }">Сохранить</b-button>
+                            <div class="wrapper-save">
+                                <b-button
+                                    variant="success"
+                                    v-on:click="onSubmit"
+                                    v-bind:class="{ 'disabled': cantEdit }">Сохранить</b-button>
+                            </div>
 
                         </div>
 
@@ -794,4 +798,60 @@ export default {
 
 
 <style lang='scss'>
+@media(max-width: 425px){
+    .wrapper-save .btn{
+        width: 40%;
+        display: inline-block;
+        background: #32d270 !important;
+        border-radius: 10px !important;
+        border: 1px #6ff1a1 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+}
+@media(min-width: 768px){
+    .wrapper-save .btn{
+        width: 30%;
+        display: inline-block;
+        background: #32d270 !important;
+        border-radius: 10px !important;
+        border: 1px #6ff1a1 solid !important;
+        color: #000 !important;
+        text-align: center;
+        transition: 0.3s;
+    }
+}
+div.cust-wrapper-top div.btn-group{
+    width: 100%;
+}
+div.cust-wrapper-top div.btn-group .btn{
+    width: 49.7%;
+    display: inline-block;
+    background: white !important;
+    border-radius: 10px !important;
+    color: #000 !important;
+    border: 1px #000 solid !important;
+    text-align: center;
+    transition: 0.3s;
+    margin: 2.5px;
+}
+div.cust-wrapper-top div.btn-group .active{
+    width: 49.7%;
+    display: inline-block;
+    background: rgba(123,121,127, 1) !important;
+    border-radius: 10px !important;
+    border: 1px #000 solid !important;
+    color: #000 !important;
+    text-align: center;
+    transition: 0.3s;
+}
+div.cust-wrapper-top div.btn-group .btn:hover{
+    background:  rgba(107,98,108, 0.6) !important;
+    border-color: rgba(107,98,108, 0.6) !important;
+}
+.wrapper-save .btn:hover{
+    background:  #6ff1a1 !important;
+    border-color: #6ff1a1 !important;
+}
 </style>

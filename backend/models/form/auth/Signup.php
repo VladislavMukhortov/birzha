@@ -116,7 +116,7 @@ class Signup extends Model
         });
 
         if ($user->hasErrors()) {
-			Company::find()->where(['id' => $company->id])->one()->delete();
+			//Company::find()->where(['id' => $company->id])->one()->delete();
             $result['messages'] = $user->getFirstErrors();
             return $result;
         }

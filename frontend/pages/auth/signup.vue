@@ -9,89 +9,95 @@
                     <b-col cols="12" md="8">
 
                         <h1 class="section_title">Join Grain Market</h1>
-                        <h2 class="section_subtitle">Добро пожаловать!</h2>
-                        <p>Для успешной регистрации укажите информацию о себе и организации, которую представляете. Для вашего удобства, мы разбили процесс регистрации на шаги.</p>
+                        <div class="section-signin">
+                            <h2 class="section_subtitle">Добро пожаловать!</h2>
+                            <p>Для успешной регистрации укажите информацию о себе и организации, которую представляете. Для вашего удобства, мы разбили процесс регистрации на шаги.</p>
 
 
-                        <!-- STEP NUMBER -->
-                        <div class="signup-steps">
-                            <div class="signup-steps-item _step_1" v-bind:class="{ '_active': step_1 }">
-                                <strong>Шаг 1</strong>
-                                <div>Персональная информация</div>
-                            </div>
-                            <div class="signup-steps-item _step_2" v-bind:class="{ '_active': step_2 }">
-                                <strong>Шаг 2</strong>
-                                <div>Информация об организации</div>
-                            </div>
-                        </div>
-
-
-                        <!-- STEP 0 -->
-                        <div class="signup-step" v-bind:class="{ '_active': step_0 }">
-                            <b-button
-                                variant="primary"
-                                v-on:click="toOneStep">Далее</b-button>
-                        </div>
-
-
-                        <!-- STEP 1 -->
-                        <div class="signup-step" v-bind:class="{ '_active': step_1 }">
-
-                            <b-form-group label="Ваше имя" label-class="required">
-                                <b-input type="text" v-model="memberName" v-bind:state="memberNameState"></b-input>
-                            </b-form-group>
-
-                            <b-form-group label="Ваш телефон" label-class="required">
-                                <b-input type="text" v-model="memberPhone" v-bind:state="memberPhoneState"></b-input>
-                                <b-form-text>Номер телефона через +</b-form-text>
-                                <b-form-invalid-feedback>Этот номер телефона уже занят</b-form-invalid-feedback>
-                            </b-form-group>
-
-                            <b-form-group label="Email address" label-class="required">
-                                <b-input type="email" v-model="memberEmail" v-bind:state="memberEmailState"></b-input>
-                                <b-form-invalid-feedback>Эта электронная почта уже занята</b-form-invalid-feedback>
-                            </b-form-group>
-
-                            <b-button
-                                variant="primary"
-                                v-bind:class="{ 'disabled': !checkFirstStepCompleted }"
-                                v-on:click="toTwoStep">Далее</b-button>
-
-                        </div>
-
-
-                        <!-- STEP 2 -->
-                        <div class="signup-step" v-bind:class="{ '_active': step_2 }">
-
-                            <div class="signup-input-info">
-                                <div>Имя: <b>{{memberName}}</b></div>
-                                <div>Телефон: <b>{{memberPhone}}</b></div>
-                                <div>Почтовый ящик: <b>{{memberEmail}}</b></div>
+                            <!-- STEP NUMBER -->
+                            <div class="wrapper-steps">
+                                <div class="signup-steps">
+                                    <div class="signup-steps-item _step_1" v-bind:class="{ '_active': step_1 }" v-on:click="toOneStep">
+                                        <strong>Шаг 1</strong>
+                                        <div>Персональная информация</div>
+                                    </div>
+                                    <div class="signup-steps-item _step_2" v-bind:class="{ '_active': step_2 }">
+                                        <strong>Шаг 2</strong>
+                                        <div>Информация об организации</div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <b-form-group label="Company Name" label-class="required">
-                                <b-input type="text" v-model="companyName"></b-input>
-                            </b-form-group>
 
-                            <b-form-group label="SWIFT" label-class="required">
-                                <b-input type="text" v-model="companySwift"></b-input>
-                            </b-form-group>
+                            <!-- STEP 0 -->
+                            <div class="signup-step" v-bind:class="{ '_active': step_0 }">
+                                <b-button
+                                    
+                                    v-on:click="toOneStep">Далее</b-button>
+                            </div>
 
-                            <b-form-group label="ACC / IBAN" label-class="required">
-                                <b-input type="text" v-model="companyIban"></b-input>
-                            </b-form-group>
 
-                            <hr>
+                            <!-- STEP 1 -->
+                            <div class="signup-step" v-bind:class="{ '_active': step_1 }">
 
-                            <div class="small">By clicking «Create an account» below, you agree to our <nuxt-link target="_blank" to="/site/terms">Terms of Service</nuxt-link> and <nuxt-link target="_blank" to="/site/privacy">Privacy Statement</nuxt-link>. We'll occasionally send you account-related emails.</div>
+                                <b-form-group label="Ваше имя" label-class="required">
+                                    <b-input type="text" v-model="memberName" v-bind:state="memberNameState"></b-input>
+                                </b-form-group>
 
-                            <hr>
+                                <b-form-group label="Ваш телефон" label-class="required">
+                                    <b-input type="text" v-model="memberPhone" v-bind:state="memberPhoneState"></b-input>
+                                    <b-form-text>Номер телефона через +</b-form-text>
+                                    <b-form-invalid-feedback>Этот номер телефона уже занят</b-form-invalid-feedback>
+                                </b-form-group>
 
-                            <b-button
-                                variant="primary"
-                                v-bind:class="{ 'disabled': !checkTwoStepCompleted }"
-                                v-on:click="onSubmit">Create an account</b-button>
+                                <b-form-group label="Email address" label-class="required">
+                                    <b-input type="email" v-model="memberEmail" v-bind:state="memberEmailState"></b-input>
+                                    <b-form-invalid-feedback>Эта электронная почта уже занята</b-form-invalid-feedback>
+                                </b-form-group>
 
+                                <b-button
+                                    
+                                    v-bind:class="{ 'disabled': !checkFirstStepCompleted }"
+                                    v-on:click="toTwoStep">Далее</b-button>
+
+                            </div>
+
+
+                            <!-- STEP 2 -->
+                            <div class="signup-step" v-bind:class="{ '_active': step_2 }">
+
+                                <div class="signup-input-info">
+                                    <div>Имя: <b>{{memberName}}</b></div>
+                                    <div>Телефон: <b>{{memberPhone}}</b></div>
+                                    <div>Почтовый ящик: <b>{{memberEmail}}</b></div>
+                                </div>
+
+                                <b-form-group label="Company Name" label-class="required">
+                                    <b-input type="text" v-model="companyName"></b-input>
+                                </b-form-group>
+
+                                <b-form-group label="SWIFT" label-class="required">
+                                    <b-input type="text" v-model="companySwift"></b-input>
+                                </b-form-group>
+
+                                <b-form-group label="ACC / IBAN" label-class="required">
+                                    <b-input type="text" v-model="companyIban"></b-input>
+                                </b-form-group>
+
+                                <hr>
+
+                                <div class="small">By clicking «Create an account» below, you agree to our <nuxt-link target="_blank" to="/site/terms">Terms of Service</nuxt-link> and <nuxt-link target="_blank" to="/site/privacy">Privacy Statement</nuxt-link>. We'll occasionally send you account-related emails.</div>
+
+                                <hr>
+                                <div class="wrapper-signup">
+                                    <b-button
+                                        variant="success"
+                                        class=""
+                                        v-bind:class="{ 'disabled': !checkTwoStepCompleted }"
+                                        v-on:click="onSubmit">Create an account</b-button>
+                                </div>
+
+                            </div>
                         </div>
 
                     </b-col>
@@ -131,6 +137,8 @@ export default {
             memberNameState: null,  // состояние для проверки имени
             memberPhoneState: null, // состояние для проверки телефона
             memberEmailState: null, // состояние для проверки почты
+
+
         }
     },
 
@@ -159,6 +167,7 @@ export default {
         toOneStep() {
             this.step_0 = false;
             this.step_1 = true;
+            this.step_2 = false;
         },
 
         /**
@@ -253,12 +262,22 @@ export default {
 
 
 <style lang='scss'>
+
 .signup-steps {
     display: table;
     width: 100%;
+    height: 100%;
     margin: 1.5rem 0;
-    border: 1px solid gray;
+    border: 1px #000 solid;
+    border-radius: 10px !important;
     border-radius: 3px;
+}
+
+._step_1{
+    border-radius: 10px 0 0 10px !important;
+}
+._step_2{
+    border-radius: 0 10px 10px 0 !important;
 }
 
 .signup-steps-item {
@@ -329,5 +348,33 @@ export default {
     color: gray;
 }
 
+.signup-step .btn{
+    width: 40%;
+    background: #7b797f;
+    border-radius: 10px !important;
+    color: #000 !important;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.signup-step .btn:hover{
+    background:  rgba(107,98,108, 0.6) !important;
+    border-color: rgba(107,98,108, 0.6) !important;
+    color: #000 !important;
+}
+
+.wrapper-signup .btn{
+    width: 40%;
+    display: inline-block;
+    background: rgba(76,217,100, 1) !important;
+    border-radius: 10px !important;
+    color: #000 !important;
+    text-align: center;
+    transition: 0.3s;
+}
+.wrapper-signup .btn:hover{
+    background:  #6ff1a1 !important;
+    border-color: #6ff1a1 !important;
+}
 
 </style>
