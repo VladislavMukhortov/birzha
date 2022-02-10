@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "cross-env": "^5.2.1",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "sass-loader": "^8.0.0",
     "sass": "^1.22.12",
     "fibers": "^4.0.1",
